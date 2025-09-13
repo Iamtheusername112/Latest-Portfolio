@@ -15,9 +15,9 @@ export default function AdminLoginPage() {
     }
   }, [isAuthenticated, isLoading, router]);
 
-  const handleLogin = (userData) => {
-    console.log("Login page handleLogin called with:", userData); // Debug log
-    const success = login(userData);
+  const handleLogin = async (credentials) => {
+    console.log("Login page handleLogin called with:", credentials);
+    const success = await login(credentials);
     if (success) {
       console.log("Login successful, redirecting...");
       // The useEffect will handle the redirect

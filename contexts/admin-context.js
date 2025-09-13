@@ -18,22 +18,22 @@ export const AdminProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Check if user is already logged in (from localStorage)
-    const checkAuth = () => {
+    // Check authentication status with database
+    const checkAuth = async () => {
       try {
-        const token = localStorage.getItem("admin_token");
-        const userData = localStorage.getItem("admin_user");
+        const response = await fetch('/api/auth/verify', {
+          credentials: 'include'
+        });
         
-        if (token && userData) {
-          // In a real app, you'd validate the token with your backend
-          setIsAuthenticated(true);
-          setUser(JSON.parse(userData));
+        if (response.ok) {
+          const data = await response.json();
+          if (data.authenticated) {
+            setIsAuthenticated(true);
+            setUser(data.user);
+          }
         }
       } catch (error) {
-        console.error("Error checking authentication:", error);
-        // Clear invalid data
-        localStorage.removeItem("admin_token");
-        localStorage.removeItem("admin_user");
+        console.error("Auth check error:", error);
       } finally {
         setIsLoading(false);
       }
@@ -42,32 +42,43 @@ export const AdminProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = (userData) => {
+  const login = async (credentials) => {
     try {
-      console.log("AdminContext login called with:", userData); // Debug log
+      console.log("AdminContext login called with:", credentials);
       
-      // In a real app, you'd get this from your backend
-      const token = "demo_admin_token_" + Date.now();
-      
-      // Store in localStorage
-      localStorage.setItem("admin_token", token);
-      localStorage.setItem("admin_user", JSON.stringify(userData));
-      
-      setIsAuthenticated(true);
-      setUser(userData);
-      
-      console.log("Login successful, user authenticated"); // Debug log
-      return true;
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(credentials)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setIsAuthenticated(true);
+        setUser(data.user);
+        console.log("Login successful, user authenticated");
+        return true;
+      } else {
+        const error = await response.json();
+        console.error("Login failed:", error.error);
+        return false;
+      }
     } catch (error) {
       console.error("Login error:", error);
       return false;
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     try {
-      localStorage.removeItem("admin_token");
-      localStorage.removeItem("admin_user");
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
       setIsAuthenticated(false);
       setUser(null);
     } catch (error) {

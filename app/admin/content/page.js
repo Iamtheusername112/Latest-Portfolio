@@ -33,18 +33,9 @@ export default function ContentManagement() {
   const [activeTab, setActiveTab] = useState("hero");
   const [isEditing, setIsEditing] = useState(false);
 
-  // Sample data - in a real app, this would come from a database
-  const [heroData, setHeroData] = useState({
-    name: "John Doe",
-    title: "Full Stack Web Developer",
-    description: "I create beautiful, functional, and user-centered digital experiences that bring ideas to life. Passionate about clean code, modern technologies, and continuous learning.",
-    cvUrl: "/cv.pdf",
-    socialLinks: {
-      github: "https://github.com",
-      linkedin: "https://linkedin.com",
-      email: "mailto:john@example.com"
-    }
-  });
+  // Database state
+  const [heroData, setHeroData] = useState(null);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
   const [aboutData, setAboutData] = useState({
     title: "About Me",
@@ -144,11 +135,86 @@ export default function ContentManagement() {
     ]
   });
 
-  const handleSave = () => {
-    // In a real app, this would save to a database
-    console.log("Saving content...", { heroData, aboutData, projectsData, contactData });
-    setIsEditing(false);
-    // Show success message
+  // Fetch data from database
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoadingData(true);
+        
+        // Fetch hero data
+        const heroResponse = await fetch('/api/admin/hero');
+        if (heroResponse.ok) {
+          const hero = await heroResponse.json();
+          setHeroData(hero);
+        }
+        
+        // Fetch about data
+        const aboutResponse = await fetch('/api/admin/about');
+        if (aboutResponse.ok) {
+          const about = await aboutResponse.json();
+          setAboutData(about);
+        }
+        
+        // Fetch projects data
+        const projectsResponse = await fetch('/api/admin/projects');
+        if (projectsResponse.ok) {
+          const projects = await projectsResponse.json();
+          setProjectsData(projects);
+        }
+        
+        // Fetch contact data
+        const contactResponse = await fetch('/api/admin/contact');
+        if (contactResponse.ok) {
+          const contact = await contactResponse.json();
+          setContactData(contact);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated]);
+
+  const handleSave = async () => {
+    try {
+      setIsEditing(false);
+      
+      // Save hero data
+      if (heroData) {
+        await fetch('/api/admin/hero', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(heroData)
+        });
+      }
+      
+      // Save about data
+      if (aboutData) {
+        await fetch('/api/admin/about', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(aboutData)
+        });
+      }
+      
+      // Save contact data
+      if (contactData) {
+        await fetch('/api/admin/contact', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(contactData)
+        });
+      }
+      
+      console.log("Content saved successfully!");
+    } catch (error) {
+      console.error('Error saving content:', error);
+    }
   };
 
   // All hooks must be called before any conditional returns
@@ -172,6 +238,19 @@ export default function ContentManagement() {
 
   if (!isAuthenticated) {
     return null;
+  }
+
+  if (isLoadingData) {
+    return (
+      <AdminLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-2 text-muted-foreground">Loading content...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
   }
 
   return (
@@ -239,7 +318,7 @@ export default function ContentManagement() {
                         Name
                       </label>
                       <Input
-                        value={heroData.name}
+                        value={heroData?.name || ""}
                         onChange={(e) => setHeroData({...heroData, name: e.target.value})}
                         disabled={!isEditing}
                         placeholder="Your name"
@@ -250,7 +329,7 @@ export default function ContentManagement() {
                         Title
                       </label>
                       <Input
-                        value={heroData.title}
+                        value={heroData?.title || ""}
                         onChange={(e) => setHeroData({...heroData, title: e.target.value})}
                         disabled={!isEditing}
                         placeholder="Your professional title"
@@ -261,7 +340,7 @@ export default function ContentManagement() {
                         CV URL
                       </label>
                       <Input
-                        value={heroData.cvUrl}
+                        value={heroData?.cvUrl || ""}
                         onChange={(e) => setHeroData({...heroData, cvUrl: e.target.value})}
                         disabled={!isEditing}
                         placeholder="/cv.pdf"
@@ -274,7 +353,7 @@ export default function ContentManagement() {
                         Description
                       </label>
                       <Textarea
-                        value={heroData.description}
+                        value={heroData?.description || ""}
                         onChange={(e) => setHeroData({...heroData, description: e.target.value})}
                         disabled={!isEditing}
                         placeholder="Your professional description"
@@ -293,10 +372,10 @@ export default function ContentManagement() {
                         GitHub URL
                       </label>
                       <Input
-                        value={heroData.socialLinks.github}
+                        value={heroData?.socialLinks?.github || ""}
                         onChange={(e) => setHeroData({
                           ...heroData, 
-                          socialLinks: {...heroData.socialLinks, github: e.target.value}
+                          socialLinks: {...heroData?.socialLinks, github: e.target.value}
                         })}
                         disabled={!isEditing}
                         placeholder="https://github.com/username"
@@ -307,10 +386,10 @@ export default function ContentManagement() {
                         LinkedIn URL
                       </label>
                       <Input
-                        value={heroData.socialLinks.linkedin}
+                        value={heroData?.socialLinks?.linkedin || ""}
                         onChange={(e) => setHeroData({
                           ...heroData, 
-                          socialLinks: {...heroData.socialLinks, linkedin: e.target.value}
+                          socialLinks: {...heroData?.socialLinks, linkedin: e.target.value}
                         })}
                         disabled={!isEditing}
                         placeholder="https://linkedin.com/in/username"
@@ -321,10 +400,10 @@ export default function ContentManagement() {
                         Email
                       </label>
                       <Input
-                        value={heroData.socialLinks.email}
+                        value={heroData?.socialLinks?.email || ""}
                         onChange={(e) => setHeroData({
                           ...heroData, 
-                          socialLinks: {...heroData.socialLinks, email: e.target.value}
+                          socialLinks: {...heroData?.socialLinks, email: e.target.value}
                         })}
                         disabled={!isEditing}
                         placeholder="mailto:your@email.com"

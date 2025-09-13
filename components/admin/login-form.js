@@ -29,25 +29,18 @@ const LoginForm = ({ onLogin }) => {
   });
 
   const onSubmit = async (data) => {
-    console.log("Form submitted with data:", data); // Debug log
+    console.log("Form submitted with data:", data);
     setIsLoading(true);
     setError("");
 
     try {
-      // Simulate API call - replace with actual authentication
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const success = await onLogin(data);
       
-      // For now, accept any email/password combination
-      // In production, this would validate against your database
-      if (data.email && data.password) {
-        console.log("Calling onLogin with:", data); // Debug log
-        onLogin(data);
-        console.log("onLogin called successfully"); // Debug log
-      } else {
-        setError("Invalid credentials");
+      if (!success) {
+        setError("Invalid email or password");
       }
     } catch (err) {
-      console.error("Login error:", err); // Debug log
+      console.error("Login error:", err);
       setError("Login failed. Please try again.");
     } finally {
       setIsLoading(false);

@@ -37,7 +37,7 @@ export default function SecurityManagement() {
   const recentActivity = [
     { id: 1, action: "Successful login", user: "admin@example.com", ip: "192.168.1.100", time: "2 minutes ago", status: "success" },
     { id: 2, action: "Failed login attempt", user: "unknown@example.com", ip: "203.0.113.42", time: "15 minutes ago", status: "warning" },
-    { id: 3, action: "Password changed", user: "admin@example.com", ip: "192.168.1.100", time: "1 hour ago", status: "info" },
+    { id: 3, action: "Password changed", user: "admin@***.com", ip: "192.168.1.***", time: "1 hour ago", status: "info" },
     { id: 4, action: "Suspicious activity detected", user: "admin@example.com", ip: "198.51.100.1", time: "2 hours ago", status: "error" },
     { id: 5, action: "Two-factor authentication enabled", user: "admin@example.com", ip: "192.168.1.100", time: "3 hours ago", status: "success" }
   ];
