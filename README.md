@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Modern Full Stack Web Developer Portfolio
 
-## Getting Started
+A modern, responsive portfolio website built with Next.js 15, React 19, and Tailwind CSS. Features a clean design, smooth animations, dark/light mode toggle, and a fully functional contact form.
 
-First, run the development server:
+## 🚀 Features
 
+- **Modern Design**: Clean, professional layout with smooth animations
+- **Responsive**: Fully responsive design that works on all devices
+- **Dark/Light Mode**: Toggle between dark and light themes
+- **Interactive Sections**: Hero, About, Projects, and Contact sections
+- **Contact Form**: Functional contact form with validation
+- **Smooth Scrolling**: Smooth navigation between sections
+- **SEO Optimized**: Meta tags and structured data for better search visibility
+- **Performance**: Optimized for fast loading and smooth interactions
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **Language**: JavaScript (ES6+)
+- **Styling**: Tailwind CSS 4
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **UI Components**: Custom components with Radix UI primitives
+- **Fonts**: Geist Sans & Geist Mono
+
+## 📦 Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd portfolio
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+## 🎨 Customization
 
-To learn more about Next.js, take a look at the following resources:
+### Personal Information
+Update the following files with your personal information:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **`app/layout.js`**: Update metadata (title, description, etc.)
+2. **`components/hero.js`**: Update name, title, and description
+3. **`components/about.js`**: Update bio, skills, and experience
+4. **`components/projects.js`**: Add your projects
+5. **`components/contact.js`**: Update contact information
+6. **`components/footer.js`**: Update social links and contact info
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Styling
+- Modify `app/globals.css` for global styles and CSS variables
+- Update `tailwind.config.js` for theme customization
+- Customize component styles in individual component files
 
-## Deploy on Vercel
+### Colors
+The color scheme can be customized in `app/globals.css` by modifying the CSS variables:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```css
+:root {
+  --primary: #3b82f6;        /* Primary blue */
+  --secondary: #f1f5f9;      /* Light gray */
+  --muted: #f8fafc;          /* Very light gray */
+  /* ... other colors */
+}
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📱 Sections
+
+### Hero Section
+- Introduction with name and title
+- Call-to-action buttons
+- Social media links
+- Animated scroll indicator
+
+### About Section
+- Personal bio and statistics
+- Skills and technologies
+- Professional experience timeline
+
+### Projects Section
+- Featured projects showcase
+- Project cards with descriptions
+- Technology tags
+- Live demo and GitHub links
+
+### Contact Section
+- Contact information
+- Functional contact form
+- Social media links
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Deploy with one click
+
+### Other Platforms
+- **Netlify**: Connect your GitHub repository
+- **Railway**: Deploy directly from GitHub
+- **AWS Amplify**: Connect your repository
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
+
+## 📞 Support
+
+If you have any questions or need help customizing this portfolio, feel free to reach out!
+
+---
+
+Made with ❤️ using Next.js and Tailwind CSS# Latest-Portfolio
