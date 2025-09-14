@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   User, 
   FileText, 
@@ -24,7 +25,18 @@ import {
   Eye,
   Edit,
   Plus,
-  Trash2
+  Trash2,
+  Calendar,
+  Clock,
+  DollarSign,
+  Users,
+  Target,
+  Award,
+  AlertCircle,
+  CheckCircle,
+  Play,
+  Pause,
+  XCircle
 } from "lucide-react";
 
 export default function ContentManagement() {
@@ -39,6 +51,8 @@ export default function ContentManagement() {
   const [mediaFiles, setMediaFiles] = useState([]);
   const [showMediaSelector, setShowMediaSelector] = useState(false);
   const [mediaSelectorType, setMediaSelectorType] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
 
   const [aboutData, setAboutData] = useState({
     title: "About Me",
@@ -206,6 +220,8 @@ export default function ContentManagement() {
 
   const handleSave = async () => {
     try {
+      setIsSaving(true);
+      setSaveMessage('');
       setIsEditing(false);
       
       // Save hero data
@@ -235,9 +251,96 @@ export default function ContentManagement() {
         });
       }
       
+      // Save projects data
+      if (projectsData && projectsData.length > 0) {
+        console.log('Saving projects data:', projectsData);
+        
+        // Save each project individually
+        for (let i = 0; i < projectsData.length; i++) {
+          const project = projectsData[i];
+          try {
+            // Check if this is a new project (temporary ID from Date.now())
+            if (project.id && project.id > 1000000000000) { // Date.now() generates numbers > 1 trillion
+              // This is a new project with temporary ID, create it
+              console.log(`Creating new project:`, project.title);
+              const { id, ...projectData } = project; // Remove temporary ID
+              const response = await fetch('/api/admin/projects', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(projectData)
+              });
+              
+              if (response.ok) {
+                const createdProject = await response.json();
+                console.log(`Created project with ID ${createdProject.id}:`, createdProject.title);
+                // Update the local state with the real database ID
+                projectsData[i] = createdProject;
+              } else {
+                console.error(`Failed to create project:`, response.status);
+                const errorText = await response.text();
+                console.error(`Error details:`, errorText);
+              }
+            } else if (project.id && project.id > 0) {
+              // Update existing project with real database ID
+              console.log(`Updating project ${project.id}:`, project.title);
+              const response = await fetch(`/api/admin/projects/${project.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(project)
+              });
+              
+              if (response.ok) {
+                const updatedProject = await response.json();
+                console.log(`Updated project ${project.id}:`, updatedProject.title);
+                projectsData[i] = updatedProject;
+              } else {
+                console.error(`Failed to update project ${project.id}:`, response.status);
+                const errorText = await response.text();
+                console.error(`Error details:`, errorText);
+              }
+            } else {
+              // Create new project without ID
+              console.log(`Creating new project:`, project.title);
+              const response = await fetch('/api/admin/projects', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(project)
+              });
+              
+              if (response.ok) {
+                const createdProject = await response.json();
+                console.log(`Created project with ID ${createdProject.id}:`, createdProject.title);
+                projectsData[i] = createdProject;
+              } else {
+                console.error(`Failed to create project:`, response.status);
+                const errorText = await response.text();
+                console.error(`Error details:`, errorText);
+              }
+            }
+          } catch (error) {
+            console.error(`Error saving project ${project.title}:`, error);
+          }
+        }
+        
+        // Update the local state with the updated projects data
+        setProjectsData([...projectsData]);
+        
+        console.log('Projects saved successfully!');
+        setSaveMessage('Projects saved successfully!');
+      }
+      
       console.log("Content saved successfully!");
+      setSaveMessage('All content saved successfully!');
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSaveMessage(''), 3000);
+      
     } catch (error) {
       console.error('Error saving content:', error);
+      setSaveMessage('Error saving content. Please try again.');
+      setTimeout(() => setSaveMessage(''), 5000);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -255,6 +358,37 @@ export default function ContentManagement() {
     setMediaSelectorType(type);
     setShowMediaSelector(true);
   };
+
+  // Project status and priority options
+  const projectStatuses = [
+    { value: 'planning', label: 'Planning', icon: Target, color: 'bg-blue-100 text-blue-800' },
+    { value: 'in_progress', label: 'In Progress', icon: Play, color: 'bg-yellow-100 text-yellow-800' },
+    { value: 'testing', label: 'Testing', icon: AlertCircle, color: 'bg-orange-100 text-orange-800' },
+    { value: 'deployed', label: 'Deployed', icon: CheckCircle, color: 'bg-green-100 text-green-800' },
+    { value: 'completed', label: 'Completed', icon: Award, color: 'bg-purple-100 text-purple-800' },
+    { value: 'on_hold', label: 'On Hold', icon: Pause, color: 'bg-gray-100 text-gray-800' },
+    { value: 'cancelled', label: 'Cancelled', icon: XCircle, color: 'bg-red-100 text-red-800' }
+  ];
+
+  const projectPriorities = [
+    { value: 'low', label: 'Low', color: 'bg-green-100 text-green-800' },
+    { value: 'medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
+    { value: 'high', label: 'High', color: 'bg-orange-100 text-orange-800' },
+    { value: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-800' }
+  ];
+
+  const projectCategories = [
+    'Web Application',
+    'Mobile Application',
+    'Desktop Application',
+    'API/Backend',
+    'Database Design',
+    'UI/UX Design',
+    'DevOps/Infrastructure',
+    'Machine Learning',
+    'Data Analysis',
+    'Other'
+  ];
 
   // All hooks must be called before any conditional returns
   useEffect(() => {
@@ -320,10 +454,23 @@ export default function ContentManagement() {
               <span>{isEditing ? "Cancel" : "Edit Mode"}</span>
             </Button>
             {isEditing && (
-              <Button onClick={handleSave} className="flex items-center space-x-2">
+              <Button 
+                onClick={handleSave} 
+                disabled={isSaving}
+                className="flex items-center space-x-2"
+              >
                 <Save className="h-4 w-4" />
-                <span>Save Changes</span>
+                <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
               </Button>
+            )}
+            {saveMessage && (
+              <div className={`px-3 py-1 rounded-md text-sm ${
+                saveMessage.includes('Error') 
+                  ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' 
+                  : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              }`}>
+                {saveMessage}
+              </div>
             )}
           </div>
         </div>
@@ -833,22 +980,35 @@ export default function ContentManagement() {
                   <span>Projects Management</span>
                 </CardTitle>
                 <CardDescription>
-                  Add, edit, and manage your portfolio projects
+                  Comprehensive project management with status tracking, timeline, and detailed information
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {projectsData.map((project, index) => (
-                    <div key={project.id} className="p-4 border border-border/50 rounded-lg">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-lg font-semibold text-foreground">
-                          Project {index + 1}
-                        </h4>
+                    <div key={project.id} className="p-6 border border-border/50 rounded-lg space-y-6">
+                      {/* Project Header */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <h4 className="text-xl font-semibold text-foreground">
+                            {project.title || `Project ${index + 1}`}
+                          </h4>
+                          {project.status && (
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${projectStatuses.find(s => s.value === project.status)?.color || 'bg-gray-100 text-gray-800'}`}>
+                              {projectStatuses.find(s => s.value === project.status)?.label || project.status}
+                            </span>
+                          )}
+                          {project.priority && (
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${projectPriorities.find(p => p.value === project.priority)?.color || 'bg-gray-100 text-gray-800'}`}>
+                              {projectPriorities.find(p => p.value === project.priority)?.label || project.priority}
+                            </span>
+                          )}
+                        </div>
                         <div className="flex items-center space-x-2">
                           <label className="flex items-center space-x-2">
                             <input
                               type="checkbox"
-                              checked={project.featured}
+                              checked={project.featured || false}
                               onChange={(e) => {
                                 const newProjects = [...projectsData];
                                 newProjects[index].featured = e.target.checked;
@@ -857,6 +1017,19 @@ export default function ContentManagement() {
                               disabled={!isEditing}
                             />
                             <span className="text-sm text-muted-foreground">Featured</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              checked={project.isPublic !== false}
+                              onChange={(e) => {
+                                const newProjects = [...projectsData];
+                                newProjects[index].isPublic = e.target.checked;
+                                setProjectsData(newProjects);
+                              }}
+                              disabled={!isEditing}
+                            />
+                            <span className="text-sm text-muted-foreground">Public</span>
                           </label>
                           {isEditing && (
                             <Button
@@ -872,86 +1045,476 @@ export default function ContentManagement() {
                           )}
                         </div>
                       </div>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-4">
+
+                      {/* Progress Bar */}
+                      {project.progress !== undefined && (
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">Progress</span>
+                            <span className="font-medium">{project.progress || 0}%</span>
+                          </div>
+                          <div className="w-full bg-muted rounded-full h-2">
+                            <div 
+                              className="bg-primary h-2 rounded-full transition-all duration-300" 
+                              style={{ width: `${project.progress || 0}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Main Content Grid */}
+                      <div className="grid lg:grid-cols-3 gap-6">
+                        {/* Basic Information */}
+                        <div className="lg:col-span-2 space-y-4">
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-foreground mb-2">
+                                Project Title *
+                              </label>
+                              <Input
+                                value={project.title || ""}
+                                onChange={(e) => {
+                                  const newProjects = [...projectsData];
+                                  newProjects[index].title = e.target.value;
+                                  setProjectsData(newProjects);
+                                }}
+                                disabled={!isEditing}
+                                placeholder="Enter project title"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-foreground mb-2">
+                                Category
+                              </label>
+                              <Select
+                                value={project.category || ""}
+                                onValueChange={(value) => {
+                                  const newProjects = [...projectsData];
+                                  newProjects[index].category = value;
+                                  setProjectsData(newProjects);
+                                }}
+                                disabled={!isEditing}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {projectCategories.map((category) => (
+                                    <SelectItem key={category} value={category}>
+                                      {category}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+
                           <div>
                             <label className="block text-sm font-medium text-foreground mb-2">
-                              Title
+                              Short Description
                             </label>
                             <Input
-                              value={project.title}
+                              value={project.shortDescription || ""}
                               onChange={(e) => {
                                 const newProjects = [...projectsData];
-                                newProjects[index].title = e.target.value;
+                                newProjects[index].shortDescription = e.target.value;
                                 setProjectsData(newProjects);
                               }}
                               disabled={!isEditing}
+                              placeholder="Brief description for cards"
                             />
                           </div>
+
                           <div>
                             <label className="block text-sm font-medium text-foreground mb-2">
-                              Description
+                              Full Description *
                             </label>
                             <Textarea
-                              value={project.description}
+                              value={project.description || ""}
                               onChange={(e) => {
                                 const newProjects = [...projectsData];
                                 newProjects[index].description = e.target.value;
                                 setProjectsData(newProjects);
                               }}
                               disabled={!isEditing}
-                              rows={3}
+                              rows={4}
+                              placeholder="Detailed project description"
+                            />
+                          </div>
+
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-foreground mb-2">
+                                Status
+                              </label>
+                              <Select
+                                value={project.status || "planning"}
+                                onValueChange={(value) => {
+                                  const newProjects = [...projectsData];
+                                  newProjects[index].status = value;
+                                  setProjectsData(newProjects);
+                                }}
+                                disabled={!isEditing}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {projectStatuses.map((status) => (
+                                    <SelectItem key={status.value} value={status.value}>
+                                      <div className="flex items-center space-x-2">
+                                        <status.icon className="h-4 w-4" />
+                                        <span>{status.label}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-foreground mb-2">
+                                Priority
+                              </label>
+                              <Select
+                                value={project.priority || "medium"}
+                                onValueChange={(value) => {
+                                  const newProjects = [...projectsData];
+                                  newProjects[index].priority = value;
+                                  setProjectsData(newProjects);
+                                }}
+                                disabled={!isEditing}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {projectPriorities.map((priority) => (
+                                    <SelectItem key={priority.value} value={priority.value}>
+                                      {priority.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-foreground mb-2">
+                              Progress (%)
+                            </label>
+                            <Input
+                              type="number"
+                              min="0"
+                              max="100"
+                              value={project.progress || 0}
+                              onChange={(e) => {
+                                const newProjects = [...projectsData];
+                                newProjects[index].progress = parseInt(e.target.value) || 0;
+                                setProjectsData(newProjects);
+                              }}
+                              disabled={!isEditing}
+                              placeholder="0-100"
                             />
                           </div>
                         </div>
+
+                        {/* Project Details Sidebar */}
                         <div className="space-y-4">
+                          {/* Project Image */}
                           <div>
                             <label className="block text-sm font-medium text-foreground mb-2">
+                              Project Image
+                            </label>
+                            <div className="space-y-2">
+                              {project.imageUrl && (
+                                <div className="relative w-full h-32 rounded-lg overflow-hidden border border-border/50">
+                                  <img 
+                                    src={project.imageUrl} 
+                                    alt="Project" 
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              )}
+                              <div className="flex space-x-2">
+                                <Input
+                                  value={project.imageUrl || ""}
+                                  onChange={(e) => {
+                                    const newProjects = [...projectsData];
+                                    newProjects[index].imageUrl = e.target.value;
+                                    setProjectsData(newProjects);
+                                  }}
+                                  disabled={!isEditing}
+                                  placeholder="Image URL"
+                                  className="flex-1"
+                                />
+                                {isEditing && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => openMediaSelector('projectImage')}
+                                  >
+                                    <Image className="h-4 w-4" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Timeline */}
+                          <div className="space-y-3">
+                            <h5 className="text-sm font-medium text-foreground">Timeline</h5>
+                            <div className="space-y-2">
+                              <div>
+                                <label className="block text-xs text-muted-foreground mb-1">
+                                  Start Date
+                                </label>
+                                <Input
+                                  type="date"
+                                  value={project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : ""}
+                                  onChange={(e) => {
+                                    const newProjects = [...projectsData];
+                                    newProjects[index].startDate = e.target.value ? new Date(e.target.value).toISOString() : null;
+                                    setProjectsData(newProjects);
+                                  }}
+                                  disabled={!isEditing}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-muted-foreground mb-1">
+                                  End Date
+                                </label>
+                                <Input
+                                  type="date"
+                                  value={project.endDate ? new Date(project.endDate).toISOString().split('T')[0] : ""}
+                                  onChange={(e) => {
+                                    const newProjects = [...projectsData];
+                                    newProjects[index].endDate = e.target.value ? new Date(e.target.value).toISOString() : null;
+                                    setProjectsData(newProjects);
+                                  }}
+                                  disabled={!isEditing}
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Project Metrics */}
+                          <div className="space-y-3">
+                            <h5 className="text-sm font-medium text-foreground">Metrics</h5>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="block text-xs text-muted-foreground mb-1">
+                                  Est. Hours
+                                </label>
+                                <Input
+                                  type="number"
+                                  value={project.estimatedHours || ""}
+                                  onChange={(e) => {
+                                    const newProjects = [...projectsData];
+                                    newProjects[index].estimatedHours = e.target.value ? parseInt(e.target.value) : null;
+                                    setProjectsData(newProjects);
+                                  }}
+                                  disabled={!isEditing}
+                                  placeholder="Hours"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs text-muted-foreground mb-1">
+                                  Actual Hours
+                                </label>
+                                <Input
+                                  type="number"
+                                  value={project.actualHours || ""}
+                                  onChange={(e) => {
+                                    const newProjects = [...projectsData];
+                                    newProjects[index].actualHours = e.target.value ? parseInt(e.target.value) : null;
+                                    setProjectsData(newProjects);
+                                  }}
+                                  disabled={!isEditing}
+                                  placeholder="Hours"
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-xs text-muted-foreground mb-1">
+                                Team Size
+                              </label>
+                              <Input
+                                type="number"
+                                min="1"
+                                value={project.teamSize || 1}
+                                onChange={(e) => {
+                                  const newProjects = [...projectsData];
+                                  newProjects[index].teamSize = parseInt(e.target.value) || 1;
+                                  setProjectsData(newProjects);
+                                }}
+                                disabled={!isEditing}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Client Information */}
+                          <div>
+                            <label className="block text-sm font-medium text-foreground mb-2">
+                              Client
+                            </label>
+                            <Input
+                              value={project.client || ""}
+                              onChange={(e) => {
+                                const newProjects = [...projectsData];
+                                newProjects[index].client = e.target.value;
+                                setProjectsData(newProjects);
+                              }}
+                              disabled={!isEditing}
+                              placeholder="Client name"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* URLs Section */}
+                      <div className="space-y-4">
+                        <h5 className="text-sm font-medium text-foreground">Project Links</h5>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                          <div>
+                            <label className="block text-xs text-muted-foreground mb-1">
                               Live URL
                             </label>
                             <Input
-                              value={project.liveUrl}
+                              value={project.liveUrl || ""}
                               onChange={(e) => {
                                 const newProjects = [...projectsData];
                                 newProjects[index].liveUrl = e.target.value;
                                 setProjectsData(newProjects);
                               }}
                               disabled={!isEditing}
+                              placeholder="https://..."
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-foreground mb-2">
+                            <label className="block text-xs text-muted-foreground mb-1">
                               GitHub URL
                             </label>
                             <Input
-                              value={project.githubUrl}
+                              value={project.githubUrl || ""}
                               onChange={(e) => {
                                 const newProjects = [...projectsData];
                                 newProjects[index].githubUrl = e.target.value;
                                 setProjectsData(newProjects);
                               }}
                               disabled={!isEditing}
+                              placeholder="https://..."
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-foreground mb-2">
-                              Technologies (comma-separated)
+                            <label className="block text-xs text-muted-foreground mb-1">
+                              Demo URL
                             </label>
                             <Input
-                              value={project.technologies.join(", ")}
+                              value={project.demoUrl || ""}
                               onChange={(e) => {
                                 const newProjects = [...projectsData];
-                                newProjects[index].technologies = e.target.value.split(", ");
+                                newProjects[index].demoUrl = e.target.value;
                                 setProjectsData(newProjects);
                               }}
                               disabled={!isEditing}
-                              placeholder="React, Node.js, MongoDB"
+                              placeholder="https://..."
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-muted-foreground mb-1">
+                              Documentation
+                            </label>
+                            <Input
+                              value={project.documentationUrl || ""}
+                              onChange={(e) => {
+                                const newProjects = [...projectsData];
+                                newProjects[index].documentationUrl = e.target.value;
+                                setProjectsData(newProjects);
+                              }}
+                              disabled={!isEditing}
+                              placeholder="https://..."
                             />
                           </div>
                         </div>
                       </div>
+
+                      {/* Technologies Section */}
+                      <div className="space-y-4">
+                        <h5 className="text-sm font-medium text-foreground">Technologies</h5>
+                        <div>
+                          <label className="block text-xs text-muted-foreground mb-2">
+                            Technology Stack (comma-separated)
+                          </label>
+                          <Input
+                            value={Array.isArray(project.technologies) ? project.technologies.join(", ") : ""}
+                            onChange={(e) => {
+                              const newProjects = [...projectsData];
+                              newProjects[index].technologies = e.target.value.split(", ").filter(t => t.trim());
+                              setProjectsData(newProjects);
+                            }}
+                            disabled={!isEditing}
+                            placeholder="React, Node.js, MongoDB, TypeScript"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Additional Details */}
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-foreground mb-2">
+                            Challenges Faced
+                          </label>
+                          <Textarea
+                            value={project.challenges || ""}
+                            onChange={(e) => {
+                              const newProjects = [...projectsData];
+                              newProjects[index].challenges = e.target.value;
+                              setProjectsData(newProjects);
+                            }}
+                            disabled={!isEditing}
+                            rows={3}
+                            placeholder="Describe the main challenges..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-foreground mb-2">
+                            Solutions Implemented
+                          </label>
+                          <Textarea
+                            value={project.solutions || ""}
+                            onChange={(e) => {
+                              const newProjects = [...projectsData];
+                              newProjects[index].solutions = e.target.value;
+                              setProjectsData(newProjects);
+                            }}
+                            disabled={!isEditing}
+                            rows={3}
+                            placeholder="How you solved the challenges..."
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Lessons Learned
+                        </label>
+                        <Textarea
+                          value={project.lessonsLearned || ""}
+                          onChange={(e) => {
+                            const newProjects = [...projectsData];
+                            newProjects[index].lessonsLearned = e.target.value;
+                            setProjectsData(newProjects);
+                          }}
+                          disabled={!isEditing}
+                          rows={3}
+                          placeholder="Key takeaways from this project..."
+                        />
+                      </div>
                     </div>
                   ))}
+
+                  {/* Add New Project Button */}
                   {isEditing && (
                     <Button
                       variant="outline"
@@ -960,16 +1523,22 @@ export default function ContentManagement() {
                           id: Date.now(),
                           title: "New Project",
                           description: "Project description",
-                          technologies: ["React", "Node.js"],
-                          liveUrl: "https://example.com",
-                          githubUrl: "https://github.com",
-                          featured: false
+                          shortDescription: "",
+                          technologies: [],
+                          category: "Web Application",
+                          status: "planning",
+                          priority: "medium",
+                          progress: 0,
+                          featured: false,
+                          isPublic: true,
+                          teamSize: 1,
+                          order: projectsData.length + 1
                         };
                         setProjectsData([...projectsData, newProject]);
                       }}
-                      className="w-full"
+                      className="w-full h-12 border-2 border-dashed"
                     >
-                      <Plus className="h-4 w-4 mr-2" />
+                      <Plus className="h-5 w-5 mr-2" />
                       Add New Project
                     </Button>
                   )}

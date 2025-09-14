@@ -1,23 +1,45 @@
-import 'dotenv/config';
-import { db } from '../lib/db/config.js';
+#!/usr/bin/env node
 
-async function testConnection() {
+import { db } from '../lib/db/config.js';
+import { projects } from '../lib/db/schema.js';
+
+async function testDatabaseConnection() {
+  console.log('🔍 Testing Database Connection...\n');
+
   try {
-    console.log('🔍 Testing database connection...');
-    console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+    // Test basic connection
+    console.log('1. Testing database connection...');
     
-    // Test a simple query
-    const result = await db.execute('SELECT 1 as test');
-    console.log('✅ Database connection successful');
-    console.log('📊 Test query result:', result);
+    // Try to select from projects table
+    const result = await db.select().from(projects);
+    console.log(`✅ Database connection successful!`);
+    console.log(`📊 Found ${result.length} projects in database`);
+    
+    if (result.length > 0) {
+      console.log('\n📋 Projects found:');
+      result.forEach((project, index) => {
+        console.log(`   ${index + 1}. ${project.title || 'Untitled'} (ID: ${project.id})`);
+        console.log(`      Status: ${project.status || 'N/A'}`);
+        console.log(`      Public: ${project.is_public !== false ? 'Yes' : 'No'}`);
+        console.log(`      Featured: ${project.featured ? 'Yes' : 'No'}`);
+        console.log('');
+      });
+    } else {
+      console.log('\n💡 No projects found in database. This explains why frontend shows nothing.');
+      console.log('   You need to create projects through the admin dashboard.');
+    }
     
   } catch (error) {
-    console.error('❌ Database connection failed:', error.message);
-    console.log('\n🔧 Troubleshooting:');
-    console.log('1. Check your .env.local file exists');
-    console.log('2. Verify DATABASE_URL is correct');
-    console.log('3. Ensure your Neon database is active');
+    console.error('\n❌ Database connection failed:', error.message);
+    console.error('\n🔧 Possible solutions:');
+    console.error('   1. Check if .env.local file exists with correct DATABASE_URL');
+    console.error('   2. Verify database credentials are correct');
+    console.error('   3. Make sure database server is accessible');
+    console.error('   4. Run npm run db:push to apply migrations');
+    console.error('\n📝 Full error details:');
+    console.error(error);
+    process.exit(1);
   }
 }
 
-testConnection();
+testDatabaseConnection();

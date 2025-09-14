@@ -23,12 +23,23 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     const data = await request.json();
+    console.log(`Updating project ${params.id} with data:`, data);
+    
     const updatedProject = await ProjectsService.updateProject(parseInt(params.id), data);
+    console.log('Project updated successfully:', updatedProject);
+    
     return NextResponse.json(updatedProject);
   } catch (error) {
     console.error('Error updating project:', error);
+    console.error('Error details:', error.message);
+    console.error('Error stack:', error.stack);
+    
     return NextResponse.json(
-      { error: 'Failed to update project' },
+      { 
+        error: 'Failed to update project',
+        details: error.message,
+        projectId: params.id
+      },
       { status: 500 }
     );
   }

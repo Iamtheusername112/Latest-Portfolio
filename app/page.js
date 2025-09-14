@@ -1,7 +1,7 @@
 import Header from "@/components/header";
 import DynamicHero from "@/components/dynamic-hero";
 import DynamicAbout from "@/components/dynamic-about";
-import Projects from "@/components/projects";
+import DynamicProjects from "@/components/dynamic-projects";
 import Contact from "@/components/contact";
 import Footer from "@/components/footer";
 
@@ -12,7 +12,7 @@ export default function Home() {
       <main>
         <DynamicHero />
         <DynamicAbout />
-        <Projects />
+        <DynamicProjects />
         <Contact />
       </main>
       <Footer />

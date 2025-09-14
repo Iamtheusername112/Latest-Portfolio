@@ -17,12 +17,22 @@ export async function GET() {
 export async function POST(request) {
   try {
     const data = await request.json();
+    console.log('Creating project with data:', data);
+    
     const newProject = await ProjectsService.createProject(data);
+    console.log('Project created successfully:', newProject);
+    
     return NextResponse.json(newProject);
   } catch (error) {
     console.error('Error creating project:', error);
+    console.error('Error details:', error.message);
+    console.error('Error stack:', error.stack);
+    
     return NextResponse.json(
-      { error: 'Failed to create project' },
+      { 
+        error: 'Failed to create project',
+        details: error.message
+      },
       { status: 500 }
     );
   }
