@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Lock, Mail, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, AlertCircle, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +19,7 @@ const LoginForm = ({ onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const {
     register,
@@ -32,16 +33,31 @@ const LoginForm = ({ onLogin }) => {
     console.log("Form submitted with data:", data);
     setIsLoading(true);
     setError("");
+    setSuccess(false);
 
     try {
-      const success = await onLogin(data);
+      const result = await onLogin(data);
       
-      if (!success) {
-        setError("Invalid email or password");
+      if (typeof result === 'boolean') {
+        // Handle old boolean response format
+        if (result) {
+          setSuccess(true);
+        } else {
+          setError("Invalid email or password. Please check your credentials and try again.");
+        }
+      } else if (result && typeof result === 'object') {
+        // Handle new object response format
+        if (result.success) {
+          setSuccess(true);
+        } else {
+          setError(result.error || "Login failed. Please try again.");
+        }
+      } else {
+        setError("Login failed. Please try again.");
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Login failed. Please try again.");
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -69,11 +85,25 @@ const LoginForm = ({ onLogin }) => {
             
             <CardContent>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Success Message */}
+                {success && (
+                  <div className="flex items-start space-x-2 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-green-800 dark:text-green-200 mb-1">Login Successful!</p>
+                      <p className="text-sm text-green-700 dark:text-green-300">Redirecting to admin dashboard...</p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Error Message */}
                 {error && (
-                  <div className="flex items-center space-x-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-                    <AlertCircle className="h-4 w-4 text-destructive" />
-                    <span className="text-sm text-destructive">{error}</span>
+                  <div className="flex items-start space-x-2 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                    <AlertCircle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-destructive mb-1">Login Failed</p>
+                      <p className="text-sm text-destructive/80">{error}</p>
+                    </div>
                   </div>
                 )}
 
@@ -131,10 +161,22 @@ const LoginForm = ({ onLogin }) => {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoading || success}
                   className="w-full btn-premium"
                 >
-                  {isLoading ? "Signing in..." : "Sign In"}
+                  {isLoading ? (
+                    <>
+                      <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      Signing in...
+                    </>
+                  ) : success ? (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Success! Redirecting...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
                 </Button>
               </form>
 

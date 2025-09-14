@@ -60,15 +60,26 @@ export const AdminProvider = ({ children }) => {
         setIsAuthenticated(true);
         setUser(data.user);
         console.log("Login successful, user authenticated");
-        return true;
+        return { success: true };
       } else {
-        const error = await response.json();
-        console.error("Login failed:", error.error);
-        return false;
+        let errorMessage = "Login failed. Please try again.";
+        
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch (parseError) {
+          console.warn("Could not parse error response:", parseError);
+        }
+        
+        console.log("Login failed:", errorMessage);
+        return { success: false, error: errorMessage };
       }
     } catch (error) {
       console.error("Login error:", error);
-      return false;
+      return { 
+        success: false, 
+        error: "Network error. Please check your connection and try again." 
+      };
     }
   };
 

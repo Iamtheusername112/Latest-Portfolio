@@ -17,12 +17,14 @@ export default function AdminLoginPage() {
 
   const handleLogin = async (credentials) => {
     console.log("Login page handleLogin called with:", credentials);
-    const success = await login(credentials);
-    if (success) {
+    const result = await login(credentials);
+    if (result.success) {
       console.log("Login successful, redirecting...");
       // The useEffect will handle the redirect
+      return true;
     } else {
-      console.log("Login failed");
+      console.log("Login failed:", result.error);
+      return false;
     }
   };
 
