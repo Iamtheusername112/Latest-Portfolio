@@ -180,14 +180,6 @@ const LoginForm = ({ onLogin }) => {
                 </Button>
               </form>
 
-              {/* Admin Credentials */}
-              <div className="mt-6 p-4 bg-muted/50 rounded-md">
-                <p className="text-sm text-muted-foreground mb-2">Admin Credentials:</p>
-                <p className="text-xs text-muted-foreground">
-                  Email: iwufrancis571@gmail.com<br />
-                  Password: PortfolioAdmin2024!
-                </p>
-              </div>
             </CardContent>
           </Card>
         </div>
