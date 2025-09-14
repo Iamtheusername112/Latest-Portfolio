@@ -43,6 +43,7 @@ const AdminLayout = ({ children }) => {
     { name: "Analytics", href: "/admin/analytics", icon: BarChart3, badge: "New" },
     { name: "Content", href: "/admin/content", icon: FileText, badge: null },
     { name: "Media", href: "/admin/media", icon: Image, badge: "12" },
+    { name: "Logo", href: "/admin/logo", icon: Palette, badge: null },
     { name: "SEO", href: "/admin/seo", icon: Target, badge: null },
     { name: "Appearance", href: "/admin/appearance", icon: Palette, badge: null },
     { name: "Performance", href: "/admin/performance", icon: Zap, badge: "94" },
