@@ -3,7 +3,7 @@ import { ContactService } from '@/lib/db/services/contact-service';
 
 export async function GET() {
   try {
-    const contactInfo = await ContactService.getContactInfo();
+    const contactInfo = await ContactService.ensureContactInfoExists();
     return NextResponse.json(contactInfo);
   } catch (error) {
     console.error('Error fetching contact info:', error);

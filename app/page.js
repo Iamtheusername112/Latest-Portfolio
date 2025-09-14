@@ -1,6 +1,6 @@
 import Header from "@/components/header";
-import Hero from "@/components/hero";
-import About from "@/components/about";
+import DynamicHero from "@/components/dynamic-hero";
+import DynamicAbout from "@/components/dynamic-about";
 import Projects from "@/components/projects";
 import Contact from "@/components/contact";
 import Footer from "@/components/footer";
@@ -10,8 +10,8 @@ export default function Home() {
     <div className="min-h-screen">
       <Header />
       <main>
-        <Hero />
-        <About />
+        <DynamicHero />
+        <DynamicAbout />
         <Projects />
         <Contact />
       </main>

@@ -42,6 +42,7 @@ const AdminLayout = ({ children }) => {
 
   const navigation = [
     { name: "Dashboard", href: "/admin", icon: Home, badge: null },
+    { name: "Hero", href: "/admin/hero", icon: User, badge: null },
     { name: "Analytics", href: "/admin/analytics", icon: BarChart3, badge: "New" },
     { name: "Content", href: "/admin/content", icon: FileText, badge: null },
     { name: "Media", href: "/admin/media", icon: Image, badge: "12" },

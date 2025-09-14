@@ -36,6 +36,9 @@ export default function ContentManagement() {
   // Database state
   const [heroData, setHeroData] = useState(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [mediaFiles, setMediaFiles] = useState([]);
+  const [showMediaSelector, setShowMediaSelector] = useState(false);
+  const [mediaSelectorType, setMediaSelectorType] = useState(null);
 
   const [aboutData, setAboutData] = useState({
     title: "About Me",
@@ -145,28 +148,49 @@ export default function ContentManagement() {
         const heroResponse = await fetch('/api/admin/hero');
         if (heroResponse.ok) {
           const hero = await heroResponse.json();
-          setHeroData(hero);
+          // Only update if we got valid data, otherwise keep the default values
+          if (hero && typeof hero === 'object') {
+            setHeroData(hero);
+          }
         }
         
         // Fetch about data
         const aboutResponse = await fetch('/api/admin/about');
         if (aboutResponse.ok) {
           const about = await aboutResponse.json();
-          setAboutData(about);
+          // Only update if we got valid data, otherwise keep the default values
+          if (about && typeof about === 'object') {
+            setAboutData(about);
+          }
         }
         
         // Fetch projects data
         const projectsResponse = await fetch('/api/admin/projects');
         if (projectsResponse.ok) {
           const projects = await projectsResponse.json();
-          setProjectsData(projects);
+          // Only update if we got valid data, otherwise keep the default values
+          if (projects && Array.isArray(projects)) {
+            setProjectsData(projects);
+          }
         }
         
         // Fetch contact data
         const contactResponse = await fetch('/api/admin/contact');
         if (contactResponse.ok) {
           const contact = await contactResponse.json();
-          setContactData(contact);
+          // Only update if we got valid data, otherwise keep the default values
+          if (contact && typeof contact === 'object') {
+            setContactData(contact);
+          }
+        }
+        
+        // Fetch media files
+        const mediaResponse = await fetch('/api/admin/media');
+        if (mediaResponse.ok) {
+          const media = await mediaResponse.json();
+          if (Array.isArray(media)) {
+            setMediaFiles(media);
+          }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -215,6 +239,21 @@ export default function ContentManagement() {
     } catch (error) {
       console.error('Error saving content:', error);
     }
+  };
+
+  const handleMediaSelect = (imageUrl, type) => {
+    if (type === 'profileImage') {
+      setAboutData({...aboutData, profileImageUrl: imageUrl});
+    } else if (type === 'backgroundImage') {
+      setAboutData({...aboutData, backgroundImageUrl: imageUrl});
+    }
+    setShowMediaSelector(false);
+    setMediaSelectorType(null);
+  };
+
+  const openMediaSelector = (type) => {
+    setMediaSelectorType(type);
+    setShowMediaSelector(true);
   };
 
   // All hooks must be called before any conditional returns
@@ -437,7 +476,7 @@ export default function ContentManagement() {
                         Section Title
                       </label>
                       <Input
-                        value={aboutData.title}
+                        value={aboutData?.title || ""}
                         onChange={(e) => setAboutData({...aboutData, title: e.target.value})}
                         disabled={!isEditing}
                       />
@@ -447,10 +486,90 @@ export default function ContentManagement() {
                         Subtitle
                       </label>
                       <Input
-                        value={aboutData.subtitle}
+                        value={aboutData?.subtitle || ""}
                         onChange={(e) => setAboutData({...aboutData, subtitle: e.target.value})}
                         disabled={!isEditing}
                       />
+                    </div>
+                  </div>
+                  
+                  {/* Images */}
+                  <div className="space-y-4">
+                    <h5 className="text-md font-medium text-foreground">Images</h5>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {/* Profile Image */}
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Profile Image
+                        </label>
+                        <div className="space-y-2">
+                          {aboutData?.profileImageUrl && (
+                            <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-border/50">
+                              <img 
+                                src={aboutData.profileImageUrl} 
+                                alt="Profile" 
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                          <div className="flex space-x-2">
+                            <Input
+                              value={aboutData?.profileImageUrl || ""}
+                              onChange={(e) => setAboutData({...aboutData, profileImageUrl: e.target.value})}
+                              disabled={!isEditing}
+                              placeholder="Profile image URL"
+                              className="flex-1"
+                            />
+                            {isEditing && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openMediaSelector('profileImage')}
+                              >
+                                <Image className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Background Image */}
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Background Image
+                        </label>
+                        <div className="space-y-2">
+                          {aboutData?.backgroundImageUrl && (
+                            <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-border/50">
+                              <img 
+                                src={aboutData.backgroundImageUrl} 
+                                alt="Background" 
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                          <div className="flex space-x-2">
+                            <Input
+                              value={aboutData?.backgroundImageUrl || ""}
+                              onChange={(e) => setAboutData({...aboutData, backgroundImageUrl: e.target.value})}
+                              disabled={!isEditing}
+                              placeholder="Background image URL"
+                              className="flex-1"
+                            />
+                            {isEditing && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openMediaSelector('backgroundImage')}
+                              >
+                                <Image className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div>
@@ -458,7 +577,7 @@ export default function ContentManagement() {
                       Introduction
                     </label>
                     <Textarea
-                      value={aboutData.name}
+                      value={aboutData?.name || ""}
                       onChange={(e) => setAboutData({...aboutData, name: e.target.value})}
                       disabled={!isEditing}
                       rows={2}
@@ -469,7 +588,7 @@ export default function ContentManagement() {
                       Description
                     </label>
                     <Textarea
-                      value={aboutData.description}
+                      value={aboutData?.description || ""}
                       onChange={(e) => setAboutData({...aboutData, description: e.target.value})}
                       disabled={!isEditing}
                       rows={3}
@@ -480,7 +599,7 @@ export default function ContentManagement() {
                       Additional Description
                     </label>
                     <Textarea
-                      value={aboutData.description2}
+                      value={aboutData?.description2 || ""}
                       onChange={(e) => setAboutData({...aboutData, description2: e.target.value})}
                       disabled={!isEditing}
                       rows={3}
@@ -492,7 +611,7 @@ export default function ContentManagement() {
                 <div>
                   <h4 className="text-lg font-semibold text-foreground mb-4">Statistics</h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {aboutData.stats.map((stat, index) => (
+                    {(aboutData?.stats || []).map((stat, index) => (
                       <div key={index} className="space-y-2">
                         <label className="block text-sm font-medium text-foreground">
                           {stat.label}
@@ -500,7 +619,7 @@ export default function ContentManagement() {
                         <Input
                           value={stat.value}
                           onChange={(e) => {
-                            const newStats = [...aboutData.stats];
+                            const newStats = [...(aboutData?.stats || [])];
                             newStats[index].value = e.target.value;
                             setAboutData({...aboutData, stats: newStats});
                           }}
@@ -515,13 +634,13 @@ export default function ContentManagement() {
                 <div>
                   <h4 className="text-lg font-semibold text-foreground mb-4">Skills & Technologies</h4>
                   <div className="space-y-4">
-                    {aboutData.skills.map((skill, index) => (
+                    {(aboutData?.skills || []).map((skill, index) => (
                       <div key={index} className="p-4 border border-border/50 rounded-lg">
                         <div className="flex items-center justify-between mb-2">
                           <Input
                             value={skill.category}
                             onChange={(e) => {
-                              const newSkills = [...aboutData.skills];
+                              const newSkills = [...(aboutData?.skills || [])];
                               newSkills[index].category = e.target.value;
                               setAboutData({...aboutData, skills: newSkills});
                             }}
@@ -533,7 +652,7 @@ export default function ContentManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => {
-                                const newSkills = aboutData.skills.filter((_, i) => i !== index);
+                                const newSkills = (aboutData?.skills || []).filter((_, i) => i !== index);
                                 setAboutData({...aboutData, skills: newSkills});
                               }}
                             >
@@ -547,7 +666,7 @@ export default function ContentManagement() {
                               key={techIndex}
                               value={tech}
                               onChange={(e) => {
-                                const newSkills = [...aboutData.skills];
+                                const newSkills = [...(aboutData?.skills || [])];
                                 newSkills[index].technologies[techIndex] = e.target.value;
                                 setAboutData({...aboutData, skills: newSkills});
                               }}
@@ -560,7 +679,7 @@ export default function ContentManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => {
-                                const newSkills = [...aboutData.skills];
+                                const newSkills = [...(aboutData?.skills || [])];
                                 newSkills[index].technologies.push("");
                                 setAboutData({...aboutData, skills: newSkills});
                               }}
@@ -577,13 +696,126 @@ export default function ContentManagement() {
                         onClick={() => {
                           setAboutData({
                             ...aboutData,
-                            skills: [...aboutData.skills, { category: "", technologies: [""] }]
+                            skills: [...(aboutData?.skills || []), { category: "", technologies: [""] }]
                           });
                         }}
                         className="w-full"
                       >
                         <Plus className="h-4 w-4 mr-2" />
                         Add Skill Category
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Experiences */}
+                <div>
+                  <h4 className="text-lg font-semibold text-foreground mb-4">Professional Experience</h4>
+                  <div className="space-y-4">
+                    {(aboutData?.experiences || []).map((experience, index) => (
+                      <div key={index} className="p-4 border border-border/50 rounded-lg">
+                        <div className="flex items-center justify-between mb-4">
+                          <h5 className="text-md font-medium text-foreground">
+                            Experience {index + 1}
+                          </h5>
+                          {isEditing && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                const newExperiences = (aboutData?.experiences || []).filter((_, i) => i !== index);
+                                setAboutData({...aboutData, experiences: newExperiences});
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-sm font-medium text-foreground mb-1">
+                                Job Title
+                              </label>
+                              <Input
+                                value={experience.title || ""}
+                                onChange={(e) => {
+                                  const newExperiences = [...(aboutData?.experiences || [])];
+                                  newExperiences[index].title = e.target.value;
+                                  setAboutData({...aboutData, experiences: newExperiences});
+                                }}
+                                disabled={!isEditing}
+                                placeholder="Senior Full Stack Developer"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-foreground mb-1">
+                                Company
+                              </label>
+                              <Input
+                                value={experience.company || ""}
+                                onChange={(e) => {
+                                  const newExperiences = [...(aboutData?.experiences || [])];
+                                  newExperiences[index].company = e.target.value;
+                                  setAboutData({...aboutData, experiences: newExperiences});
+                                }}
+                                disabled={!isEditing}
+                                placeholder="TechCorp Inc."
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-foreground mb-1">
+                                Period
+                              </label>
+                              <Input
+                                value={experience.period || ""}
+                                onChange={(e) => {
+                                  const newExperiences = [...(aboutData?.experiences || [])];
+                                  newExperiences[index].period = e.target.value;
+                                  setAboutData({...aboutData, experiences: newExperiences});
+                                }}
+                                disabled={!isEditing}
+                                placeholder="2022 - Present"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-foreground mb-1">
+                              Description
+                            </label>
+                            <Textarea
+                              value={experience.description || ""}
+                              onChange={(e) => {
+                                const newExperiences = [...(aboutData?.experiences || [])];
+                                newExperiences[index].description = e.target.value;
+                                setAboutData({...aboutData, experiences: newExperiences});
+                              }}
+                              disabled={!isEditing}
+                              rows={4}
+                              placeholder="Describe your role and achievements..."
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {isEditing && (
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setAboutData({
+                            ...aboutData,
+                            experiences: [...(aboutData?.experiences || []), { 
+                              title: "", 
+                              company: "", 
+                              period: "", 
+                              description: "" 
+                            }]
+                          });
+                        }}
+                        className="w-full"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Experience
                       </Button>
                     )}
                   </div>
@@ -765,7 +997,7 @@ export default function ContentManagement() {
                       Section Title
                     </label>
                     <Input
-                      value={contactData.title}
+                      value={contactData?.title || ""}
                       onChange={(e) => setContactData({...contactData, title: e.target.value})}
                       disabled={!isEditing}
                     />
@@ -775,7 +1007,7 @@ export default function ContentManagement() {
                       Subtitle
                     </label>
                     <Input
-                      value={contactData.subtitle}
+                      value={contactData?.subtitle || ""}
                       onChange={(e) => setContactData({...contactData, subtitle: e.target.value})}
                       disabled={!isEditing}
                     />
@@ -785,7 +1017,7 @@ export default function ContentManagement() {
                       Description
                     </label>
                     <Textarea
-                      value={contactData.description}
+                      value={contactData?.description || ""}
                       onChange={(e) => setContactData({...contactData, description: e.target.value})}
                       disabled={!isEditing}
                       rows={3}
@@ -797,13 +1029,13 @@ export default function ContentManagement() {
                 <div>
                   <h4 className="text-lg font-semibold text-foreground mb-4">Contact Information</h4>
                   <div className="space-y-4">
-                    {contactData.contactInfo.map((info, index) => (
+                    {(contactData?.contactInfo || []).map((info, index) => (
                       <div key={index} className="flex items-center space-x-4">
                         <div className="w-24">
                           <Input
                             value={info.type}
                             onChange={(e) => {
-                              const newContactInfo = [...contactData.contactInfo];
+                              const newContactInfo = [...(contactData?.contactInfo || [])];
                               newContactInfo[index].type = e.target.value;
                               setContactData({...contactData, contactInfo: newContactInfo});
                             }}
@@ -815,7 +1047,7 @@ export default function ContentManagement() {
                           <Input
                             value={info.value}
                             onChange={(e) => {
-                              const newContactInfo = [...contactData.contactInfo];
+                              const newContactInfo = [...(contactData?.contactInfo || [])];
                               newContactInfo[index].value = e.target.value;
                               setContactData({...contactData, contactInfo: newContactInfo});
                             }}
@@ -827,7 +1059,7 @@ export default function ContentManagement() {
                           <Input
                             value={info.href}
                             onChange={(e) => {
-                              const newContactInfo = [...contactData.contactInfo];
+                              const newContactInfo = [...(contactData?.contactInfo || [])];
                               newContactInfo[index].href = e.target.value;
                               setContactData({...contactData, contactInfo: newContactInfo});
                             }}
@@ -840,7 +1072,7 @@ export default function ContentManagement() {
                             variant="ghost"
                             size="sm"
                             onClick={() => {
-                              const newContactInfo = contactData.contactInfo.filter((_, i) => i !== index);
+                              const newContactInfo = (contactData?.contactInfo || []).filter((_, i) => i !== index);
                               setContactData({...contactData, contactInfo: newContactInfo});
                             }}
                           >
@@ -855,7 +1087,7 @@ export default function ContentManagement() {
                         onClick={() => {
                           setContactData({
                             ...contactData,
-                            contactInfo: [...contactData.contactInfo, { type: "", value: "", href: "" }]
+                            contactInfo: [...(contactData?.contactInfo || []), { type: "", value: "", href: "" }]
                           });
                         }}
                         className="w-full"
@@ -871,13 +1103,13 @@ export default function ContentManagement() {
                 <div>
                   <h4 className="text-lg font-semibold text-foreground mb-4">Social Links</h4>
                   <div className="space-y-4">
-                    {contactData.socialLinks.map((social, index) => (
+                    {(contactData?.socialLinks || []).map((social, index) => (
                       <div key={index} className="flex items-center space-x-4">
                         <div className="w-32">
                           <Input
                             value={social.name}
                             onChange={(e) => {
-                              const newSocialLinks = [...contactData.socialLinks];
+                              const newSocialLinks = [...(contactData?.socialLinks || [])];
                               newSocialLinks[index].name = e.target.value;
                               setContactData({...contactData, socialLinks: newSocialLinks});
                             }}
@@ -889,7 +1121,7 @@ export default function ContentManagement() {
                           <Input
                             value={social.href}
                             onChange={(e) => {
-                              const newSocialLinks = [...contactData.socialLinks];
+                              const newSocialLinks = [...(contactData?.socialLinks || [])];
                               newSocialLinks[index].href = e.target.value;
                               setContactData({...contactData, socialLinks: newSocialLinks});
                             }}
@@ -902,7 +1134,7 @@ export default function ContentManagement() {
                             variant="ghost"
                             size="sm"
                             onClick={() => {
-                              const newSocialLinks = contactData.socialLinks.filter((_, i) => i !== index);
+                              const newSocialLinks = (contactData?.socialLinks || []).filter((_, i) => i !== index);
                               setContactData({...contactData, socialLinks: newSocialLinks});
                             }}
                           >
@@ -917,7 +1149,7 @@ export default function ContentManagement() {
                         onClick={() => {
                           setContactData({
                             ...contactData,
-                            socialLinks: [...contactData.socialLinks, { name: "", href: "" }]
+                            socialLinks: [...(contactData?.socialLinks || []), { name: "", href: "" }]
                           });
                         }}
                         className="w-full"
@@ -932,6 +1164,69 @@ export default function ContentManagement() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Media Selector Dialog */}
+        {showMediaSelector && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-background border border-border rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Select {mediaSelectorType === 'profileImage' ? 'Profile' : 'Background'} Image
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowMediaSelector(false);
+                    setMediaSelectorType(null);
+                  }}
+                >
+                  ×
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {mediaFiles
+                  .filter(file => file.type === 'image')
+                  .map((file) => (
+                    <div
+                      key={file.id}
+                      className="relative cursor-pointer group"
+                      onClick={() => handleMediaSelect(file.url, mediaSelectorType)}
+                    >
+                      <div className="aspect-square rounded-lg overflow-hidden border border-border/50 group-hover:border-primary transition-colors">
+                        <img
+                          src={file.url}
+                          alt={file.alt || file.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg flex items-center justify-center">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button size="sm" variant="secondary">
+                            Select
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1 truncate">
+                        {file.name}
+                      </p>
+                    </div>
+                  ))}
+              </div>
+              
+              {mediaFiles.filter(file => file.type === 'image').length === 0 && (
+                <div className="text-center py-8">
+                  <Image className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">No images available</p>
+                  <p className="text-sm text-muted-foreground">
+                    Upload images in the Media section first
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );
