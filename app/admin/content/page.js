@@ -40,7 +40,7 @@ export default function ContentManagement() {
   const [aboutData, setAboutData] = useState({
     title: "About Me",
     subtitle: "Passionate about creating digital solutions that make a difference",
-    name: "Hello! I'm John Doe",
+    name: "Hello! I'm Iwu Francis",
     description: "I'm a passionate full-stack developer with over 5 years of experience building web and mobile applications. I love turning complex problems into simple, beautiful, and intuitive solutions.",
     description2: "When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, or sharing knowledge with the developer community.",
     stats: [

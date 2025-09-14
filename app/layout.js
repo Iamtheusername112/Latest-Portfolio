@@ -15,12 +15,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "John Doe - Full Stack Web Developer",
+  title: "Iwu Francis - Full Stack Web Developer",
   description: "Experienced full stack web developer specializing in React, Next.js, Node.js, and modern web technologies. Building innovative digital solutions.",
   keywords: "web developer, full stack, react, nextjs, javascript, portfolio",
-  authors: [{ name: "John Doe" }],
+  authors: [{ name: "Iwu Francis" }],
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" }
+    ],
+    apple: "/favicon.svg",
+  },
   openGraph: {
-    title: "John Doe - Full Stack Web Developer",
+    title: "Iwu Francis - Full Stack Web Developer",
     description: "Experienced full stack web developer specializing in React, Next.js, Node.js, and modern web technologies.",
     type: "website",
   },
@@ -29,14 +36,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
+      <body suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
-          disableTransitionOnChange={false}
+          disableTransitionOnChange
           storageKey="portfolio-theme"
         >
           <AdminProvider>

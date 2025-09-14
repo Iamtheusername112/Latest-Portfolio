@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTheme } from "@/hooks/use-theme";
 import { Menu, X, Sun, Moon, Monitor, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/logo";
 import { cn } from "@/lib/utils";
 
 const Header = () => {
@@ -51,7 +52,18 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <span className="text-2xl font-bold gradient-text">JD</span>
+            <Logo 
+              variant="default" 
+              size="md" 
+              showText={true}
+              className="hidden sm:flex"
+            />
+            <Logo 
+              variant="default" 
+              size="md" 
+              showText={false}
+              className="sm:hidden"
+            />
           </div>
 
           {/* Desktop Navigation */}

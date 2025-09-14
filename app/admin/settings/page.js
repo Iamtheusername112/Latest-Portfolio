@@ -31,10 +31,10 @@ export default function SettingsPage() {
 
   const [settings, setSettings] = useState({
     general: {
-      siteName: "John Doe Portfolio",
+      siteName: "Iwu Francis Portfolio",
       siteDescription: "Full Stack Web Developer Portfolio",
-      siteUrl: "https://johndoe.dev",
-      adminEmail: "admin@johndoe.dev",
+      siteUrl: "https://iwufrancis.dev",
+      adminEmail: "admin@iwufrancis.dev",
       timezone: "UTC",
       language: "en",
       maintenanceMode: false

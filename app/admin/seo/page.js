@@ -34,18 +34,18 @@ export default function SEOManagement() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const [seoData, setSeoData] = useState({
-    title: "John Doe - Full Stack Web Developer",
+    title: "Iwu Francis - Full Stack Web Developer",
     description: "Passionate full-stack developer creating beautiful, functional web applications. 5+ years experience with React, Node.js, and modern technologies.",
     keywords: "web developer, full stack developer, react developer, node.js, javascript, portfolio",
-    author: "John Doe",
-    ogTitle: "John Doe - Full Stack Web Developer Portfolio",
+    author: "Iwu Francis",
+    ogTitle: "Iwu Francis - Full Stack Web Developer Portfolio",
     ogDescription: "Explore my portfolio of web development projects and get in touch for your next project.",
     ogImage: "/api/placeholder/1200/630",
     twitterCard: "summary_large_image",
-    twitterSite: "@johndoe",
-    canonicalUrl: "https://johndoe.dev",
+    twitterSite: "@iwufrancis",
+    canonicalUrl: "https://iwufrancis.dev",
     robots: "index, follow",
-    sitemap: "https://johndoe.dev/sitemap.xml"
+    sitemap: "https://iwufrancis.dev/sitemap.xml"
   });
 
   const [analytics, setAnalytics] = useState({

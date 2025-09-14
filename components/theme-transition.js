@@ -7,7 +7,7 @@ const ThemeTransition = () => {
   const { theme, mounted } = useTheme();
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || typeof window === "undefined") return;
     
     // Add a class to the body for theme transitions
     document.body.classList.add("theme-transition");
@@ -19,6 +19,11 @@ const ThemeTransition = () => {
 
     return () => clearTimeout(timer);
   }, [theme, mounted]);
+
+  // Don't render anything during SSR
+  if (!mounted) {
+    return null;
+  }
 
   return null;
 };

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Github, Linkedin, Mail, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/logo";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -20,7 +21,7 @@ const Footer = () => {
     },
     {
       icon: <Mail className="h-5 w-5" />,
-      href: "mailto:john@example.com",
+      href: "mailto:iwu@example.com",
       label: "Email"
     }
   ];
@@ -54,10 +55,15 @@ const Footer = () => {
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             {/* Brand */}
             <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl font-bold gradient-text">JD</span>
-                <span className="text-lg font-semibold text-foreground">John Doe</span>
-              </div>
+              <Logo 
+                variant="default" 
+                size="lg" 
+                showText={true}
+                className="items-start"
+              />
+              <p className="text-sm text-muted-foreground mt-2">
+                Full Stack Developer
+              </p>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 Full Stack Web Developer passionate about creating
                 innovative digital solutions and beautiful user experiences.
@@ -98,7 +104,7 @@ const Footer = () => {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">Get In Touch</h3>
               <div className="space-y-2 text-sm text-muted-foreground">
-                <p>john@example.com</p>
+                <p>iwu@example.com</p>
                 <p>+1 (555) 123-4567</p>
                 <p>San Francisco, CA</p>
               </div>
@@ -109,7 +115,7 @@ const Footer = () => {
           <div className="pt-8 border-t border-border">
             <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
               <p className="text-sm text-muted-foreground">
-                © {currentYear} John Doe. All rights reserved.
+                © {currentYear} Iwu Francis. All rights reserved.
               </p>
               <p className="text-sm text-muted-foreground flex items-center">
                 Made with <Heart className="h-4 w-4 text-red-500 mx-1" /> using Next.js & Tailwind CSS
