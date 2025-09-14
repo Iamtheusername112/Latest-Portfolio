@@ -19,6 +19,7 @@ import {
   Settings
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import AdminLayout from '@/components/admin/admin-layout';
 
 export default function LogoManagement() {
   const [logoData, setLogoData] = useState({
@@ -170,31 +171,34 @@ export default function LogoManagement() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Loading logo settings...</p>
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-2 text-muted-foreground">Loading logo settings...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold gradient-text">Logo Management</h1>
-          <p className="text-muted-foreground">Customize your site's logo and branding</p>
+    <AdminLayout>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold gradient-text">Logo Management</h1>
+            <p className="text-muted-foreground">Customize your site's logo and branding</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => setPreviewMode(!previewMode)}
+            className="flex items-center space-x-2"
+          >
+            <Eye className="h-4 w-4" />
+            {previewMode ? 'Hide Preview' : 'Show Preview'}
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => setPreviewMode(!previewMode)}
-          className="flex items-center space-x-2"
-        >
-          <Eye className="h-4 w-4" />
-          {previewMode ? 'Hide Preview' : 'Show Preview'}
-        </Button>
-      </div>
 
       {/* Message */}
       {message && (
@@ -452,6 +456,7 @@ export default function LogoManagement() {
           </Card>
         )}
       </div>
-    </div>
+      </div>
+    </AdminLayout>
   );
 }

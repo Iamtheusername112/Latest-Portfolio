@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { useAdmin } from "@/contexts/admin-context";
 import { 
   Menu, 
@@ -34,6 +35,7 @@ import LogoutDialog from "./logout-dialog";
 
 const AdminLayout = ({ children }) => {
   const { user, logout } = useAdmin();
+  const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -155,7 +157,7 @@ const AdminLayout = ({ children }) => {
           <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
             {navigation.map((item) => {
               const Icon = item.icon;
-              const isActive = typeof window !== 'undefined' && window.location.pathname === item.href;
+              const isActive = pathname === item.href;
               return (
                 <a
                   key={item.name}
