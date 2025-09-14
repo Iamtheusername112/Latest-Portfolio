@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Github, Linkedin, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,19 +45,19 @@ const Contact = () => {
     {
       icon: <Mail className="h-6 w-6" />,
       title: "Email",
-      value: "john@example.com",
-      href: "mailto:john@example.com"
-    },
-    {
-      icon: <Phone className="h-6 w-6" />,
-      title: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567"
+      value: "iwufrancis571@gmail.com",
+      href: "mailto:iwufrancis571@gmail.com"
     },
     {
       icon: <MapPin className="h-6 w-6" />,
       title: "Location",
-      value: "San Francisco, CA",
+      value: "Berlin, Germany",
+      href: "#"
+    },
+    {
+      icon: <Phone className="h-6 w-6" />,
+      title: "Availability",
+      value: "Available for remote work",
       href: "#"
     }
   ];
@@ -66,20 +66,20 @@ const Contact = () => {
     {
       icon: <Github className="h-5 w-5" />,
       name: "GitHub",
-      href: "https://github.com",
+      href: "https://github.com/Iamtheusername112",
       color: "hover:text-gray-900 dark:hover:text-gray-100"
     },
     {
       icon: <Linkedin className="h-5 w-5" />,
       name: "LinkedIn",
-      href: "https://linkedin.com",
+      href: "https://linkedin.com/in/francis-iwu-878973238",
       color: "hover:text-blue-600"
     },
     {
-      icon: <Twitter className="h-5 w-5" />,
-      name: "Twitter",
-      href: "https://twitter.com",
-      color: "hover:text-blue-400"
+      icon: <Instagram className="h-5 w-5" />,
+      name: "Instagram",
+      href: "https://www.instagram.com/fran_cis3831?igsh=azdxemFwNGl0dzU3",
+      color: "hover:text-pink-500"
     }
   ];
 

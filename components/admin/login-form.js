@@ -87,7 +87,7 @@ const LoginForm = ({ onLogin }) => {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="admin@example.com"
+                      placeholder="iwufrancis571@gmail.com"
                       className="pl-10"
                       {...register("email")}
                     />
@@ -138,12 +138,12 @@ const LoginForm = ({ onLogin }) => {
                 </Button>
               </form>
 
-              {/* Demo Credentials */}
+              {/* Admin Credentials */}
               <div className="mt-6 p-4 bg-muted/50 rounded-md">
-                <p className="text-sm text-muted-foreground mb-2">Demo Credentials:</p>
+                <p className="text-sm text-muted-foreground mb-2">Admin Credentials:</p>
                 <p className="text-xs text-muted-foreground">
-                  Email: admin@example.com<br />
-                  Password: password123
+                  Email: iwufrancis571@gmail.com<br />
+                  Password: PortfolioAdmin2024!
                 </p>
               </div>
             </CardContent>

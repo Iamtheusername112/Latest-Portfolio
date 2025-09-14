@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Iwu Francis - Full Stack Web Developer",
+  title: "Iwu Francis",
   description: "Experienced full stack web developer specializing in React, Next.js, Node.js, and modern web technologies. Building innovative digital solutions.",
   keywords: "web developer, full stack, react, nextjs, javascript, portfolio",
   authors: [{ name: "Iwu Francis" }],

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Github, Linkedin, Mail, Heart } from "lucide-react";
+import { Github, Linkedin, Mail, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/logo";
 
@@ -11,17 +11,22 @@ const Footer = () => {
   const socialLinks = [
     {
       icon: <Github className="h-5 w-5" />,
-      href: "https://github.com",
+      href: "https://github.com/Iamtheusername112",
       label: "GitHub"
     },
     {
       icon: <Linkedin className="h-5 w-5" />,
-      href: "https://linkedin.com",
+      href: "https://linkedin.com/in/francis-iwu-878973238",
       label: "LinkedIn"
     },
     {
+      icon: <Instagram className="h-5 w-5" />,
+      href: "https://www.instagram.com/fran_cis3831?igsh=azdxemFwNGl0dzU3",
+      label: "Instagram"
+    },
+    {
       icon: <Mail className="h-5 w-5" />,
-      href: "mailto:iwu@example.com",
+      href: "mailto:iwufrancis571@gmail.com",
       label: "Email"
     }
   ];
@@ -104,9 +109,9 @@ const Footer = () => {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">Get In Touch</h3>
               <div className="space-y-2 text-sm text-muted-foreground">
-                <p>iwu@example.com</p>
-                <p>+1 (555) 123-4567</p>
-                <p>San Francisco, CA</p>
+                <p>iwufrancis571@gmail.com</p>
+                <p>Berlin, Germany</p>
+                <p>Available for remote work</p>
               </div>
             </div>
           </div>
@@ -116,9 +121,6 @@ const Footer = () => {
             <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
               <p className="text-sm text-muted-foreground">
                 © {currentYear} Iwu Francis. All rights reserved.
-              </p>
-              <p className="text-sm text-muted-foreground flex items-center">
-                Made with <Heart className="h-4 w-4 text-red-500 mx-1" /> using Next.js & Tailwind CSS
               </p>
             </div>
           </div>

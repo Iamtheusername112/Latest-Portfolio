@@ -74,15 +74,48 @@ export const AdminProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', {
+      console.log("🔄 Logging out...");
+      
+      // Call logout API
+      const response = await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include'
       });
       
+      if (response.ok) {
+        console.log("✅ Logout successful");
+      } else {
+        console.warn("⚠️ Logout API failed, but continuing with local logout");
+      }
+      
+      // Clear local state immediately
       setIsAuthenticated(false);
       setUser(null);
+      
+      // Clear any cached data
+      if (typeof window !== 'undefined') {
+        // Clear any localStorage items if they exist
+        localStorage.removeItem('admin-token');
+        localStorage.removeItem('admin-user');
+        
+        // Clear any sessionStorage items
+        sessionStorage.clear();
+      }
+      
+      console.log("✅ Local logout completed");
+      
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error("❌ Logout error:", error);
+      
+      // Even if API fails, clear local state
+      setIsAuthenticated(false);
+      setUser(null);
+      
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('admin-token');
+        localStorage.removeItem('admin-user');
+        sessionStorage.clear();
+      }
     }
   };
 

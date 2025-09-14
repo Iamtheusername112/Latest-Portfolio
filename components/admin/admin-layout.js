@@ -30,10 +30,13 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import LogoutDialog from "./logout-dialog";
 
 const AdminLayout = ({ children }) => {
   const { user, logout } = useAdmin();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   const navigation = [
     { name: "Dashboard", href: "/admin", icon: Home, badge: null },
@@ -54,9 +57,44 @@ const AdminLayout = ({ children }) => {
     { label: "Performance", value: "94%", change: "+2%", icon: Zap },
   ];
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = "/admin/login";
+  const handleLogoutClick = () => {
+    setShowLogoutDialog(true);
+  };
+
+  const handleLogoutConfirm = async () => {
+    if (isLoggingOut) return; // Prevent multiple clicks
+    
+    setIsLoggingOut(true);
+    
+    try {
+      console.log("🔄 Starting logout process...");
+      
+      // Call logout function
+      await logout();
+      
+      // Wait a moment for state to update
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Close dialog
+      setShowLogoutDialog(false);
+      
+      // Redirect to login page
+      console.log("🔄 Redirecting to login page...");
+      window.location.href = "/admin/login";
+      
+    } catch (error) {
+      console.error("❌ Logout error:", error);
+      
+      // Even if logout fails, redirect to login
+      setShowLogoutDialog(false);
+      window.location.href = "/admin/login";
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutDialog(false);
   };
 
   return (
@@ -171,8 +209,9 @@ const AdminLayout = ({ children }) => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={handleLogout}
-              className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-xl"
+              onClick={handleLogoutClick}
+              disabled={isLoggingOut}
+              className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded-xl disabled:opacity-50"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
@@ -262,6 +301,14 @@ const AdminLayout = ({ children }) => {
           {children}
         </main>
       </div>
+
+      {/* Logout Dialog */}
+      <LogoutDialog
+        isOpen={showLogoutDialog}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+        isLoggingOut={isLoggingOut}
+      />
     </div>
   );
 };

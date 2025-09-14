@@ -12,7 +12,8 @@
     "db:studio": "drizzle-kit studio",
     "db:init": "node scripts/migrate.js && node lib/db/init.js",
     "setup": "node scripts/setup.js",
-    "check-env": "node scripts/check-env.js"
+    "check-env": "node scripts/check-env.js",
+    "reset-admin": "node scripts/reset-admin.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

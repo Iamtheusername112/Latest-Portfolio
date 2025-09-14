@@ -21,6 +21,14 @@ export async function GET(request) {
       );
     }
 
+    // Ensure user has admin role
+    if (result.user.role !== 'admin') {
+      return NextResponse.json(
+        { authenticated: false, message: 'Access denied. Admin privileges required.' },
+        { status: 403 }
+      );
+    }
+
     return NextResponse.json({
       authenticated: true,
       user: result.user

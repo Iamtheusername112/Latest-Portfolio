@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowDown, Github, Linkedin, Mail, Download } from "lucide-react";
+import { ArrowDown, Github, Linkedin, Mail, Download, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
@@ -91,7 +91,8 @@ const Hero = () => {
               variant="ghost"
               size="icon"
               className="h-12 w-12 rounded-full glass hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
-              onClick={() => window.open("https://github.com", "_blank")}
+              onClick={() => window.open("https://github.com/Iamtheusername112", "_blank")}
+              title="GitHub"
             >
               <Github className="h-6 w-6" />
             </Button>
@@ -99,7 +100,8 @@ const Hero = () => {
               variant="ghost"
               size="icon"
               className="h-12 w-12 rounded-full glass hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
-              onClick={() => window.open("https://linkedin.com", "_blank")}
+              onClick={() => window.open("https://linkedin.com/in/francis-iwu-878973238", "_blank")}
+              title="LinkedIn"
             >
               <Linkedin className="h-6 w-6" />
             </Button>
@@ -107,7 +109,17 @@ const Hero = () => {
               variant="ghost"
               size="icon"
               className="h-12 w-12 rounded-full glass hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
-              onClick={() => window.open("mailto:john@example.com", "_blank")}
+              onClick={() => window.open("https://www.instagram.com/fran_cis3831?igsh=azdxemFwNGl0dzU3", "_blank")}
+              title="Instagram"
+            >
+              <Instagram className="h-6 w-6" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-12 w-12 rounded-full glass hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110"
+              onClick={() => window.open("mailto:iwufrancis571@gmail.com", "_blank")}
+              title="Email"
             >
               <Mail className="h-6 w-6" />
             </Button>
