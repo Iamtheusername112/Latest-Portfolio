@@ -136,13 +136,76 @@ export default function MediaManagement() {
     event.target.value = '';
   };
 
-  const handleFileDelete = (fileId) => {
-    removeMediaFile(fileId);
+  const handleFileDelete = async (fileId) => {
+    try {
+      console.log(`Deleting media file ${fileId} from database...`);
+      const response = await fetch(`/api/admin/media/${fileId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        console.log(`Media file ${fileId} deleted successfully from database`);
+        removeMediaFile(fileId);
+        setUploadMessage(`File deleted successfully!`);
+        setTimeout(() => setUploadMessage(''), 3000);
+      } else {
+        console.error(`Failed to delete media file ${fileId} from database`);
+        const errorData = await response.json();
+        console.error('Error details:', errorData);
+        setUploadMessage(`Failed to delete file. Please try again.`);
+        setTimeout(() => setUploadMessage(''), 5000);
+      }
+    } catch (error) {
+      console.error(`Error deleting media file ${fileId}:`, error);
+      setUploadMessage(`Error deleting file. Please try again.`);
+      setTimeout(() => setUploadMessage(''), 5000);
+    }
   };
 
-  const handleBulkDelete = () => {
-    selectedFiles.forEach(fileId => removeMediaFile(fileId));
-    setSelectedFiles([]);
+  const handleBulkDelete = async () => {
+    if (selectedFiles.length === 0) return;
+    
+    try {
+      console.log(`Bulk deleting ${selectedFiles.length} media files from database...`);
+      let successCount = 0;
+      let errorCount = 0;
+      
+      for (const fileId of selectedFiles) {
+        try {
+          const response = await fetch(`/api/admin/media/${fileId}`, {
+            method: 'DELETE'
+          });
+          
+          if (response.ok) {
+            removeMediaFile(fileId);
+            successCount++;
+            console.log(`Media file ${fileId} deleted successfully`);
+          } else {
+            errorCount++;
+            console.error(`Failed to delete media file ${fileId}`);
+          }
+        } catch (error) {
+          errorCount++;
+          console.error(`Error deleting media file ${fileId}:`, error);
+        }
+      }
+      
+      setSelectedFiles([]);
+      
+      if (successCount > 0 && errorCount === 0) {
+        setUploadMessage(`✅ Successfully deleted ${successCount} file(s)`);
+      } else if (successCount > 0 && errorCount > 0) {
+        setUploadMessage(`✅ Deleted ${successCount} file(s), ❌ ${errorCount} failed`);
+      } else {
+        setUploadMessage(`❌ Failed to delete ${errorCount} file(s)`);
+      }
+      
+      setTimeout(() => setUploadMessage(''), 3000);
+    } catch (error) {
+      console.error('Error in bulk delete:', error);
+      setUploadMessage(`Error deleting files. Please try again.`);
+      setTimeout(() => setUploadMessage(''), 5000);
+    }
   };
 
   const handleClearAll = async () => {
