@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAdmin } from "@/contexts/admin-context";
+import { useMedia } from "@/contexts/media-context";
 import { 
   Menu, 
   X, 
@@ -39,13 +40,13 @@ const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const { mediaCount, loading: mediaLoading } = useMedia();
 
   const navigation = [
     { name: "Dashboard", href: "/admin", icon: Home, badge: null },
     { name: "Hero", href: "/admin/hero", icon: User, badge: null },
-    { name: "Analytics", href: "/admin/analytics", icon: BarChart3, badge: "New" },
     { name: "Content", href: "/admin/content", icon: FileText, badge: null },
-    { name: "Media", href: "/admin/media", icon: Image, badge: "12" },
+    { name: "Media", href: "/admin/media", icon: Image, badge: mediaLoading ? "..." : mediaCount.toString() },
     { name: "Logo", href: "/admin/logo", icon: Palette, badge: null },
     { name: "SEO", href: "/admin/seo", icon: Target, badge: null },
     { name: "Appearance", href: "/admin/appearance", icon: Palette, badge: null },

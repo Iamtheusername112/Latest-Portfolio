@@ -16,7 +16,6 @@ import {
   TrendingUp,
   Eye,
   Edit,
-  BarChart3,
   Activity,
   Globe,
   Smartphone,
@@ -162,13 +161,6 @@ export default function AdminDashboard() {
       color: "bg-pink-500",
     },
     {
-      title: "Analytics",
-      description: "View detailed analytics and reports",
-      icon: BarChart3,
-      href: "/admin/analytics",
-      color: "bg-green-500",
-    },
-    {
       title: "SEO Settings",
       description: "Optimize for search engines",
       icon: Target,
@@ -248,7 +240,6 @@ export default function AdminDashboard() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
           </TabsList>
@@ -363,44 +354,6 @@ export default function AdminDashboard() {
             </div>
           </TabsContent>
 
-          {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="glass border-border/50">
-                <CardHeader>
-                  <CardTitle>Page Views Over Time</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={trafficData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="pageViews" stroke="#8884d8" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <Card className="glass border-border/50">
-                <CardHeader>
-                  <CardTitle>Bounce Rate Trend</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={trafficData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="bounceRate" fill="#82ca9d" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
 
           {/* Content Tab */}
           <TabsContent value="content" className="space-y-6">

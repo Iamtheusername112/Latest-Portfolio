@@ -1,6 +1,7 @@
 "use client";
 
 import { useAdmin } from "@/contexts/admin-context";
+import { useMedia } from "@/contexts/media-context";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminLayout from "@/components/admin/admin-layout";
@@ -29,40 +30,16 @@ import {
 
 export default function MediaManagement() {
   const { isAuthenticated, isLoading } = useAdmin();
+  const { mediaFiles, loading: isLoadingMedia, addMediaFile, removeMediaFile, clearAllMedia, fetchMedia } = useMedia();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("library");
   const [viewMode, setViewMode] = useState("grid");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
-
-  // Media files state
-  const [mediaFiles, setMediaFiles] = useState([]);
-  const [isLoadingMedia, setIsLoadingMedia] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState('');
 
-  // Fetch media files from database
-  useEffect(() => {
-    const fetchMediaFiles = async () => {
-      try {
-        const response = await fetch('/api/admin/media');
-        if (response.ok) {
-          const data = await response.json();
-          setMediaFiles(data);
-        } else {
-          console.error('Failed to fetch media files');
-        }
-      } catch (error) {
-        console.error('Error fetching media files:', error);
-      } finally {
-        setIsLoadingMedia(false);
-      }
-    };
-
-    if (isAuthenticated) {
-      fetchMediaFiles();
-    }
-  }, [isAuthenticated]);
+  // Media files are now managed by the context
 
   // All hooks must be called before any conditional returns
   useEffect(() => {
@@ -126,7 +103,7 @@ export default function MediaManagement() {
         
         if (response.ok) {
           const newMediaFile = await response.json();
-          setMediaFiles(prev => [newMediaFile, ...prev]);
+          addMediaFile(newMediaFile);
           successCount++;
           console.log(`✅ Uploaded: ${file.name}`);
         } else {
@@ -160,11 +137,11 @@ export default function MediaManagement() {
   };
 
   const handleFileDelete = (fileId) => {
-    setMediaFiles(mediaFiles.filter(f => f.id !== fileId));
+    removeMediaFile(fileId);
   };
 
   const handleBulkDelete = () => {
-    setMediaFiles(mediaFiles.filter(f => !selectedFiles.includes(f.id)));
+    selectedFiles.forEach(fileId => removeMediaFile(fileId));
     setSelectedFiles([]);
   };
 
@@ -181,7 +158,7 @@ export default function MediaManagement() {
       if (response.ok) {
         const result = await response.json();
         console.log('Clear result:', result);
-        setMediaFiles([]);
+        clearAllMedia();
         setUploadMessage(`Cleared ${result.deletedCount} media files successfully!`);
         setTimeout(() => setUploadMessage(''), 3000);
       } else {

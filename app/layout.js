@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AdminProvider } from "@/contexts/admin-context";
+import { MediaProvider } from "@/contexts/media-context";
 import ThemeTransition from "@/components/theme-transition";
 
 const geistSans = Geist({
@@ -47,8 +48,10 @@ export default function RootLayout({ children }) {
           storageKey="portfolio-theme"
         >
           <AdminProvider>
-            <ThemeTransition />
-            {children}
+            <MediaProvider>
+              <ThemeTransition />
+              {children}
+            </MediaProvider>
           </AdminProvider>
         </ThemeProvider>
       </body>
