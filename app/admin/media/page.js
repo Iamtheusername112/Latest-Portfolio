@@ -18,8 +18,6 @@ import {
   List,
   Download,
   Trash2,
-  Edit,
-  Eye,
   Plus,
   Folder,
   File,
@@ -459,28 +457,6 @@ export default function MediaManagement() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-8 w-8 p-0 bg-background/80 hover:bg-background"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                // Preview file
-                              }}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 bg-background/80 hover:bg-background"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                // Edit file
-                              }}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
                               className="h-8 w-8 p-0 bg-background/80 hover:bg-background text-destructive hover:text-destructive"
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -531,26 +507,7 @@ export default function MediaManagement() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Preview file
-                            }}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Edit file
-                            }}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
+                            className="text-destructive hover:text-destructive"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleFileDelete(file.id);
