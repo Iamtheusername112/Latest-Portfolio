@@ -114,7 +114,8 @@ export default function ContentManagement() {
       technologies: ["React", "Node.js", "PostgreSQL", "Stripe", "Tailwind CSS"],
       liveUrl: "https://example.com",
       githubUrl: "https://github.com",
-      featured: true
+      featured: true,
+      isPublic: true
     },
     {
       id: 2,
@@ -123,16 +124,8 @@ export default function ContentManagement() {
       technologies: ["Next.js", "TypeScript", "Socket.io", "MongoDB", "Framer Motion"],
       liveUrl: "https://example.com",
       githubUrl: "https://github.com",
-      featured: true
-    },
-    {
-      id: 3,
-      title: "Weather Dashboard",
-      description: "A responsive weather dashboard with location-based forecasts, interactive maps, and detailed weather analytics.",
-      technologies: ["React", "Chart.js", "OpenWeather API", "CSS Modules"],
-      liveUrl: "https://example.com",
-      githubUrl: "https://github.com",
-      featured: false
+      featured: true,
+      isPublic: true
     }
   ]);
 
@@ -182,6 +175,15 @@ export default function ContentManagement() {
         const projectsResponse = await fetch('/api/admin/projects');
         if (projectsResponse.ok) {
           const projects = await projectsResponse.json();
+          console.log('Loaded projects data from API:', projects);
+          projects.forEach((project, index) => {
+            console.log(`Project ${index}:`, {
+              id: project.id,
+              title: project.title,
+              imageUrl: project.imageUrl,
+              isPublic: project.isPublic
+            });
+          });
           // Only update if we got valid data, otherwise keep the default values
           if (projects && Array.isArray(projects)) {
             setProjectsData(projects);
@@ -258,12 +260,19 @@ export default function ContentManagement() {
         // Save each project individually
         for (let i = 0; i < projectsData.length; i++) {
           const project = projectsData[i];
+          console.log(`Processing project ${i}:`, {
+            id: project.id,
+            title: project.title,
+            imageUrl: project.imageUrl,
+            isPublic: project.isPublic
+          });
           try {
             // Check if this is a new project (temporary ID from Date.now())
             if (project.id && project.id > 1000000000000) { // Date.now() generates numbers > 1 trillion
               // This is a new project with temporary ID, create it
               console.log(`Creating new project:`, project.title);
               const { id, ...projectData } = project; // Remove temporary ID
+              console.log('Sending project data to API:', projectData);
               const response = await fetch('/api/admin/projects', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -283,6 +292,8 @@ export default function ContentManagement() {
             } else if (project.id && project.id > 0) {
               // Update existing project with real database ID
               console.log(`Updating project ${project.id}:`, project.title);
+              console.log('Project imageUrl before sending to API:', project.imageUrl);
+              console.log('Sending update data to API:', project);
               const response = await fetch(`/api/admin/projects/${project.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -345,10 +356,20 @@ export default function ContentManagement() {
   };
 
   const handleMediaSelect = (imageUrl, type) => {
+    console.log('Media selected:', { imageUrl, type, mediaSelectorType });
+    
     if (type === 'profileImage') {
       setAboutData({...aboutData, profileImageUrl: imageUrl});
     } else if (type === 'backgroundImage') {
       setAboutData({...aboutData, backgroundImageUrl: imageUrl});
+    } else if (type && type.startsWith('projectImage_')) {
+      // Handle project image selection
+      const projectIndex = parseInt(type.split('_')[1]); // Extract project index from type
+      console.log('Setting project image:', { projectIndex, imageUrl });
+      const newProjects = [...projectsData];
+      newProjects[projectIndex].imageUrl = imageUrl;
+      setProjectsData(newProjects);
+      console.log('Updated projects data:', newProjects);
     }
     setShowMediaSelector(false);
     setMediaSelectorType(null);
@@ -361,20 +382,20 @@ export default function ContentManagement() {
 
   // Project status and priority options
   const projectStatuses = [
-    { value: 'planning', label: 'Planning', icon: Target, color: 'bg-blue-100 text-blue-800' },
-    { value: 'in_progress', label: 'In Progress', icon: Play, color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'testing', label: 'Testing', icon: AlertCircle, color: 'bg-orange-100 text-orange-800' },
-    { value: 'deployed', label: 'Deployed', icon: CheckCircle, color: 'bg-green-100 text-green-800' },
-    { value: 'completed', label: 'Completed', icon: Award, color: 'bg-purple-100 text-purple-800' },
-    { value: 'on_hold', label: 'On Hold', icon: Pause, color: 'bg-gray-100 text-gray-800' },
-    { value: 'cancelled', label: 'Cancelled', icon: XCircle, color: 'bg-red-100 text-red-800' }
+    { value: 'planning', label: 'Planning', icon: Target, color: 'bg-blue-500 text-white border-blue-600' },
+    { value: 'in_progress', label: 'In Progress', icon: Play, color: 'bg-yellow-500 text-white border-yellow-600' },
+    { value: 'testing', label: 'Testing', icon: AlertCircle, color: 'bg-orange-500 text-white border-orange-600' },
+    { value: 'deployed', label: 'Deployed', icon: CheckCircle, color: 'bg-green-500 text-white border-green-600' },
+    { value: 'completed', label: 'Completed', icon: Award, color: 'bg-purple-500 text-white border-purple-600' },
+    { value: 'on_hold', label: 'On Hold', icon: Pause, color: 'bg-gray-500 text-white border-gray-600' },
+    { value: 'cancelled', label: 'Cancelled', icon: XCircle, color: 'bg-red-500 text-white border-red-600' }
   ];
 
   const projectPriorities = [
-    { value: 'low', label: 'Low', color: 'bg-green-100 text-green-800' },
-    { value: 'medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'high', label: 'High', color: 'bg-orange-100 text-orange-800' },
-    { value: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-800' }
+    { value: 'low', label: 'Low', color: 'bg-green-500 text-white border-green-600' },
+    { value: 'medium', label: 'Medium', color: 'bg-yellow-500 text-white border-yellow-600' },
+    { value: 'high', label: 'High', color: 'bg-orange-500 text-white border-orange-600' },
+    { value: 'urgent', label: 'Urgent', color: 'bg-red-500 text-white border-red-600' }
   ];
 
   const projectCategories = [
@@ -1035,9 +1056,39 @@ export default function ContentManagement() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => {
-                                const newProjects = projectsData.filter((_, i) => i !== index);
-                                setProjectsData(newProjects);
+                              onClick={async () => {
+                                if (project.id && project.id > 0) {
+                                  // Delete from database
+                                  try {
+                                    console.log(`Deleting project ${project.id} from database`);
+                                    const response = await fetch(`/api/admin/projects/${project.id}`, {
+                                      method: 'DELETE'
+                                    });
+                                    
+                                    if (response.ok) {
+                                      console.log(`Project ${project.id} deleted successfully`);
+                                      // Remove from local state
+                                      const newProjects = projectsData.filter((_, i) => i !== index);
+                                      setProjectsData(newProjects);
+                                      setSaveMessage('Project deleted successfully!');
+                                      setTimeout(() => setSaveMessage(''), 3000);
+                                    } else {
+                                      console.error(`Failed to delete project ${project.id}`);
+                                      const errorData = await response.json();
+                                      console.error('Error details:', errorData);
+                                      setSaveMessage('Failed to delete project. Please try again.');
+                                      setTimeout(() => setSaveMessage(''), 5000);
+                                    }
+                                  } catch (error) {
+                                    console.error(`Error deleting project ${project.id}:`, error);
+                                    setSaveMessage('Error deleting project. Please try again.');
+                                    setTimeout(() => setSaveMessage(''), 5000);
+                                  }
+                                } else {
+                                  // Remove from local state only (for new projects not yet saved)
+                                  const newProjects = projectsData.filter((_, i) => i !== index);
+                                  setProjectsData(newProjects);
+                                }
                               }}
                             >
                               <Trash2 className="h-4 w-4" />
@@ -1252,7 +1303,7 @@ export default function ContentManagement() {
                                     type="button"
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => openMediaSelector('projectImage')}
+                                    onClick={() => openMediaSelector(`projectImage_${index}`)}
                                   >
                                     <Image className="h-4 w-4" />
                                   </Button>
@@ -1757,7 +1808,9 @@ export default function ContentManagement() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {mediaFiles
                   .filter(file => file.type === 'image')
-                  .map((file) => (
+                  .map((file) => {
+                    console.log('Media file available:', { id: file.id, name: file.name, url: file.url, type: file.type });
+                    return (
                     <div
                       key={file.id}
                       className="relative cursor-pointer group"
@@ -1781,7 +1834,8 @@ export default function ContentManagement() {
                         {file.name}
                       </p>
                     </div>
-                  ))}
+                    );
+                  })}
               </div>
               
               {mediaFiles.filter(file => file.type === 'image').length === 0 && (

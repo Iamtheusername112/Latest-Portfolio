@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Github, Calendar, Clock, Users, Target, Award, AlertCircle, Play, Pause, XCircle, CheckCircle } from "lucide-react";
+import { ExternalLink, Github, Calendar, Clock, Users, Target, Award, AlertCircle, Play, Pause, XCircle, CheckCircle, Image } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -21,6 +21,7 @@ const DynamicProjects = () => {
         if (response.ok) {
           const data = await response.json();
           console.log('Projects data received:', data);
+          console.log('Projects with images:', data.filter(p => p.imageUrl));
           setProjectsData(data);
         } else {
           console.error('Failed to fetch projects data, status:', response.status);
@@ -44,13 +45,55 @@ const DynamicProjects = () => {
 
   // Project status configuration
   const projectStatuses = {
-    planning: { label: 'Planning', icon: Target, color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' },
-    in_progress: { label: 'In Progress', icon: Play, color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' },
-    testing: { label: 'Testing', icon: AlertCircle, color: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' },
-    deployed: { label: 'Deployed', icon: CheckCircle, color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' },
-    completed: { label: 'Completed', icon: Award, color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' },
-    on_hold: { label: 'On Hold', icon: Pause, color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200' },
-    cancelled: { label: 'Cancelled', icon: XCircle, color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' }
+    planning: { 
+      label: 'Planning', 
+      icon: Target, 
+      color: 'bg-blue-500 text-white border-blue-600',
+      progressColor: 'bg-blue-500'
+    },
+    in_progress: { 
+      label: 'In Progress', 
+      icon: Play, 
+      color: 'bg-yellow-500 text-white border-yellow-600',
+      progressColor: 'bg-yellow-500'
+    },
+    testing: { 
+      label: 'Testing', 
+      icon: AlertCircle, 
+      color: 'bg-orange-500 text-white border-orange-600',
+      progressColor: 'bg-orange-500'
+    },
+    deployed: { 
+      label: 'Deployed', 
+      icon: CheckCircle, 
+      color: 'bg-green-500 text-white border-green-600',
+      progressColor: 'bg-green-500'
+    },
+    completed: { 
+      label: 'Completed', 
+      icon: Award, 
+      color: 'bg-purple-500 text-white border-purple-600',
+      progressColor: 'bg-purple-500'
+    },
+    on_hold: { 
+      label: 'On Hold', 
+      icon: Pause, 
+      color: 'bg-gray-500 text-white border-gray-600',
+      progressColor: 'bg-gray-400'
+    },
+    cancelled: { 
+      label: 'Cancelled', 
+      icon: XCircle, 
+      color: 'bg-red-500 text-white border-red-600',
+      progressColor: 'bg-red-400'
+    }
+  };
+
+  const projectPriorities = {
+    low: { label: 'Low', color: 'bg-green-500 text-white border-green-600' },
+    medium: { label: 'Medium', color: 'bg-yellow-500 text-white border-yellow-600' },
+    high: { label: 'High', color: 'bg-orange-500 text-white border-orange-600' },
+    urgent: { label: 'Urgent', color: 'bg-red-500 text-white border-red-600' }
   };
 
   const containerVariants = {
@@ -147,21 +190,43 @@ const DynamicProjects = () => {
         >
           {publicProjects.map((project, index) => {
             const status = projectStatuses[project.status] || projectStatuses.planning;
+            const priority = projectPriorities[project.priority] || projectPriorities.medium;
             const StatusIcon = status.icon;
+            
+            console.log(`Project ${index}:`, {
+              title: project.title,
+              imageUrl: project.imageUrl,
+              hasImage: !!project.imageUrl
+            });
 
             return (
               <motion.div key={project.id} variants={itemVariants}>
                 <Card className="group h-full bg-background/50 backdrop-blur-sm border-border/50 hover:border-border transition-all duration-300 hover:shadow-lg hover:shadow-primary/10">
                   <CardContent className="p-6 h-full flex flex-col">
                     {/* Project Image */}
-                    {project.imageUrl && (
+                    {project.imageUrl ? (
                       <div className="relative w-full h-48 rounded-lg overflow-hidden mb-4">
                         <img 
                           src={project.imageUrl} 
                           alt={project.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            console.error('Image failed to load:', project.imageUrl);
+                            console.error('Project:', project);
+                            e.target.style.display = 'none';
+                          }}
+                          onLoad={() => {
+                            console.log('Image loaded successfully:', project.imageUrl);
+                          }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                      </div>
+                    ) : (
+                      <div className="relative w-full h-48 rounded-lg overflow-hidden mb-4 bg-muted/20 border-2 border-dashed border-muted-foreground/30 flex items-center justify-center">
+                        <div className="text-center text-muted-foreground">
+                          <Image className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm">No image</p>
+                        </div>
                       </div>
                     )}
 
@@ -171,10 +236,17 @@ const DynamicProjects = () => {
                         <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
                           {project.title}
                         </h3>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${status.color}`}>
-                          <StatusIcon className="h-3 w-3" />
-                          {status.label}
-                        </span>
+                        <div className="flex flex-col gap-1">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${status.color}`}>
+                            <StatusIcon className="h-3 w-3" />
+                            {status.label}
+                          </span>
+                          {project.priority && (
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${priority.color}`}>
+                              {priority.label}
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Project Description */}
@@ -213,7 +285,7 @@ const DynamicProjects = () => {
                             </div>
                             <div className="w-full bg-muted rounded-full h-1.5">
                               <div 
-                                className="bg-primary h-1.5 rounded-full transition-all duration-500" 
+                                className={`h-1.5 rounded-full transition-all duration-500 ${status.progressColor}`}
                                 style={{ width: `${project.progress}%` }}
                               ></div>
                             </div>

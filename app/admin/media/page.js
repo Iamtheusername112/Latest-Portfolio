@@ -35,69 +35,34 @@ export default function MediaManagement() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
 
-  // Sample media data - moved before conditional returns
-  const [mediaFiles, setMediaFiles] = useState([
-    {
-      id: 1,
-      name: "hero-background.jpg",
-      type: "image",
-      size: "2.4 MB",
-      url: "/api/placeholder/400/300",
-      alt: "Hero section background",
-      uploadedAt: "2024-01-15",
-      category: "backgrounds"
-    },
-    {
-      id: 2,
-      name: "profile-picture.png",
-      type: "image",
-      size: "1.2 MB",
-      url: "/api/placeholder/300/300",
-      alt: "Profile picture",
-      uploadedAt: "2024-01-14",
-      category: "profile"
-    },
-    {
-      id: 3,
-      name: "project-screenshot-1.png",
-      type: "image",
-      size: "3.1 MB",
-      url: "/api/placeholder/600/400",
-      alt: "E-commerce project screenshot",
-      uploadedAt: "2024-01-13",
-      category: "projects"
-    },
-    {
-      id: 4,
-      name: "project-demo.mp4",
-      type: "video",
-      size: "15.2 MB",
-      url: "/api/placeholder/600/400",
-      alt: "Project demo video",
-      uploadedAt: "2024-01-12",
-      category: "projects"
-    },
-    {
-      id: 5,
-      name: "resume.pdf",
-      type: "document",
-      size: "0.8 MB",
-      url: "/api/placeholder/400/600",
-      alt: "Resume document",
-      uploadedAt: "2024-01-11",
-      category: "documents"
-    },
-    {
-      id: 6,
-      name: "logo.svg",
-      type: "image",
-      size: "0.3 MB",
-      url: "/api/placeholder/200/200",
-      alt: "Company logo",
-      uploadedAt: "2024-01-10",
-      category: "branding"
+  // Media files state
+  const [mediaFiles, setMediaFiles] = useState([]);
+  const [isLoadingMedia, setIsLoadingMedia] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState('');
+
+  // Fetch media files from database
+  useEffect(() => {
+    const fetchMediaFiles = async () => {
+      try {
+        const response = await fetch('/api/admin/media');
+        if (response.ok) {
+          const data = await response.json();
+          setMediaFiles(data);
+        } else {
+          console.error('Failed to fetch media files');
+        }
+      } catch (error) {
+        console.error('Error fetching media files:', error);
+      } finally {
+        setIsLoadingMedia(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchMediaFiles();
     }
-  ]);
+  }, [isAuthenticated]);
 
   // All hooks must be called before any conditional returns
   useEffect(() => {
@@ -136,10 +101,62 @@ export default function MediaManagement() {
     }
   };
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     const files = Array.from(event.target.files);
-    // In a real app, this would upload to a server
+    
+    if (files.length === 0) return;
+    
+    setIsUploading(true);
+    setUploadMessage('');
+    
     console.log("Uploading files:", files);
+    
+    let successCount = 0;
+    let errorCount = 0;
+    
+    for (const file of files) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await fetch('/api/admin/media/upload', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (response.ok) {
+          const newMediaFile = await response.json();
+          setMediaFiles(prev => [newMediaFile, ...prev]);
+          successCount++;
+          console.log(`✅ Uploaded: ${file.name}`);
+        } else {
+          errorCount++;
+          console.error(`❌ Failed to upload: ${file.name}`);
+          const errorData = await response.json();
+          console.error('Error details:', errorData);
+        }
+      } catch (error) {
+        errorCount++;
+        console.error(`❌ Error uploading ${file.name}:`, error);
+      }
+    }
+    
+    // Show upload result message
+    if (successCount > 0 && errorCount === 0) {
+      setUploadMessage(`✅ Successfully uploaded ${successCount} file(s)`);
+    } else if (successCount > 0 && errorCount > 0) {
+      setUploadMessage(`✅ Uploaded ${successCount} file(s), ❌ ${errorCount} failed`);
+    } else {
+      setUploadMessage(`❌ Failed to upload ${errorCount} file(s)`);
+    }
+    
+    // Clear message after 3 seconds
+    setTimeout(() => setUploadMessage(''), 3000);
+    
+    setIsUploading(false);
+    
+    // Reset the file input
+    event.target.value = '';
   };
 
   const handleFileDelete = (fileId) => {
@@ -150,6 +167,36 @@ export default function MediaManagement() {
     setMediaFiles(mediaFiles.filter(f => !selectedFiles.includes(f.id)));
     setSelectedFiles([]);
   };
+
+  const handleClearAll = async () => {
+    if (!confirm('Are you sure you want to delete ALL media files? This cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch('/api/admin/media/clear', {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Clear result:', result);
+        setMediaFiles([]);
+        setUploadMessage(`Cleared ${result.deletedCount} media files successfully!`);
+        setTimeout(() => setUploadMessage(''), 3000);
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to clear media files:', errorData);
+        setUploadMessage('Failed to clear media files. Please try again.');
+        setTimeout(() => setUploadMessage(''), 5000);
+      }
+    } catch (error) {
+      console.error('Error clearing media files:', error);
+      setUploadMessage('Error clearing media files. Please try again.');
+      setTimeout(() => setUploadMessage(''), 5000);
+    }
+  };
+
 
   // Conditional returns after all hooks
   if (isLoading) {
@@ -182,11 +229,31 @@ export default function MediaManagement() {
             <Button
               variant="outline"
               onClick={() => document.getElementById('file-upload').click()}
+              disabled={isUploading}
               className="flex items-center space-x-2"
             >
               <Upload className="h-4 w-4" />
-              <span>Upload Files</span>
+              <span>{isUploading ? 'Uploading...' : 'Upload Files'}</span>
             </Button>
+            {mediaFiles.length > 0 && (
+              <Button
+                variant="destructive"
+                onClick={handleClearAll}
+                className="flex items-center space-x-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>Clear All</span>
+              </Button>
+            )}
+            {uploadMessage && (
+              <div className={`px-3 py-1 rounded-md text-sm ${
+                uploadMessage.includes('✅') 
+                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+              }`}>
+                {uploadMessage}
+              </div>
+            )}
             <input
               id="file-upload"
               type="file"
@@ -288,7 +355,30 @@ export default function MediaManagement() {
                 </div>
               </CardHeader>
               <CardContent>
-                {viewMode === "grid" ? (
+                {isLoadingMedia ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                      <p className="mt-4 text-muted-foreground">Loading media files...</p>
+                    </div>
+                  </div>
+                ) : filteredFiles.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Image className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+                    <h3 className="text-lg font-semibold mb-2">No media files found</h3>
+                    <p className="text-muted-foreground mb-4">
+                      {searchQuery ? 'No files match your search criteria.' : 'Upload some images to get started.'}
+                    </p>
+                    <Button
+                      onClick={() => document.getElementById('file-upload').click()}
+                      disabled={isUploading}
+                      className="flex items-center space-x-2"
+                    >
+                      <Upload className="h-4 w-4" />
+                      <span>{isUploading ? 'Uploading...' : 'Upload Files'}</span>
+                    </Button>
+                  </div>
+                ) : viewMode === "grid" ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {filteredFiles.map((file) => (
                       <div
