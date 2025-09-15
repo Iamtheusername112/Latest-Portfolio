@@ -24,9 +24,13 @@ export const metadata = {
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" }
+      { url: "/favicon.svg", sizes: "16x16", type: "image/svg+xml" },
+      { url: "/favicon.svg", sizes: "32x32", type: "image/svg+xml" }
     ],
-    apple: "/favicon.svg",
+    apple: [
+      { url: "/favicon.svg", sizes: "180x180", type: "image/svg+xml" }
+    ],
+    shortcut: "/favicon.svg"
   },
   openGraph: {
     title: "Iwu Francis - Full Stack Web Developer",
