@@ -1,0 +1,5 @@
+[33m31a1110[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m implementing the change of the theme toggle from Radix ui to schadcn ui
+[33m86298ab[m implementing the change of the theme toggle from Radix ui to schadcn ui
+[33m22fb3ea[m implementing the admin rights to change the login credentials of the admin panel from the admin dashboard
+[33m9725e22[m implementing the SEO for this app
+[33m2488c8c[m implementing the contact form data collection, storage in the database and fetch on the admin dashboard

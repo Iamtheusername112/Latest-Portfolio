@@ -24,7 +24,7 @@ import {
   Link,
   Palette,
   Layout,
-  Brand,
+  Brain,
   Users,
   Settings
 } from "lucide-react";
@@ -280,7 +280,7 @@ export default function FooterPage() {
             <Card className="glass border-border/50">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Brand className="h-5 w-5" />
+                  <Brain className="h-5 w-5" />
                   <span>Brand Information</span>
                 </CardTitle>
                 <CardDescription>
