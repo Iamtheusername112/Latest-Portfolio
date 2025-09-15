@@ -3,6 +3,7 @@
 import { useAdmin } from "@/contexts/admin-context";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import AdminLayout from "@/components/admin/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,47 +35,99 @@ export default function SEOManagement() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const [seoData, setSeoData] = useState({
-    title: "Iwu Francis - Full Stack Web Developer",
-    description: "Passionate full-stack developer creating beautiful, functional web applications. 5+ years experience with React, Node.js, and modern technologies.",
-    keywords: "web developer, full stack developer, react developer, node.js, javascript, portfolio",
-    author: "Iwu Francis",
-    ogTitle: "Iwu Francis - Full Stack Web Developer Portfolio",
-    ogDescription: "Explore my portfolio of web development projects and get in touch for your next project.",
-    ogImage: "/api/placeholder/1200/630",
+    title: "",
+    description: "",
+    keywords: "",
+    author: "",
+    ogTitle: "",
+    ogDescription: "",
+    ogImage: "",
     twitterCard: "summary_large_image",
-    twitterSite: "@iwufrancis",
-    canonicalUrl: "https://iwufrancis.dev",
+    twitterSite: "",
+    canonicalUrl: "",
     robots: "index, follow",
-    sitemap: "https://iwufrancis.dev/sitemap.xml"
+    sitemap: ""
   });
 
   const [analytics, setAnalytics] = useState({
-    score: 94,
-    issues: [
-      { type: "warning", message: "Meta description is too long (160+ characters)", status: "warning" },
-      { type: "success", message: "Title tag is optimized", status: "success" },
-      { type: "success", message: "Images have alt attributes", status: "success" },
-      { type: "error", message: "Missing structured data", status: "error" },
-      { type: "warning", message: "Page load speed could be improved", status: "warning" }
-    ],
+    score: 0,
+    issues: [],
     metrics: {
-      pageSpeed: 87,
-      mobileUsability: 95,
-      seoScore: 94,
-      accessibility: 92
+      pageSpeed: 0,
+      mobileUsability: 0,
+      seoScore: 0,
+      accessibility: 0
     }
   });
 
+  const [isLoadingSEO, setIsLoadingSEO] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Fetch SEO settings on component mount
+  useEffect(() => {
+    const fetchSEOSettings = async () => {
+      try {
+        setIsLoadingSEO(true);
+        const response = await fetch('/api/admin/seo');
+        if (response.ok) {
+          const data = await response.json();
+          setSeoData(data);
+        } else {
+          console.error('Failed to fetch SEO settings');
+        }
+      } catch (error) {
+        console.error('Error fetching SEO settings:', error);
+      } finally {
+        setIsLoadingSEO(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchSEOSettings();
+    }
+  }, [isAuthenticated]);
+
   const handleAnalyze = async () => {
-    setIsAnalyzing(true);
-    // Simulate analysis
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsAnalyzing(false);
+    try {
+      setIsAnalyzing(true);
+      const response = await fetch('/api/admin/seo/analyze');
+      if (response.ok) {
+        const analysis = await response.json();
+        setAnalytics(analysis);
+      } else {
+        console.error('Failed to analyze SEO');
+      }
+    } catch (error) {
+      console.error('Error analyzing SEO:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
-  const handleSave = () => {
-    // In a real app, this would save to a database
-    console.log("Saving SEO settings...", seoData);
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      const response = await fetch('/api/admin/seo', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(seoData)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('SEO settings saved successfully:', result);
+        toast.success('SEO settings saved successfully!');
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to save SEO settings:', errorData);
+        toast.error(`Failed to save SEO settings: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error saving SEO settings:', error);
+      toast.error('Error saving SEO settings. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // All hooks must be called before any conditional returns
@@ -85,14 +138,16 @@ export default function SEOManagement() {
   }, [isAuthenticated, isLoading, router]);
 
   // Conditional returns after all hooks
-  if (isLoading) {
+  if (isLoading || isLoadingSEO) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Loading...</p>
+      <AdminLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading SEO settings...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
@@ -136,10 +191,11 @@ export default function SEOManagement() {
             </Button>
             <Button
               onClick={handleSave}
+              disabled={isSaving}
               className="flex items-center space-x-2"
             >
-              <Save className="h-4 w-4" />
-              <span>Save Changes</span>
+              <Save className={`h-4 w-4 ${isSaving ? 'animate-pulse' : ''}`} />
+              <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
             </Button>
           </div>
         </div>
@@ -253,21 +309,37 @@ export default function SEOManagement() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => window.open('https://search.google.com/search-console', '_blank')}
+                    >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Test in Google Search Console
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => window.open('https://analytics.google.com', '_blank')}
+                    >
                       <BarChart3 className="h-4 w-4 mr-2" />
                       View Analytics
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => window.open('/api/sitemap.xml', '_blank')}
+                    >
                       <Globe className="h-4 w-4 mr-2" />
-                      Generate Sitemap
+                      View Sitemap
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => window.open('/api/robots.txt', '_blank')}
+                    >
                       <Shield className="h-4 w-4 mr-2" />
-                      Check Security
+                      View Robots.txt
                     </Button>
                   </div>
                 </CardContent>

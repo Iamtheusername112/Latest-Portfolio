@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test SEO Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .form-group { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        textarea { height: 80px; }
+    </style>
+</head>
+<body>
+    <h1>SEO Dashboard Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Fetch SEO Settings</h2>
+        <button onclick="fetchSEOSettings()">Fetch Current SEO Settings</button>
+        <div id="fetch-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Update SEO Settings</h2>
+        <div class="form-group">
+            <label>Title:</label>
+            <input type="text" id="title" placeholder="Page title">
+        </div>
+        <div class="form-group">
+            <label>Description:</label>
+            <textarea id="description" placeholder="Meta description"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Keywords:</label>
+            <input type="text" id="keywords" placeholder="Keywords separated by commas">
+        </div>
+        <div class="form-group">
+            <label>Author:</label>
+            <input type="text" id="author" placeholder="Author name">
+        </div>
+        <div class="form-group">
+            <label>Canonical URL:</label>
+            <input type="url" id="canonicalUrl" placeholder="https://yourdomain.com">
+        </div>
+        <button onclick="updateSEOSettings()">Update SEO Settings</button>
+        <div id="update-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Analyze SEO</h2>
+        <button onclick="analyzeSEO()">Analyze SEO Score</button>
+        <div id="analyze-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Test Sitemap</h2>
+        <button onclick="testSitemap()">View Sitemap</button>
+        <div id="sitemap-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Test Robots.txt</h2>
+        <button onclick="testRobots()">View Robots.txt</button>
+        <div id="robots-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>6. Test Dynamic Metadata</h2>
+        <button onclick="testMetadata()">Check Page Metadata</button>
+        <div id="metadata-result"></div>
+    </div>
+
+    <script>
+        async function fetchSEOSettings() {
+            const resultDiv = document.getElementById('fetch-result');
+            resultDiv.innerHTML = '<p>Loading SEO settings...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/seo');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ SEO Settings Fetched!</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    
+                    // Populate form fields
+                    document.getElementById('title').value = data.title || '';
+                    document.getElementById('description').value = data.description || '';
+                    document.getElementById('keywords').value = data.keywords || '';
+                    document.getElementById('author').value = data.author || '';
+                    document.getElementById('canonicalUrl').value = data.canonicalUrl || '';
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function updateSEOSettings() {
+            const resultDiv = document.getElementById('update-result');
+            resultDiv.innerHTML = '<p>Updating SEO settings...</p>';
+            
+            const seoData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                keywords: document.getElementById('keywords').value,
+                author: document.getElementById('author').value,
+                canonicalUrl: document.getElementById('canonicalUrl').value,
+                ogTitle: document.getElementById('title').value + ' - Portfolio',
+                ogDescription: document.getElementById('description').value,
+                ogImage: '/api/placeholder/1200/630',
+                twitterCard: 'summary_large_image',
+                twitterSite: '@iwufrancis',
+                robots: 'index, follow',
+                sitemap: (document.getElementById('canonicalUrl').value || 'https://iwufrancis.dev') + '/api/sitemap.xml'
+            };
+            
+            try {
+                const response = await fetch('/api/admin/seo', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(seoData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ SEO Settings Updated!</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function analyzeSEO() {
+            const resultDiv = document.getElementById('analyze-result');
+            resultDiv.innerHTML = '<p>Analyzing SEO...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/seo/analyze');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ SEO Analysis Complete!</h3>
+                        <p><strong>Overall Score:</strong> ${data.score}/100</p>
+                        <p><strong>Page Speed:</strong> ${data.metrics.pageSpeed}/100</p>
+                        <p><strong>Mobile Usability:</strong> ${data.metrics.mobileUsability}/100</p>
+                        <p><strong>Accessibility:</strong> ${data.metrics.accessibility}/100</p>
+                        <h4>Issues Found:</h4>
+                        <ul>
+                            ${data.issues.map(issue => `<li style="color: ${issue.status === 'success' ? 'green' : issue.status === 'warning' ? 'orange' : 'red'}">${issue.message}</li>`).join('')}
+                        </ul>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function testSitemap() {
+            const resultDiv = document.getElementById('sitemap-result');
+            resultDiv.innerHTML = '<p>Loading sitemap...</p>';
+            
+            try {
+                const response = await fetch('/api/sitemap.xml');
+                const data = await response.text();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Sitemap Generated!</h3>
+                        <pre>${data}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function testRobots() {
+            const resultDiv = document.getElementById('robots-result');
+            resultDiv.innerHTML = '<p>Loading robots.txt...</p>';
+            
+            try {
+                const response = await fetch('/api/robots.txt');
+                const data = await response.text();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Robots.txt Generated!</h3>
+                        <pre>${data}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        function testMetadata() {
+            const resultDiv = document.getElementById('metadata-result');
+            
+            const metadata = {
+                title: document.title,
+                description: document.querySelector('meta[name="description"]')?.content || 'Not found',
+                keywords: document.querySelector('meta[name="keywords"]')?.content || 'Not found',
+                author: document.querySelector('meta[name="author"]')?.content || 'Not found',
+                canonical: document.querySelector('link[rel="canonical"]')?.href || 'Not found',
+                robots: document.querySelector('meta[name="robots"]')?.content || 'Not found',
+                ogTitle: document.querySelector('meta[property="og:title"]')?.content || 'Not found',
+                ogDescription: document.querySelector('meta[property="og:description"]')?.content || 'Not found',
+                ogImage: document.querySelector('meta[property="og:image"]')?.content || 'Not found',
+                twitterCard: document.querySelector('meta[name="twitter:card"]')?.content || 'Not found',
+                twitterSite: document.querySelector('meta[name="twitter:site"]')?.content || 'Not found'
+            };
+            
+            resultDiv.className = 'test-section success';
+            resultDiv.innerHTML = `
+                <h3>✅ Current Page Metadata</h3>
+                <pre>${JSON.stringify(metadata, null, 2)}</pre>
+            `;
+        }
+
+        // Load SEO settings on page load
+        window.onload = function() {
+            fetchSEOSettings();
+        };
+    </script>
+</body>
+</html>
