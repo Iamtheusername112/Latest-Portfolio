@@ -7,38 +7,20 @@ export async function GET() {
     
     if (!footer) {
       return NextResponse.json({
-        footer: {
-          title: "Iwu Francis",
-          description: "Full Stack Developer & UI/UX Designer",
-          copyright: "© 2024 Iwu Francis. All rights reserved.",
-          socialLinks: [
-            { platform: "github", url: "https://github.com/iwufrancis", label: "GitHub" },
-            { platform: "linkedin", url: "https://linkedin.com/in/iwufrancis", label: "LinkedIn" },
-            { platform: "mail", url: "mailto:iwufrancis571@gmail.com", label: "Email" }
-          ],
-          quickLinks: [
-            { name: "Home", href: "#home" },
-            { name: "About", href: "#about" },
-            { name: "Projects", href: "#projects" },
-            { name: "Contact", href: "#contact" }
-          ]
-        }
-      });
-    }
-
-    return NextResponse.json({ footer });
-  } catch (error) {
-    console.error('Error fetching footer data:', error);
-    
-    // Return fallback data instead of error
-    return NextResponse.json({
-      footer: {
-        title: "Iwu Francis",
-        description: "Full Stack Developer & UI/UX Designer",
-        copyright: "© 2024 Iwu Francis. All rights reserved.",
+        brand: {
+          name: "Iwu Francis",
+          tagline: "Full Stack Developer",
+          description: "Full Stack Web Developer passionate about creating innovative digital solutions and beautiful user experiences.",
+          logo: {
+            show: true,
+            variant: "default",
+            size: "lg"
+          }
+        },
         socialLinks: [
-          { platform: "github", url: "https://github.com/iwufrancis", label: "GitHub" },
-          { platform: "linkedin", url: "https://linkedin.com/in/iwufrancis", label: "LinkedIn" },
+          { platform: "github", url: "https://github.com/Iamtheusername112", label: "GitHub" },
+          { platform: "linkedin", url: "https://linkedin.com/in/francis-iwu-878973238", label: "LinkedIn" },
+          { platform: "instagram", url: "https://www.instagram.com/fran_cis3831?igsh=azdxemFwNGl0dzU3", label: "Instagram" },
           { platform: "mail", url: "mailto:iwufrancis571@gmail.com", label: "Email" }
         ],
         quickLinks: [
@@ -46,7 +28,87 @@ export async function GET() {
           { name: "About", href: "#about" },
           { name: "Projects", href: "#projects" },
           { name: "Contact", href: "#contact" }
-        ]
+        ],
+        contactInfo: {
+          email: "iwufrancis571@gmail.com",
+          location: "Berlin, Germany",
+          availability: "Available for remote work"
+        },
+        copyright: {
+          text: "All rights reserved.",
+          showYear: true
+        },
+        layout: {
+          showBrand: true,
+          showQuickLinks: true,
+          showContactInfo: true,
+          showSocialLinks: true,
+          showCopyright: true,
+          columns: 3
+        },
+        styling: {
+          backgroundColor: "background",
+          textColor: "foreground",
+          accentColor: "primary",
+          borderColor: "border",
+          showBackgroundPattern: true,
+          patternOpacity: 0.3
+        }
+      });
+    }
+
+    return NextResponse.json(footer);
+  } catch (error) {
+    console.error('Error fetching footer data:', error);
+    
+    // Return fallback data instead of error
+    return NextResponse.json({
+      brand: {
+        name: "Iwu Francis",
+        tagline: "Full Stack Developer",
+        description: "Full Stack Web Developer passionate about creating innovative digital solutions and beautiful user experiences.",
+        logo: {
+          show: true,
+          variant: "default",
+          size: "lg"
+        }
+      },
+      socialLinks: [
+        { platform: "github", url: "https://github.com/Iamtheusername112", label: "GitHub" },
+        { platform: "linkedin", url: "https://linkedin.com/in/francis-iwu-878973238", label: "LinkedIn" },
+        { platform: "instagram", url: "https://www.instagram.com/fran_cis3831?igsh=azdxemFwNGl0dzU3", label: "Instagram" },
+        { platform: "mail", url: "mailto:iwufrancis571@gmail.com", label: "Email" }
+      ],
+      quickLinks: [
+        { name: "Home", href: "#home" },
+        { name: "About", href: "#about" },
+        { name: "Projects", href: "#projects" },
+        { name: "Contact", href: "#contact" }
+      ],
+      contactInfo: {
+        email: "iwufrancis571@gmail.com",
+        location: "Berlin, Germany",
+        availability: "Available for remote work"
+      },
+      copyright: {
+        text: "All rights reserved.",
+        showYear: true
+      },
+      layout: {
+        showBrand: true,
+        showQuickLinks: true,
+        showContactInfo: true,
+        showSocialLinks: true,
+        showCopyright: true,
+        columns: 3
+      },
+      styling: {
+        backgroundColor: "background",
+        textColor: "foreground",
+        accentColor: "primary",
+        borderColor: "border",
+        showBackgroundPattern: true,
+        patternOpacity: 0.3
       }
     });
   }
