@@ -3,6 +3,7 @@
 import { useAdmin } from "@/contexts/admin-context";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import AdminLayout from "@/components/admin/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,66 +29,100 @@ export default function SettingsPage() {
   const { isAuthenticated, isLoading, user } = useAdmin();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("general");
-
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [settings, setSettings] = useState({
-    general: {
-      siteName: "Iwu Francis Portfolio",
-      siteDescription: "Full Stack Web Developer Portfolio",
-      siteUrl: "https://iwufrancis.dev",
-      adminEmail: "admin@iwufrancis.dev",
-      timezone: "UTC",
-      language: "en",
-      maintenanceMode: false
-    },
-    user: {
-      name: user?.email?.split("@")[0] || "Admin",
-      email: user?.email || "admin@example.com",
-      role: "Administrator",
-      lastLogin: "2024-01-15 14:30:00",
-      notifications: true,
-      emailNotifications: true
-    },
-    security: {
-      twoFactorAuth: false,
-      sessionTimeout: 30,
-      passwordExpiry: 90,
-      loginAttempts: 5,
-      ipWhitelist: "",
-      sslEnabled: true
-    },
-    notifications: {
-      emailAlerts: true,
-      systemAlerts: true,
-      performanceAlerts: true,
-      securityAlerts: true,
-      weeklyReports: true,
-      monthlyReports: false
-    },
-    backup: {
-      autoBackup: true,
-      backupFrequency: "daily",
-      retentionDays: 30,
-      lastBackup: "2024-01-15 02:00:00",
-      backupLocation: "cloud"
-    }
+    general: {},
+    user: {},
+    security: {},
+    notifications: {},
+    backup: {},
+    advanced: {}
   });
 
-  const handleSave = () => {
-    // In a real app, this would save to a database
-    console.log("Saving settings...", settings);
+  // Fetch settings on component mount
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        setIsLoadingSettings(true);
+        
+        const response = await fetch('/api/admin/settings');
+        if (response.ok) {
+          const settingsData = await response.json();
+          setSettings(settingsData);
+        } else {
+          toast.error('Failed to load settings');
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+        toast.error('Error loading settings');
+      } finally {
+        setIsLoadingSettings(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchSettings();
+    }
+  }, [isAuthenticated]);
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      
+      const response = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success('Settings saved successfully!');
+      } else {
+        toast.error(result.error || 'Failed to save settings');
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast.error('Error saving settings. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleReset = () => {
-    // Reset to default values
-    window.location.reload();
+  const handleReset = async () => {
+    try {
+      setIsSaving(true);
+      
+      const response = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reset' })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success('Settings reset to default successfully!');
+        setSettings(result.settings);
+      } else {
+        toast.error(result.error || 'Failed to reset settings');
+      }
+    } catch (error) {
+      console.error('Error resetting settings:', error);
+      toast.error('Error resetting settings. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleBackup = () => {
-    console.log("Creating backup...");
+    toast.info('Backup functionality coming soon!');
   };
 
   const handleRestore = () => {
-    console.log("Restoring from backup...");
+    toast.info('Restore functionality coming soon!');
   };
 
   // All hooks must be called before any conditional returns
@@ -98,14 +133,16 @@ export default function SettingsPage() {
   }, [isAuthenticated, isLoading, router]);
 
   // Conditional returns after all hooks
-  if (isLoading) {
+  if (isLoading || isLoadingSettings) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Loading...</p>
+      <AdminLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading settings...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
@@ -128,17 +165,19 @@ export default function SettingsPage() {
             <Button
               variant="outline"
               onClick={handleReset}
+              disabled={isSaving}
               className="flex items-center space-x-2"
             >
-              <RefreshCw className="h-4 w-4" />
-              <span>Reset</span>
+              <RefreshCw className={`h-4 w-4 ${isSaving ? 'animate-spin' : ''}`} />
+              <span>{isSaving ? 'Resetting...' : 'Reset'}</span>
             </Button>
             <Button
               onClick={handleSave}
+              disabled={isSaving}
               className="flex items-center space-x-2"
             >
-              <Save className="h-4 w-4" />
-              <span>Save Changes</span>
+              <Save className={`h-4 w-4 ${isSaving ? 'animate-pulse' : ''}`} />
+              <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
             </Button>
           </div>
         </div>
@@ -174,7 +213,7 @@ export default function SettingsPage() {
                         Site Name
                       </label>
                       <Input
-                        value={settings.general.siteName}
+                        value={settings.general?.siteName || ''}
                         onChange={(e) => setSettings({
                           ...settings,
                           general: { ...settings.general, siteName: e.target.value }
@@ -187,7 +226,7 @@ export default function SettingsPage() {
                         Site URL
                       </label>
                       <Input
-                        value={settings.general.siteUrl}
+                        value={settings.general?.siteUrl || ''}
                         onChange={(e) => setSettings({
                           ...settings,
                           general: { ...settings.general, siteUrl: e.target.value }
@@ -200,7 +239,7 @@ export default function SettingsPage() {
                         Admin Email
                       </label>
                       <Input
-                        value={settings.general.adminEmail}
+                        value={settings.general?.adminEmail || ''}
                         onChange={(e) => setSettings({
                           ...settings,
                           general: { ...settings.general, adminEmail: e.target.value }
@@ -215,7 +254,7 @@ export default function SettingsPage() {
                         Site Description
                       </label>
                       <Textarea
-                        value={settings.general.siteDescription}
+                        value={settings.general?.siteDescription || ''}
                         onChange={(e) => setSettings({
                           ...settings,
                           general: { ...settings.general, siteDescription: e.target.value }
@@ -229,7 +268,7 @@ export default function SettingsPage() {
                         Timezone
                       </label>
                       <select
-                        value={settings.general.timezone}
+                        value={settings.general?.timezone || 'UTC'}
                         onChange={(e) => setSettings({
                           ...settings,
                           general: { ...settings.general, timezone: e.target.value }
@@ -251,7 +290,7 @@ export default function SettingsPage() {
                         Language
                       </label>
                       <select
-                        value={settings.general.language}
+                        value={settings.general?.language || 'en'}
                         onChange={(e) => setSettings({
                           ...settings,
                           general: { ...settings.general, language: e.target.value }
@@ -272,7 +311,7 @@ export default function SettingsPage() {
                   <input
                     type="checkbox"
                     id="maintenance"
-                    checked={settings.general.maintenanceMode}
+                        checked={settings.general?.maintenanceMode || false}
                     onChange={(e) => setSettings({
                       ...settings,
                       general: { ...settings.general, maintenanceMode: e.target.checked }
@@ -306,7 +345,7 @@ export default function SettingsPage() {
                         Display Name
                       </label>
                       <Input
-                        value={settings.user.name}
+                        value={settings.user?.name || ''}
                         onChange={(e) => setSettings({
                           ...settings,
                           user: { ...settings.user, name: e.target.value }
@@ -319,7 +358,7 @@ export default function SettingsPage() {
                         Email Address
                       </label>
                       <Input
-                        value={settings.user.email}
+                        value={settings.user?.email || ''}
                         onChange={(e) => setSettings({
                           ...settings,
                           user: { ...settings.user, email: e.target.value }
@@ -332,7 +371,7 @@ export default function SettingsPage() {
                         Role
                       </label>
                       <Input
-                        value={settings.user.role}
+                        value={settings.user?.role || 'Administrator'}
                         disabled
                         placeholder="Administrator"
                       />
@@ -344,7 +383,7 @@ export default function SettingsPage() {
                         Last Login
                       </label>
                       <Input
-                        value={settings.user.lastLogin}
+                        value={settings.user?.lastLogin || 'Never'}
                         disabled
                         placeholder="Never"
                       />
@@ -357,7 +396,7 @@ export default function SettingsPage() {
                         <label className="flex items-center space-x-2">
                           <input
                             type="checkbox"
-                            checked={settings.user.notifications}
+                            checked={settings.user?.notifications || false}
                             onChange={(e) => setSettings({
                               ...settings,
                               user: { ...settings.user, notifications: e.target.checked }
@@ -368,7 +407,7 @@ export default function SettingsPage() {
                         <label className="flex items-center space-x-2">
                           <input
                             type="checkbox"
-                            checked={settings.user.emailNotifications}
+                            checked={settings.user?.emailNotifications || false}
                             onChange={(e) => setSettings({
                               ...settings,
                               user: { ...settings.user, emailNotifications: e.target.checked }
@@ -405,7 +444,7 @@ export default function SettingsPage() {
                       </label>
                       <Input
                         type="number"
-                        value={settings.security.sessionTimeout}
+                        value={settings.security?.sessionTimeout || 30}
                         onChange={(e) => setSettings({
                           ...settings,
                           security: { ...settings.security, sessionTimeout: parseInt(e.target.value) }
@@ -419,7 +458,7 @@ export default function SettingsPage() {
                       </label>
                       <Input
                         type="number"
-                        value={settings.security.passwordExpiry}
+                        value={settings.security?.passwordExpiry || 90}
                         onChange={(e) => setSettings({
                           ...settings,
                           security: { ...settings.security, passwordExpiry: parseInt(e.target.value) }
@@ -433,7 +472,7 @@ export default function SettingsPage() {
                       </label>
                       <Input
                         type="number"
-                        value={settings.security.loginAttempts}
+                        value={settings.security?.loginAttempts || 5}
                         onChange={(e) => setSettings({
                           ...settings,
                           security: { ...settings.security, loginAttempts: parseInt(e.target.value) }
@@ -448,7 +487,7 @@ export default function SettingsPage() {
                         IP Whitelist
                       </label>
                       <Textarea
-                        value={settings.security.ipWhitelist}
+                        value={settings.security?.ipWhitelist || ''}
                         onChange={(e) => setSettings({
                           ...settings,
                           security: { ...settings.security, ipWhitelist: e.target.value }
@@ -464,7 +503,7 @@ export default function SettingsPage() {
                       <label className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          checked={settings.security.twoFactorAuth}
+                          checked={settings.security?.twoFactorAuth || false}
                           onChange={(e) => setSettings({
                             ...settings,
                             security: { ...settings.security, twoFactorAuth: e.target.checked }
@@ -475,7 +514,7 @@ export default function SettingsPage() {
                       <label className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          checked={settings.security.sslEnabled}
+                          checked={settings.security?.sslEnabled || false}
                           onChange={(e) => setSettings({
                             ...settings,
                             security: { ...settings.security, sslEnabled: e.target.checked }
@@ -511,7 +550,7 @@ export default function SettingsPage() {
                         <label className="flex items-center space-x-2">
                           <input
                             type="checkbox"
-                            checked={settings.notifications.emailAlerts}
+                            checked={settings.notifications?.emailAlerts || false}
                             onChange={(e) => setSettings({
                               ...settings,
                               notifications: { ...settings.notifications, emailAlerts: e.target.checked }
@@ -522,7 +561,7 @@ export default function SettingsPage() {
                         <label className="flex items-center space-x-2">
                           <input
                             type="checkbox"
-                            checked={settings.notifications.systemAlerts}
+                            checked={settings.notifications?.systemAlerts || false}
                             onChange={(e) => setSettings({
                               ...settings,
                               notifications: { ...settings.notifications, systemAlerts: e.target.checked }
@@ -533,7 +572,7 @@ export default function SettingsPage() {
                         <label className="flex items-center space-x-2">
                           <input
                             type="checkbox"
-                            checked={settings.notifications.performanceAlerts}
+                            checked={settings.notifications?.performanceAlerts || false}
                             onChange={(e) => setSettings({
                               ...settings,
                               notifications: { ...settings.notifications, performanceAlerts: e.target.checked }
@@ -544,7 +583,7 @@ export default function SettingsPage() {
                         <label className="flex items-center space-x-2">
                           <input
                             type="checkbox"
-                            checked={settings.notifications.securityAlerts}
+                            checked={settings.notifications?.securityAlerts || false}
                             onChange={(e) => setSettings({
                               ...settings,
                               notifications: { ...settings.notifications, securityAlerts: e.target.checked }
@@ -560,7 +599,7 @@ export default function SettingsPage() {
                         <label className="flex items-center space-x-2">
                           <input
                             type="checkbox"
-                            checked={settings.notifications.weeklyReports}
+                            checked={settings.notifications?.weeklyReports || false}
                             onChange={(e) => setSettings({
                               ...settings,
                               notifications: { ...settings.notifications, weeklyReports: e.target.checked }
@@ -571,7 +610,7 @@ export default function SettingsPage() {
                         <label className="flex items-center space-x-2">
                           <input
                             type="checkbox"
-                            checked={settings.notifications.monthlyReports}
+                            checked={settings.notifications?.monthlyReports || false}
                             onChange={(e) => setSettings({
                               ...settings,
                               notifications: { ...settings.notifications, monthlyReports: e.target.checked }
@@ -607,7 +646,7 @@ export default function SettingsPage() {
                         Backup Frequency
                       </label>
                       <select
-                        value={settings.backup.backupFrequency}
+                        value={settings.backup?.backupFrequency || 'daily'}
                         onChange={(e) => setSettings({
                           ...settings,
                           backup: { ...settings.backup, backupFrequency: e.target.value }
@@ -626,7 +665,7 @@ export default function SettingsPage() {
                       </label>
                       <Input
                         type="number"
-                        value={settings.backup.retentionDays}
+                        value={settings.backup?.retentionDays || 30}
                         onChange={(e) => setSettings({
                           ...settings,
                           backup: { ...settings.backup, retentionDays: parseInt(e.target.value) }
@@ -639,7 +678,7 @@ export default function SettingsPage() {
                         Last Backup
                       </label>
                       <Input
-                        value={settings.backup.lastBackup}
+                        value={settings.backup?.lastBackup || 'Never'}
                         disabled
                         placeholder="Never"
                       />
@@ -651,7 +690,7 @@ export default function SettingsPage() {
                         Backup Location
                       </label>
                       <select
-                        value={settings.backup.backupLocation}
+                        value={settings.backup?.backupLocation || 'cloud'}
                         onChange={(e) => setSettings({
                           ...settings,
                           backup: { ...settings.backup, backupLocation: e.target.value }
@@ -667,7 +706,7 @@ export default function SettingsPage() {
                       <label className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          checked={settings.backup.autoBackup}
+                          checked={settings.backup?.autoBackup || false}
                           onChange={(e) => setSettings({
                             ...settings,
                             backup: { ...settings.backup, autoBackup: e.target.checked }

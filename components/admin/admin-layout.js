@@ -34,6 +34,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import LogoutDialog from "./logout-dialog";
+import { ThemeToggle, ThemeToggleButton } from "@/components/theme-toggle";
 
 const AdminLayout = ({ children }) => {
   const { user, logout } = useAdmin();
@@ -214,6 +215,11 @@ const AdminLayout = ({ children }) => {
                 </p>
               </div>
             </div>
+
+            {/* Theme Toggle in Sidebar */}
+            <div className="mb-4">
+              <ThemeToggleButton />
+            </div>
             <Button
               variant="ghost"
               size="sm"
@@ -270,6 +276,9 @@ const AdminLayout = ({ children }) => {
                 3
               </span>
             </Button>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Quick Actions */}
             <div className="hidden lg:flex items-center space-x-2">

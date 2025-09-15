@@ -2,34 +2,14 @@
 
 import { useState } from "react";
 import { useTheme } from "@/hooks/use-theme";
-import { Menu, X, Sun, Moon, Monitor, Settings } from "lucide-react";
+import { Menu, X, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DynamicLogo from "@/components/dynamic-logo";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, setTheme, mounted } = useTheme();
-
-  const toggleTheme = () => {
-    if (theme === "dark") {
-      setTheme("light");
-    } else if (theme === "light") {
-      setTheme("system");
-    } else {
-      setTheme("dark");
-    }
-  };
-
-  const getThemeIcon = () => {
-    if (theme === "system") {
-      return <Monitor className="h-4 w-4" />;
-    } else if (theme === "dark") {
-      return <Moon className="h-4 w-4" />;
-    } else {
-      return <Sun className="h-4 w-4" />;
-    }
-  };
 
   const navItems = [
     { name: "Home", href: "#home" },
@@ -90,15 +70,7 @@ const Header = () => {
               <Settings className="h-4 w-4" />
             </Button>
             
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="h-9 w-9 btn-premium text-foreground hover:bg-accent hover:text-accent-foreground"
-              title={`Current theme: ${theme}`}
-            >
-              {getThemeIcon()}
-            </Button>
+            <ThemeToggle />
 
             {/* Mobile menu button */}
             <Button
