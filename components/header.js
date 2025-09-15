@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTheme } from "@/hooks/use-theme";
-import { Menu, X, Settings } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DynamicLogo from "@/components/dynamic-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -60,16 +60,6 @@ const Header = () => {
 
           {/* Theme Toggle & Mobile Menu Button */}
           <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => window.open("/admin", "_blank")}
-              className="h-9 w-9 text-foreground hover:bg-accent hover:text-accent-foreground"
-              title="Admin Panel"
-            >
-              <Settings className="h-4 w-4" />
-            </Button>
-            
             <ThemeToggle />
 
             {/* Mobile menu button */}

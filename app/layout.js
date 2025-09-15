@@ -2,8 +2,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AdminProvider } from "@/contexts/admin-context";
-import { MediaProvider } from "@/contexts/media-context";
-import { MessagesProvider } from "@/contexts/messages-context";
 import ThemeTransition from "@/components/theme-transition";
 import DynamicMetadata from "@/components/dynamic-metadata";
 import { Toaster } from "sonner";
@@ -51,14 +49,10 @@ export default function RootLayout({ children }) {
           storageKey="portfolio-theme"
         >
           <AdminProvider>
-            <MediaProvider>
-              <MessagesProvider>
-                <ThemeTransition />
-                <DynamicMetadata />
-                {children}
-                <Toaster richColors position="top-right" />
-              </MessagesProvider>
-            </MediaProvider>
+            <ThemeTransition />
+            <DynamicMetadata />
+            {children}
+            <Toaster richColors position="top-right" />
           </AdminProvider>
         </ThemeProvider>
       </body>

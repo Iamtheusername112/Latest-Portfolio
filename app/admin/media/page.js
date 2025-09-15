@@ -107,8 +107,17 @@ export default function MediaManagement() {
         } else {
           errorCount++;
           console.error(`❌ Failed to upload: ${file.name}`);
-          const errorData = await response.json();
-          console.error('Error details:', errorData);
+          console.error('Response status:', response.status);
+          console.error('Response headers:', Object.fromEntries(response.headers.entries()));
+          
+          try {
+            const errorData = await response.json();
+            console.error('Error details:', errorData);
+          } catch (jsonError) {
+            console.error('Failed to parse error response as JSON:', jsonError);
+            const textResponse = await response.text();
+            console.error('Raw error response:', textResponse);
+          }
         }
       } catch (error) {
         errorCount++;

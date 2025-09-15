@@ -8,7 +8,7 @@ export default function DynamicMetadata() {
   useEffect(() => {
     const fetchSEOData = async () => {
       try {
-        const response = await fetch('/api/admin/seo');
+        const response = await fetch('/api/public/seo');
         if (response.ok) {
           const data = await response.json();
           setSeoData(data);

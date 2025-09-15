@@ -3,6 +3,7 @@ import { AuthService } from '@/lib/db/services/auth-service';
 import { db } from '@/lib/db/config';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { SECURITY_CONFIG, validatePassword, sanitizeInput } from '@/lib/security-config';
 
 export async function POST(request) {
   try {
@@ -15,11 +16,24 @@ export async function POST(request) {
       );
     }
 
+    // Sanitize inputs
+    const sanitizedEmail = sanitizeInput(email);
+    const sanitizedPassword = sanitizeInput(password);
+
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(sanitizedEmail)) {
       return NextResponse.json(
         { error: 'Invalid email format' },
+        { status: 400 }
+      );
+    }
+
+    // Validate password strength
+    const passwordValidation = validatePassword(sanitizedPassword);
+    if (!passwordValidation.isValid) {
+      return NextResponse.json(
+        { error: 'Password does not meet security requirements', details: passwordValidation.errors },
         { status: 400 }
       );
     }
@@ -59,14 +73,14 @@ export async function POST(request) {
     }
 
     // Only allow specific admin email
-    if (email !== 'iwufrancis571@gmail.com') {
+    if (!SECURITY_CONFIG.ADMIN.allowedEmails.includes(sanitizedEmail)) {
       return NextResponse.json(
         { error: 'Access denied. Only authorized administrators can log in.' },
         { status: 403 }
       );
     }
 
-    const result = await AuthService.authenticateUser(email, password);
+    const result = await AuthService.authenticateUser(sanitizedEmail, sanitizedPassword);
     
     console.log('Authentication result:', result);
 
@@ -84,10 +98,10 @@ export async function POST(request) {
     });
 
     response.cookies.set('admin-token', result.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      httpOnly: SECURITY_CONFIG.SESSION.httpOnly,
+      secure: SECURITY_CONFIG.SESSION.secure,
+      sameSite: SECURITY_CONFIG.SESSION.sameSite,
+      maxAge: SECURITY_CONFIG.SESSION.maxAge
     });
 
     return response;

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { AuthService } from '@/lib/db/services/auth-service';
 
 // Simple in-memory rate limiting (in production, use Redis or similar)
 const rateLimitMap = new Map();
@@ -25,7 +26,7 @@ function rateLimit(identifier, limit = 5, window = 15 * 60 * 1000) {
   return true;
 }
 
-export function middleware(request) {
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
   
   // Apply rate limiting to admin login
@@ -57,6 +58,14 @@ export function middleware(request) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
+
+  // Temporarily disable middleware protection for admin routes
+  // Each route will handle its own authentication
+  if (pathname.startsWith('/api/admin/')) {
+    console.log('🔒 Admin route accessed:', pathname);
+    console.log('🍪 Token in middleware:', request.cookies.get('admin-token')?.value ? 'Present' : 'Missing');
+    // Let the individual routes handle authentication
+  }
   
   return response;
 }
@@ -64,6 +73,7 @@ export function middleware(request) {
 export const config = {
   matcher: [
     '/api/auth/:path*',
+    '/api/admin/:path*',
     '/admin/:path*'
   ]
 };

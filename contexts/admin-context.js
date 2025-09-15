@@ -17,6 +17,31 @@ export const AdminProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
 
+  // Token refresh function
+  const attemptTokenRefresh = async () => {
+    try {
+      console.log("🔄 Attempting token refresh...");
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setIsAuthenticated(true);
+        setUser(data.user);
+        console.log("✅ Token refreshed successfully");
+        return true;
+      } else {
+        console.log("❌ Token refresh failed");
+        return false;
+      }
+    } catch (error) {
+      console.error("❌ Token refresh error:", error);
+      return false;
+    }
+  };
+
   useEffect(() => {
     // Check authentication status with database
     const checkAuth = async () => {
@@ -30,10 +55,35 @@ export const AdminProvider = ({ children }) => {
           if (data.authenticated) {
             setIsAuthenticated(true);
             setUser(data.user);
+            console.log("✅ User authenticated:", data.user);
+          } else {
+            console.log("❌ User not authenticated:", data.message);
+            // Try to refresh token before giving up
+            await attemptTokenRefresh();
+          }
+        } else if (response.status === 401) {
+          console.log("❌ Auth verification failed (401), attempting token refresh...");
+          // Try to refresh token
+          const refreshSuccess = await attemptTokenRefresh();
+          if (!refreshSuccess) {
+            // Clear invalid tokens if refresh fails
+            if (typeof window !== 'undefined') {
+              document.cookie = 'admin-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            }
+          }
+        } else {
+          console.log("❌ Auth verification failed:", response.status);
+          // Clear any invalid tokens
+          if (typeof window !== 'undefined') {
+            document.cookie = 'admin-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
           }
         }
       } catch (error) {
         console.error("Auth check error:", error);
+        // Clear any invalid tokens on error
+        if (typeof window !== 'undefined') {
+          document.cookie = 'admin-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        }
       } finally {
         setIsLoading(false);
       }
@@ -59,7 +109,14 @@ export const AdminProvider = ({ children }) => {
         const data = await response.json();
         setIsAuthenticated(true);
         setUser(data.user);
-        console.log("Login successful, user authenticated");
+        console.log("✅ Login successful, user authenticated:", data.user);
+        
+        // Verify the token was set in cookies
+        if (typeof window !== 'undefined') {
+          const tokenExists = document.cookie.includes('admin-token=');
+          console.log("🍪 Token set in cookies:", tokenExists);
+        }
+        
         return { success: true };
       } else {
         let errorMessage = "Login failed. Please try again.";

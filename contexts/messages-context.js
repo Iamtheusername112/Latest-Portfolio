@@ -8,7 +8,20 @@ const MessagesContext = createContext();
 export const useMessages = () => {
   const context = useContext(MessagesContext);
   if (!context) {
-    throw new Error('useMessages must be used within a MessagesProvider');
+    // Return default values if not within a MessagesProvider
+    return {
+      messages: [],
+      stats: {},
+      loading: false,
+      error: null,
+      fetchMessages: () => {},
+      addMessage: () => {},
+      updateMessage: () => {},
+      deleteMessage: () => {},
+      markAsRead: () => {},
+      markAsUnread: () => {},
+      getUnreadCount: () => 0
+    };
   }
   return context;
 };
@@ -18,15 +31,42 @@ export const MessagesProvider = ({ children }) => {
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { isAuthenticated, isLoading: authLoading } = useAdmin();
+  
+  // Safely get admin context
+  let isAuthenticated = false;
+  let authLoading = false;
+  try {
+    const adminContext = useAdmin();
+    isAuthenticated = adminContext?.isAuthenticated || false;
+    authLoading = adminContext?.isLoading || false;
+  } catch (e) {
+    // Admin context not available, use defaults
+    isAuthenticated = false;
+    authLoading = false;
+  }
 
   const fetchMessages = async () => {
     // Only fetch if user is authenticated
     if (!isAuthenticated) {
+      console.log('MessagesContext: Not authenticated, skipping fetch');
       setLoading(false);
       return;
     }
 
+    // Check if we're on an admin page
+    if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin')) {
+      console.log('MessagesContext: Not on admin page, skipping fetch');
+      setLoading(false);
+      return;
+    }
+
+    // Final check - if still not authenticated, abort
+    if (!isAuthenticated) {
+      console.log('MessagesContext: Final check - not authenticated, aborting');
+      return;
+    }
+
+    console.log('MessagesContext: Fetching messages data...');
     try {
       setLoading(true);
       setError(null);
@@ -34,6 +74,14 @@ export const MessagesProvider = ({ children }) => {
       const response = await fetch('/api/admin/messages');
       
       if (!response.ok) {
+        // If we get 403, it means we shouldn't be making this call
+        if (response.status === 403) {
+          console.log('MessagesContext: Got 403 - not authenticated, clearing data');
+          setMessages([]);
+          setStats({});
+          setError(null);
+          return;
+        }
         throw new Error(`Failed to fetch messages: ${response.status}`);
       }
       
@@ -86,11 +134,19 @@ export const MessagesProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log('MessagesContext useEffect:', { isAuthenticated, authLoading });
+    
     // Only fetch messages when authentication is complete and user is authenticated
     if (!authLoading && isAuthenticated) {
-      fetchMessages();
+      // Double check we're on an admin page
+      if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
+        fetchMessages();
+      } else {
+        console.log('MessagesContext: Not on admin page, skipping fetch in useEffect');
+      }
     } else if (!authLoading && !isAuthenticated) {
       // Clear messages when user is not authenticated
+      console.log('MessagesContext: Not authenticated, clearing data in useEffect');
       setMessages([]);
       setStats({});
       setError(null);

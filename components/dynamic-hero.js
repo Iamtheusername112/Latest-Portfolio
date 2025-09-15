@@ -14,7 +14,7 @@ const DynamicHero = () => {
   useEffect(() => {
     const fetchHeroData = async () => {
       try {
-        const response = await fetch('/api/admin/hero');
+        const response = await fetch('/api/public/hero');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

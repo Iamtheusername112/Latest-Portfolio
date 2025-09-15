@@ -13,7 +13,7 @@ const DynamicFooter = () => {
   useEffect(() => {
     const fetchFooterData = async () => {
       try {
-        const response = await fetch('/api/admin/footer?action=preview');
+        const response = await fetch('/api/public/footer');
         if (response.ok) {
           const data = await response.json();
           setFooterData(data);
