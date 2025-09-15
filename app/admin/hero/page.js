@@ -618,7 +618,7 @@ export default function HeroManagement() {
                   <span>Live Preview</span>
                 </CardTitle>
                 <CardDescription>
-                  See how your hero section will appear
+                  See how your hero section will appear on the website
                 </CardDescription>
               </CardHeader>
               <CardContent>
