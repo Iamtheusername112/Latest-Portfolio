@@ -1,0 +1,20 @@
+CREATE TABLE "contact_messages" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"email" varchar(255) NOT NULL,
+	"subject" varchar(500),
+	"message" text NOT NULL,
+	"phone" varchar(50),
+	"company" varchar(255),
+	"status" varchar(50) DEFAULT 'unread',
+	"priority" varchar(20) DEFAULT 'normal',
+	"ip_address" varchar(45),
+	"user_agent" text,
+	"is_read" boolean DEFAULT false,
+	"read_at" timestamp,
+	"replied_at" timestamp,
+	"archived_at" timestamp,
+	"admin_notes" text,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
+);

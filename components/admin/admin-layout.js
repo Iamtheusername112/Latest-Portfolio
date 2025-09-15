@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAdmin } from "@/contexts/admin-context";
 import { useMedia } from "@/contexts/media-context";
+import { useMessages } from "@/contexts/messages-context";
 import { 
   Menu, 
   X, 
@@ -41,12 +42,14 @@ const AdminLayout = ({ children }) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const { mediaCount, loading: mediaLoading } = useMedia();
+  const { getUnreadCount, loading: messagesLoading } = useMessages();
 
   const navigation = [
     { name: "Dashboard", href: "/admin", icon: Home, badge: null },
     { name: "Hero", href: "/admin/hero", icon: User, badge: null },
     { name: "Content", href: "/admin/content", icon: FileText, badge: null },
     { name: "Media", href: "/admin/media", icon: Image, badge: mediaLoading ? "..." : mediaCount.toString() },
+    { name: "Messages", href: "/admin/messages", icon: Mail, badge: messagesLoading ? "..." : getUnreadCount().toString() },
     { name: "Logo", href: "/admin/logo", icon: Palette, badge: null },
     { name: "SEO", href: "/admin/seo", icon: Target, badge: null },
     { name: "Appearance", href: "/admin/appearance", icon: Palette, badge: null },

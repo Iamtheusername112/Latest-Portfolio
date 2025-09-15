@@ -3,7 +3,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AdminProvider } from "@/contexts/admin-context";
 import { MediaProvider } from "@/contexts/media-context";
+import { MessagesProvider } from "@/contexts/messages-context";
 import ThemeTransition from "@/components/theme-transition";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,8 +51,11 @@ export default function RootLayout({ children }) {
         >
           <AdminProvider>
             <MediaProvider>
-              <ThemeTransition />
-              {children}
+              <MessagesProvider>
+                <ThemeTransition />
+                {children}
+                <Toaster richColors position="top-right" />
+              </MessagesProvider>
             </MediaProvider>
           </AdminProvider>
         </ThemeProvider>

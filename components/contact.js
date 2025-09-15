@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { Mail, Phone, MapPin, Send, Github, Linkedin, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,10 +14,11 @@ const Contact = () => {
     name: "",
     email: "",
     subject: "",
-    message: ""
+    message: "",
+    phone: "",
+    company: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -30,15 +32,50 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormData({ name: "", email: "", subject: "", message: "" });
-    
-    // Reset success message after 3 seconds
-    setTimeout(() => setIsSubmitted(false), 3000);
+    try {
+      // Validate required fields
+      if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+        throw new Error("Name, email, and message are required");
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        throw new Error("Please provide a valid email address");
+      }
+
+      // Submit to API
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to send message');
+      }
+
+      // Success
+      toast.success(result.message);
+      setFormData({ 
+        name: "", 
+        email: "", 
+        subject: "", 
+        message: "",
+        phone: "",
+        company: ""
+      });
+      
+    } catch (error) {
+      console.error('Contact form error:', error);
+      toast.error(error.message || 'Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -220,17 +257,45 @@ const Contact = () => {
                       </div>
                     </div>
 
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
+                          Subject *
+                        </label>
+                        <Input
+                          id="subject"
+                          name="subject"
+                          value={formData.subject}
+                          onChange={handleInputChange}
+                          required
+                          placeholder="What's this about?"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
+                          Phone
+                        </label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          placeholder="Your phone number"
+                        />
+                      </div>
+                    </div>
+
                     <div>
-                      <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
-                        Subject *
+                      <label htmlFor="company" className="block text-sm font-medium text-foreground mb-2">
+                        Company
                       </label>
                       <Input
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
+                        id="company"
+                        name="company"
+                        value={formData.company}
                         onChange={handleInputChange}
-                        required
-                        placeholder="What's this about?"
+                        placeholder="Your company name"
                       />
                     </div>
 
@@ -256,8 +321,6 @@ const Contact = () => {
                     >
                       {isSubmitting ? (
                         "Sending..."
-                      ) : isSubmitted ? (
-                        "Message Sent!"
                       ) : (
                         <>
                           <Send className="mr-2 h-4 w-4" />
@@ -266,15 +329,6 @@ const Contact = () => {
                       )}
                     </Button>
 
-                    {isSubmitted && (
-                      <motion.p
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center text-green-600 dark:text-green-400"
-                      >
-                        Thanks for your message! I'll get back to you soon.
-                      </motion.p>
-                    )}
                   </form>
                 </CardContent>
               </Card>

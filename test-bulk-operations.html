@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Bulk Operations</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .message-item { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>Test Bulk Operations</h1>
+    
+    <div class="test-section">
+        <h2>1. Create Test Messages</h2>
+        <button onclick="createTestMessages()">Create 3 Test Messages</button>
+        <div id="create-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Fetch Messages</h2>
+        <button onclick="fetchMessages()">Fetch All Messages</button>
+        <div id="fetch-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Test Bulk Mark as Read</h2>
+        <input type="text" id="bulk-read-ids" placeholder="Message IDs (comma separated)" style="width: 300px; margin-right: 10px;">
+        <button onclick="testBulkMarkRead()">Bulk Mark as Read</button>
+        <div id="bulk-read-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Test Bulk Archive</h2>
+        <input type="text" id="bulk-archive-ids" placeholder="Message IDs (comma separated)" style="width: 300px; margin-right: 10px;">
+        <button onclick="testBulkArchive()">Bulk Archive</button>
+        <div id="bulk-archive-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Test Bulk Delete</h2>
+        <input type="text" id="bulk-delete-ids" placeholder="Message IDs (comma separated)" style="width: 300px; margin-right: 10px;">
+        <button onclick="testBulkDelete()">Bulk Delete</button>
+        <div id="bulk-delete-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Current Messages</h2>
+        <button onclick="refreshMessages()">Refresh</button>
+        <div id="messages-list"></div>
+    </div>
+
+    <script>
+        let currentMessages = [];
+
+        async function createTestMessages() {
+            const resultDiv = document.getElementById('create-result');
+            resultDiv.innerHTML = '<p>Creating test messages...</p>';
+            
+            const testMessages = [
+                {
+                    name: 'Test User 1',
+                    email: 'test1@example.com',
+                    subject: 'Test Message 1',
+                    message: 'This is test message 1 for bulk operations.',
+                    priority: 'normal'
+                },
+                {
+                    name: 'Test User 2',
+                    email: 'test2@example.com',
+                    subject: 'Test Message 2',
+                    message: 'This is test message 2 for bulk operations.',
+                    priority: 'high'
+                },
+                {
+                    name: 'Test User 3',
+                    email: 'test3@example.com',
+                    subject: 'Test Message 3',
+                    message: 'This is test message 3 for bulk operations.',
+                    priority: 'urgent'
+                }
+            ];
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (const message of testMessages) {
+                try {
+                    const response = await fetch('/api/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(message)
+                    });
+                    
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                    }
+                } catch (error) {
+                    errorCount++;
+                }
+            }
+
+            resultDiv.className = 'test-section ' + (errorCount === 0 ? 'success' : 'error');
+            resultDiv.innerHTML = `
+                <h3>${errorCount === 0 ? '✅' : '❌'} Test Messages Created</h3>
+                <p>Success: ${successCount}, Errors: ${errorCount}</p>
+            `;
+        }
+
+        async function fetchMessages() {
+            const resultDiv = document.getElementById('fetch-result');
+            resultDiv.innerHTML = '<p>Loading messages...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/messages');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentMessages = data.messages || [];
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Messages Fetched!</h3>
+                        <p>Found ${currentMessages.length} messages</p>
+                        <p>Total: ${data.stats.total}, Unread: ${data.stats.unread}</p>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function testBulkMarkRead() {
+            const messageIds = document.getElementById('bulk-read-ids').value.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+            if (messageIds.length === 0) {
+                alert('Please enter valid message IDs');
+                return;
+            }
+
+            const resultDiv = document.getElementById('bulk-read-result');
+            resultDiv.innerHTML = '<p>Testing bulk mark as read...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'markRead',
+                        messageIds: messageIds
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Bulk Mark as Read Successful!</h3>
+                        <p>Affected ${data.affectedCount} messages</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <p>Status Text: ${response.statusText}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function testBulkArchive() {
+            const messageIds = document.getElementById('bulk-archive-ids').value.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+            if (messageIds.length === 0) {
+                alert('Please enter valid message IDs');
+                return;
+            }
+
+            const resultDiv = document.getElementById('bulk-archive-result');
+            resultDiv.innerHTML = '<p>Testing bulk archive...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'archive',
+                        messageIds: messageIds
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Bulk Archive Successful!</h3>
+                        <p>Affected ${data.affectedCount} messages</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <p>Status Text: ${response.statusText}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function testBulkDelete() {
+            const messageIds = document.getElementById('bulk-delete-ids').value.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+            if (messageIds.length === 0) {
+                alert('Please enter valid message IDs');
+                return;
+            }
+
+            const resultDiv = document.getElementById('bulk-delete-result');
+            resultDiv.innerHTML = '<p>Testing bulk delete...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        messageIds: messageIds
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Bulk Delete Successful!</h3>
+                        <p>Affected ${data.affectedCount} messages</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <p>Status Text: ${response.statusText}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function refreshMessages() {
+            const resultDiv = document.getElementById('messages-list');
+            resultDiv.innerHTML = '<p>Loading messages...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/messages');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentMessages = data.messages || [];
+                    let html = `<h3>Current Messages (${currentMessages.length})</h3>`;
+                    
+                    currentMessages.forEach(message => {
+                        html += `
+                            <div class="message-item">
+                                <strong>ID:</strong> ${message.id} | 
+                                <strong>Name:</strong> ${message.name} | 
+                                <strong>Email:</strong> ${message.email} | 
+                                <strong>Status:</strong> ${message.status} | 
+                                <strong>Priority:</strong> ${message.priority} | 
+                                <strong>Read:</strong> ${message.isRead ? 'Yes' : 'No'}
+                            </div>
+                        `;
+                    });
+                    
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<p>Error loading messages: ${response.status}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Error loading messages: ${error.message}</p>`;
+            }
+        }
+
+        // Load messages on page load
+        window.onload = function() {
+            fetchMessages();
+        };
+    </script>
+</body>
+</html>

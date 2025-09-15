@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API Endpoints</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .endpoint { margin: 10px 0; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>API Endpoints Test</h1>
+    <button onclick="testAllEndpoints()">Test All Endpoints</button>
+    <button onclick="clearResults()">Clear Results</button>
+    
+    <div id="results"></div>
+
+    <script>
+        async function testEndpoint(name, url) {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'endpoint loading';
+            resultDiv.innerHTML = `<h3>${name}</h3><p>Testing ${url}...</p>`;
+            document.getElementById('results').appendChild(resultDiv);
+            
+            try {
+                const response = await fetch(url);
+                const contentType = response.headers.get('content-type');
+                
+                if (response.ok) {
+                    if (contentType && contentType.includes('application/json')) {
+                        const data = await response.json();
+                        resultDiv.className = 'endpoint success';
+                        resultDiv.innerHTML = `
+                            <h3>${name} ✅</h3>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Content-Type:</strong> ${contentType}</p>
+                            <p><strong>Response:</strong></p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        `;
+                    } else {
+                        resultDiv.className = 'endpoint error';
+                        const text = await response.text();
+                        resultDiv.innerHTML = `
+                            <h3>${name} ❌</h3>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Content-Type:</strong> ${contentType}</p>
+                            <p><strong>Error:</strong> Response is not JSON</p>
+                            <pre>${text.substring(0, 500)}</pre>
+                        `;
+                    }
+                } else {
+                    if (contentType && contentType.includes('application/json')) {
+                        try {
+                            const errorData = await response.json();
+                            resultDiv.className = 'endpoint error';
+                            resultDiv.innerHTML = `
+                                <h3>${name} ❌</h3>
+                                <p><strong>Status:</strong> ${response.status}</p>
+                                <p><strong>Content-Type:</strong> ${contentType}</p>
+                                <p><strong>Error Response:</strong></p>
+                                <pre>${JSON.stringify(errorData, null, 2)}</pre>
+                            `;
+                        } catch (jsonError) {
+                            const text = await response.text();
+                            resultDiv.className = 'endpoint error';
+                            resultDiv.innerHTML = `
+                                <h3>${name} ❌</h3>
+                                <p><strong>Status:</strong> ${response.status}</p>
+                                <p><strong>Content-Type:</strong> ${contentType}</p>
+                                <p><strong>Error:</strong> Failed to parse JSON</p>
+                                <pre>${text.substring(0, 500)}</pre>
+                            `;
+                        }
+                    } else {
+                        const text = await response.text();
+                        resultDiv.className = 'endpoint error';
+                        resultDiv.innerHTML = `
+                            <h3>${name} ❌</h3>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Content-Type:</strong> ${contentType}</p>
+                            <p><strong>Error:</strong> ${text.substring(0, 500)}</p>
+                        `;
+                    }
+                }
+            } catch (error) {
+                resultDiv.className = 'endpoint error';
+                resultDiv.innerHTML = `
+                    <h3>${name} ❌</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+            }
+        }
+        
+        async function testAllEndpoints() {
+            clearResults();
+            
+            const endpoints = [
+                { name: 'About API', url: '/api/about' },
+                { name: 'Projects API', url: '/api/projects' },
+                { name: 'Contact API (GET)', url: '/api/contact' },
+                { name: 'Auth Verify', url: '/api/auth/verify' }
+            ];
+            
+            for (const endpoint of endpoints) {
+                await testEndpoint(endpoint.name, endpoint.url);
+                // Small delay between requests
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

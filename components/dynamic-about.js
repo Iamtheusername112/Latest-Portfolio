@@ -16,15 +16,35 @@ const DynamicAbout = () => {
         console.log('Fetching about data...');
         const response = await fetch('/api/about');
         console.log('Response status:', response.status);
+        console.log('Content-Type:', response.headers.get('content-type'));
         
         if (response.ok) {
-          const data = await response.json();
-          console.log('About data received:', data);
-          setAboutData(data);
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            console.log('About data received:', data);
+            setAboutData(data);
+          } else {
+            console.error('Response is not JSON, content-type:', contentType);
+            const text = await response.text();
+            console.error('Response text:', text.substring(0, 200));
+          }
         } else {
           console.error('Failed to fetch about data, status:', response.status);
-          const errorText = await response.text();
-          console.error('Error response:', errorText);
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            try {
+              const errorData = await response.json();
+              console.error('Error response (JSON):', errorData);
+            } catch (jsonError) {
+              console.error('Failed to parse error response as JSON:', jsonError);
+              const errorText = await response.text();
+              console.error('Error response (text):', errorText.substring(0, 200));
+            }
+          } else {
+            const errorText = await response.text();
+            console.error('Error response (text):', errorText.substring(0, 200));
+          }
         }
       } catch (error) {
         console.error('Error fetching about data:', error);

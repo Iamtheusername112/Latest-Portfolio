@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Messages CRUD Operations</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .message-item { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>Messages CRUD Operations Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Fetch Messages (GET)</h2>
+        <button onclick="fetchMessages()">Fetch All Messages</button>
+        <div id="fetch-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Create Test Message (POST)</h2>
+        <button onclick="createTestMessage()">Create Test Message</button>
+        <div id="create-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Update Message (PUT)</h2>
+        <input type="number" id="update-id" placeholder="Message ID" style="margin-right: 10px;">
+        <button onclick="updateMessage()">Mark as Read</button>
+        <div id="update-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Bulk Operations (POST)</h2>
+        <input type="text" id="bulk-ids" placeholder="Message IDs (comma separated)" style="width: 300px; margin-right: 10px;">
+        <button onclick="bulkMarkRead()">Bulk Mark as Read</button>
+        <button onclick="bulkArchive()">Bulk Archive</button>
+        <div id="bulk-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Delete Message (DELETE)</h2>
+        <input type="number" id="delete-id" placeholder="Message ID" style="margin-right: 10px;">
+        <button onclick="deleteMessage()">Delete Message</button>
+        <div id="delete-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>6. Message Statistics</h2>
+        <button onclick="getStats()">Get Statistics</button>
+        <div id="stats-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Current Messages</h2>
+        <button onclick="refreshMessages()">Refresh</button>
+        <div id="messages-list"></div>
+    </div>
+
+    <script>
+        let currentMessages = [];
+
+        async function fetchMessages() {
+            const resultDiv = document.getElementById('fetch-result');
+            resultDiv.innerHTML = '<p>Loading...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/messages');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentMessages = data.messages || [];
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Success!</h3>
+                        <p>Found ${currentMessages.length} messages</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function createTestMessage() {
+            const resultDiv = document.getElementById('create-result');
+            resultDiv.innerHTML = '<p>Creating test message...</p>';
+            
+            try {
+                const testMessage = {
+                    name: 'Test User',
+                    email: 'test@example.com',
+                    subject: 'Test Message from CRUD Test',
+                    message: 'This is a test message created by the CRUD test suite.',
+                    priority: 'normal',
+                    phone: '+1234567890',
+                    company: 'Test Company'
+                };
+
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testMessage)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Test Message Created!</h3>
+                        <p>Message ID: ${data.messageId}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function updateMessage() {
+            const messageId = document.getElementById('update-id').value;
+            if (!messageId) {
+                alert('Please enter a message ID');
+                return;
+            }
+
+            const resultDiv = document.getElementById('update-result');
+            resultDiv.innerHTML = '<p>Updating message...</p>';
+            
+            try {
+                const response = await fetch(`/api/admin/messages/${messageId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        status: 'read',
+                        isRead: true,
+                        readAt: new Date().toISOString()
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Message Updated!</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function bulkMarkRead() {
+            const messageIds = document.getElementById('bulk-ids').value.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+            if (messageIds.length === 0) {
+                alert('Please enter valid message IDs');
+                return;
+            }
+
+            const resultDiv = document.getElementById('bulk-result');
+            resultDiv.innerHTML = '<p>Performing bulk operation...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'markRead',
+                        messageIds: messageIds
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Bulk Operation Successful!</h3>
+                        <p>Affected ${data.affectedCount} messages</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function bulkArchive() {
+            const messageIds = document.getElementById('bulk-ids').value.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+            if (messageIds.length === 0) {
+                alert('Please enter valid message IDs');
+                return;
+            }
+
+            const resultDiv = document.getElementById('bulk-result');
+            resultDiv.innerHTML = '<p>Performing bulk archive...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'archive',
+                        messageIds: messageIds
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Bulk Archive Successful!</h3>
+                        <p>Affected ${data.affectedCount} messages</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function deleteMessage() {
+            const messageId = document.getElementById('delete-id').value;
+            if (!messageId) {
+                alert('Please enter a message ID');
+                return;
+            }
+
+            const resultDiv = document.getElementById('delete-result');
+            resultDiv.innerHTML = '<p>Deleting message...</p>';
+            
+            try {
+                const response = await fetch(`/api/admin/messages/${messageId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Message Deleted!</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function getStats() {
+            const resultDiv = document.getElementById('stats-result');
+            resultDiv.innerHTML = '<p>Loading statistics...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/messages');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Statistics Retrieved!</h3>
+                        <pre>${JSON.stringify(data.stats, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function refreshMessages() {
+            const resultDiv = document.getElementById('messages-list');
+            resultDiv.innerHTML = '<p>Loading messages...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/messages');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentMessages = data.messages || [];
+                    let html = `<h3>Current Messages (${currentMessages.length})</h3>`;
+                    
+                    currentMessages.forEach(message => {
+                        html += `
+                            <div class="message-item">
+                                <strong>ID:</strong> ${message.id} | 
+                                <strong>Name:</strong> ${message.name} | 
+                                <strong>Email:</strong> ${message.email} | 
+                                <strong>Status:</strong> ${message.status} | 
+                                <strong>Priority:</strong> ${message.priority} | 
+                                <strong>Read:</strong> ${message.isRead ? 'Yes' : 'No'}
+                            </div>
+                        `;
+                    });
+                    
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<p>Error loading messages: ${response.status}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p>Error loading messages: ${error.message}</p>`;
+            }
+        }
+
+        // Load messages on page load
+        window.onload = function() {
+            fetchMessages();
+        };
+    </script>
+</body>
+</html>

@@ -13,8 +13,14 @@ export async function GET() {
     return NextResponse.json(projects);
   } catch (error) {
     console.error('Error fetching public projects:', error);
+    
+    // Return a proper JSON error response
     return NextResponse.json(
-      { error: 'Failed to fetch projects' },
+      { 
+        error: 'Failed to fetch projects',
+        message: error.message || 'Unknown error occurred',
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      },
       { status: 500 }
     );
   }
