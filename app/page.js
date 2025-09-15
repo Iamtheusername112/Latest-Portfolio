@@ -3,7 +3,7 @@ import DynamicHero from "@/components/dynamic-hero";
 import DynamicAbout from "@/components/dynamic-about";
 import DynamicProjects from "@/components/dynamic-projects";
 import Contact from "@/components/contact";
-import Footer from "@/components/footer";
+import DynamicFooter from "@/components/dynamic-footer";
 
 export default function Home() {
   return (
@@ -15,7 +15,7 @@ export default function Home() {
         <DynamicProjects />
         <Contact />
       </main>
-      <Footer />
+      <DynamicFooter />
     </div>
   );
 }

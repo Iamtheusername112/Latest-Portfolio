@@ -57,6 +57,7 @@ const AdminLayout = ({ children }) => {
     { name: "Performance", href: "/admin/performance", icon: Zap, badge: "94" },
     { name: "Security", href: "/admin/security", icon: Shield, badge: null },
     { name: "Database", href: "/admin/database", icon: Database, badge: null },
+    { name: "Footer", href: "/admin/footer", icon: Globe, badge: null },
     { name: "Settings", href: "/admin/settings", icon: Settings, badge: null },
   ];
 
