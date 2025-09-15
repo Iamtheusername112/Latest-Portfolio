@@ -3,6 +3,7 @@
 import { useAdmin } from "@/contexts/admin-context";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import AdminLayout from "@/components/admin/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,33 +20,120 @@ import {
   Activity,
   Clock,
   Globe,
-  User
+  User,
+  Save,
+  RefreshCw
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function SecurityManagement() {
   const { isAuthenticated, isLoading } = useAdmin();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
+  const [isLoadingSecurity, setIsLoadingSecurity] = useState(true);
+  const [securityData, setSecurityData] = useState({});
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [vulnerabilities, setVulnerabilities] = useState([]);
+  const [adminInfo, setAdminInfo] = useState({});
+  const [isUpdatingCredentials, setIsUpdatingCredentials] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [credentialsForm, setCredentialsForm] = useState({
+    currentPassword: '',
+    newEmail: '',
+    newPassword: '',
+    newName: ''
+  });
 
-  const securityMetrics = {
-    overallScore: 92,
-    vulnerabilities: 2,
-    threatsBlocked: 156,
-    lastScan: "2024-01-15 14:30:00"
-  };
+  // Fetch security data on component mount
+  useEffect(() => {
+    const fetchSecurityData = async () => {
+      try {
+        setIsLoadingSecurity(true);
+        
+        // Fetch security overview
+        const overviewResponse = await fetch('/api/admin/security');
+        if (overviewResponse.ok) {
+          const overview = await overviewResponse.json();
+          console.log('Security overview data:', overview);
+          setSecurityData(overview);
+        }
 
-  const recentActivity = [
-    { id: 1, action: "Successful login", user: "admin@example.com", ip: "192.168.1.100", time: "2 minutes ago", status: "success" },
-    { id: 2, action: "Failed login attempt", user: "unknown@example.com", ip: "203.0.113.42", time: "15 minutes ago", status: "warning" },
-    { id: 3, action: "Password changed", user: "admin@***.com", ip: "192.168.1.***", time: "1 hour ago", status: "info" },
-    { id: 4, action: "Suspicious activity detected", user: "admin@example.com", ip: "198.51.100.1", time: "2 hours ago", status: "error" },
-    { id: 5, action: "Two-factor authentication enabled", user: "admin@example.com", ip: "192.168.1.100", time: "3 hours ago", status: "success" }
-  ];
+        // Fetch recent activity
+        const activityResponse = await fetch('/api/admin/security?action=events');
+        if (activityResponse.ok) {
+          const activity = await activityResponse.json();
+          console.log('Activity data:', activity);
+          setRecentActivity(Array.isArray(activity) ? activity : []);
+        }
 
-  const vulnerabilities = [
-    { id: 1, title: "Outdated dependencies", severity: "medium", description: "Some npm packages have known security vulnerabilities", status: "open" },
-    { id: 2, title: "Weak password policy", severity: "low", description: "Password requirements could be strengthened", status: "open" }
-  ];
+        // Fetch vulnerabilities
+        const vulnResponse = await fetch('/api/admin/security?action=vulnerabilities');
+        if (vulnResponse.ok) {
+          const vulns = await vulnResponse.json();
+          console.log('Vulnerabilities data:', vulns);
+          console.log('Type of vulnerabilities:', typeof vulns);
+          console.log('Is array:', Array.isArray(vulns));
+          
+          // Ensure we have a proper array and filter out any invalid objects
+          let validVulns = [];
+          if (Array.isArray(vulns)) {
+            validVulns = vulns.filter(vuln => {
+              const isValid = vuln && typeof vuln === 'object' && vuln.id;
+              if (!isValid) {
+                console.log('Filtering out invalid vulnerability:', vuln);
+              }
+              return isValid;
+            });
+          } else {
+            console.log('Vulnerabilities is not an array, setting to empty array');
+          }
+          
+          console.log('Valid vulnerabilities:', validVulns);
+          setVulnerabilities(validVulns);
+        }
+
+        // Fetch admin info
+        const adminResponse = await fetch('/api/admin/security?action=admin');
+        if (adminResponse.ok) {
+          const admin = await adminResponse.json();
+          setAdminInfo(admin);
+          setCredentialsForm(prev => ({
+            ...prev,
+            newEmail: admin.email || '',
+            newName: admin.name || ''
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching security data:', error);
+        toast.error('Failed to load security data');
+      } finally {
+        setIsLoadingSecurity(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchSecurityData();
+    }
+  }, [isAuthenticated]);
+
+  // Ensure vulnerabilities is always an array
+  useEffect(() => {
+    if (!Array.isArray(vulnerabilities)) {
+      console.log('Vulnerabilities is not an array, resetting to empty array');
+      console.log('Current vulnerabilities value:', vulnerabilities);
+      setVulnerabilities([]);
+    }
+  }, [vulnerabilities]);
+
+  // Ensure recentActivity is always an array
+  useEffect(() => {
+    if (!Array.isArray(recentActivity)) {
+      console.log('RecentActivity is not an array, resetting to empty array');
+      setRecentActivity([]);
+    }
+  }, [recentActivity]);
 
   // All hooks must be called before any conditional returns
   useEffect(() => {
@@ -54,15 +142,55 @@ export default function SecurityManagement() {
     }
   }, [isAuthenticated, isLoading, router]);
 
+  // Handle credential update
+  const handleUpdateCredentials = async (e) => {
+    e.preventDefault();
+    
+    try {
+      setIsUpdatingCredentials(true);
+      
+      const response = await fetch('/api/admin/security', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update-credentials',
+          ...credentialsForm
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success('Admin credentials updated successfully!');
+        setCredentialsForm({
+          currentPassword: '',
+          newEmail: result.admin.email,
+          newPassword: '',
+          newName: result.admin.name
+        });
+        setAdminInfo(result.admin);
+      } else {
+        toast.error(result.error || 'Failed to update credentials');
+      }
+    } catch (error) {
+      console.error('Error updating credentials:', error);
+      toast.error('Error updating credentials. Please try again.');
+    } finally {
+      setIsUpdatingCredentials(false);
+    }
+  };
+
   // Conditional returns after all hooks
-  if (isLoading) {
+  if (isLoading || isLoadingSecurity) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Loading...</p>
+      <AdminLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading security data...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
@@ -127,7 +255,7 @@ export default function SecurityManagement() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Security Score</p>
-                  <p className="text-3xl font-bold text-foreground">{securityMetrics.overallScore}</p>
+                  <p className="text-3xl font-bold text-foreground">{securityData.overallScore || 0}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
                   <Shield className="h-6 w-6 text-green-600" />
@@ -141,7 +269,7 @@ export default function SecurityManagement() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Vulnerabilities</p>
-                  <p className="text-3xl font-bold text-foreground">{securityMetrics.vulnerabilities}</p>
+                  <p className="text-3xl font-bold text-foreground">{securityData.vulnerabilityCount || 0}</p>
                 </div>
                 <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
                   <AlertTriangle className="h-6 w-6 text-yellow-600" />
@@ -155,7 +283,7 @@ export default function SecurityManagement() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Threats Blocked</p>
-                  <p className="text-3xl font-bold text-foreground">{securityMetrics.threatsBlocked}</p>
+                  <p className="text-3xl font-bold text-foreground">{securityData.threatsBlocked || 0}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
                   <Lock className="h-6 w-6 text-blue-600" />
@@ -276,28 +404,41 @@ export default function SecurityManagement() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {recentActivity.map((activity) => (
-                    <div key={activity.id} className="flex items-center space-x-4 p-4 rounded-lg bg-muted/30">
-                      {getStatusIcon(activity.status)}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground">{activity.action}</p>
-                        <div className="flex items-center space-x-4 mt-1">
-                          <div className="flex items-center space-x-1">
-                            <User className="h-3 w-3 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">{activity.user}</span>
+                  {Array.isArray(recentActivity) && recentActivity.length > 0 ? (
+                    recentActivity.map((activity) => {
+                      // Safety check to ensure activity is an object with required properties
+                      if (!activity || typeof activity !== 'object' || !activity.id) {
+                        return null;
+                      }
+                      
+                      return (
+                        <div key={activity.id} className="flex items-center space-x-4 p-4 rounded-lg bg-muted/30">
+                          {getStatusIcon(activity.status || 'info')}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground">{activity.action || 'Unknown Action'}</p>
+                            <div className="flex items-center space-x-4 mt-1">
+                              <div className="flex items-center space-x-1">
+                                <User className="h-3 w-3 text-muted-foreground" />
+                                <span className="text-xs text-muted-foreground">{activity.user || 'Unknown User'}</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <Globe className="h-3 w-3 text-muted-foreground" />
+                                <span className="text-xs text-muted-foreground">{activity.ip || 'Unknown IP'}</span>
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Globe className="h-3 w-3 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">{activity.ip}</span>
+                          <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                            <Clock className="h-3 w-3" />
+                            <span>{activity.createdAt ? new Date(activity.createdAt).toLocaleString() : 'Unknown Time'}</span>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        <span>{activity.time}</span>
-                      </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>No security events recorded yet.</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -312,29 +453,66 @@ export default function SecurityManagement() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {vulnerabilities.map((vuln) => (
-                    <div key={vuln.id} className="p-4 border border-border/50 rounded-lg">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <h4 className="font-semibold text-foreground">{vuln.title}</h4>
-                            <span className={`px-2 py-1 text-xs rounded-full ${getSeverityColor(vuln.severity)}`}>
-                              {vuln.severity.toUpperCase()}
-                            </span>
+                  {(() => {
+                    // Final safety check
+                    if (!Array.isArray(vulnerabilities)) {
+                      console.error('CRITICAL: Vulnerabilities is not an array!', vulnerabilities);
+                      return (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <CheckCircle className="h-12 w-12 mx-auto mb-4 text-green-500" />
+                          <p>No security vulnerabilities found!</p>
+                          <p className="text-sm">Your portfolio is secure.</p>
+                        </div>
+                      );
+                    }
+                    
+                    if (vulnerabilities.length === 0) {
+                      return (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <CheckCircle className="h-12 w-12 mx-auto mb-4 text-green-500" />
+                          <p>No security vulnerabilities found!</p>
+                          <p className="text-sm">Your portfolio is secure.</p>
+                        </div>
+                      );
+                    }
+                    
+                    return vulnerabilities.map((vuln, index) => {
+                      // Safety check to ensure vuln is an object with required properties
+                      if (!vuln || typeof vuln !== 'object' || !vuln.id) {
+                        console.log('Invalid vulnerability object at index', index, ':', vuln);
+                        return null;
+                      }
+                      
+                      return (
+                        <div key={vuln.id || index} className="p-4 border border-border/50 rounded-lg">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2 mb-2">
+                                <h4 className="font-semibold text-foreground">{vuln.title || 'Unknown Vulnerability'}</h4>
+                                <span className={`px-2 py-1 text-xs rounded-full ${getSeverityColor(vuln.severity || 'low')}`}>
+                                  {(vuln.severity || 'low').toUpperCase()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-muted-foreground mb-3">{vuln.description || 'No description available'}</p>
+                              {vuln.recommendation && (
+                                <p className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
+                                  <strong>Recommendation:</strong> {vuln.recommendation}
+                                </p>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button variant="outline" size="sm">
+                                View Details
+                              </Button>
+                              <Button size="sm">
+                                Fix Now
+                              </Button>
+                            </div>
                           </div>
-                          <p className="text-sm text-muted-foreground mb-3">{vuln.description}</p>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Button variant="outline" size="sm">
-                            View Details
-                          </Button>
-                          <Button size="sm">
-                            Fix Now
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                      );
+                    });
+                  })()}
                 </div>
               </CardContent>
             </Card>
@@ -342,6 +520,112 @@ export default function SecurityManagement() {
 
           {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
+            {/* Admin Credentials Management */}
+            <Card className="glass border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Key className="h-5 w-5" />
+                  <span>Admin Credentials</span>
+                </CardTitle>
+                <CardDescription>Update your admin login credentials</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleUpdateCredentials} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="currentPassword">Current Password</Label>
+                        <div className="relative">
+                          <Input
+                            id="currentPassword"
+                            type={showPassword ? "text" : "password"}
+                            value={credentialsForm.currentPassword}
+                            onChange={(e) => setCredentialsForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                            placeholder="Enter current password"
+                            required
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="newEmail">New Email</Label>
+                        <Input
+                          id="newEmail"
+                          type="email"
+                          value={credentialsForm.newEmail}
+                          onChange={(e) => setCredentialsForm(prev => ({ ...prev, newEmail: e.target.value }))}
+                          placeholder="Enter new email"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="newName">Display Name</Label>
+                        <Input
+                          id="newName"
+                          type="text"
+                          value={credentialsForm.newName}
+                          onChange={(e) => setCredentialsForm(prev => ({ ...prev, newName: e.target.value }))}
+                          placeholder="Enter display name"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="newPassword">New Password</Label>
+                        <div className="relative">
+                          <Input
+                            id="newPassword"
+                            type={showNewPassword ? "text" : "password"}
+                            value={credentialsForm.newPassword}
+                            onChange={(e) => setCredentialsForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                            placeholder="Enter new password (optional)"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                          >
+                            {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Password must be at least 8 characters with uppercase, lowercase, and number
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between pt-4 border-t">
+                    <div className="text-sm text-muted-foreground">
+                      <p>Current Admin: {adminInfo.email}</p>
+                      <p>Last Updated: {adminInfo.updatedAt ? new Date(adminInfo.updatedAt).toLocaleDateString() : 'Unknown'}</p>
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={isUpdatingCredentials || !credentialsForm.currentPassword}
+                      className="flex items-center space-x-2"
+                    >
+                      <Save className={`h-4 w-4 ${isUpdatingCredentials ? 'animate-pulse' : ''}`} />
+                      <span>{isUpdatingCredentials ? 'Updating...' : 'Update Credentials'}</span>
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+
+            {/* Security Settings */}
             <Card className="glass border-border/50">
               <CardHeader>
                 <CardTitle>Security Settings</CardTitle>

@@ -3,6 +3,7 @@
 import { useAdmin } from "@/contexts/admin-context";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import AdminLayout from "@/components/admin/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,51 +27,88 @@ export default function PerformanceManagement() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isLoadingPerformance, setIsLoadingPerformance] = useState(true);
+  const [performanceData, setPerformanceData] = useState([]);
+  const [currentMetrics, setCurrentMetrics] = useState({});
+  const [recommendations, setRecommendations] = useState([]);
+  const [stats, setStats] = useState({});
 
-  const performanceData = [
-    { name: "Jan", score: 85, loadTime: 2.1, requests: 45 },
-    { name: "Feb", score: 88, loadTime: 1.9, requests: 42 },
-    { name: "Mar", score: 92, loadTime: 1.6, requests: 38 },
-    { name: "Apr", score: 89, loadTime: 1.8, requests: 41 },
-    { name: "May", score: 94, loadTime: 1.4, requests: 35 },
-    { name: "Jun", score: 96, loadTime: 1.2, requests: 32 },
-  ];
+  // Fetch performance data on component mount
+  useEffect(() => {
+    const fetchPerformanceData = async () => {
+      try {
+        setIsLoadingPerformance(true);
+        
+        // Fetch current metrics
+        const metricsResponse = await fetch('/api/admin/performance');
+        if (metricsResponse.ok) {
+          const metrics = await metricsResponse.json();
+          setCurrentMetrics(metrics);
+        }
 
-  const currentMetrics = {
-    pageSpeed: 96,
-    loadTime: 1.2,
-    requests: 32,
-    bundleSize: "245 KB",
-    images: "1.2 MB",
-    scripts: "180 KB",
-    styles: "65 KB"
-  };
+        // Fetch trends data
+        const trendsResponse = await fetch('/api/admin/performance?action=trends');
+        if (trendsResponse.ok) {
+          const trends = await trendsResponse.json();
+          setPerformanceData(trends);
+        }
 
-  const recommendations = [
-    {
-      type: "success",
-      title: "Great! Your site is optimized",
-      description: "Your performance metrics are excellent. Keep up the good work!",
-      icon: CheckCircle
-    },
-    {
-      type: "warning",
-      title: "Consider image optimization",
-      description: "Some images could be compressed further to improve load times.",
-      icon: AlertTriangle
-    },
-    {
-      type: "info",
-      title: "Enable caching",
-      description: "Implement browser caching to improve repeat visit performance.",
-      icon: Clock
+        // Fetch analysis and recommendations
+        const analysisResponse = await fetch('/api/admin/performance?action=analyze');
+        if (analysisResponse.ok) {
+          const analysis = await analysisResponse.json();
+          setRecommendations(analysis.recommendations || []);
+        }
+
+        // Fetch stats
+        const statsResponse = await fetch('/api/admin/performance?action=stats');
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json();
+          setStats(statsData);
+        }
+      } catch (error) {
+        console.error('Error fetching performance data:', error);
+        toast.error('Failed to load performance data');
+      } finally {
+        setIsLoadingPerformance(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchPerformanceData();
     }
-  ];
+  }, [isAuthenticated]);
 
   const handleAnalyze = async () => {
-    setIsAnalyzing(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsAnalyzing(false);
+    try {
+      setIsAnalyzing(true);
+      
+      // Run performance measurement
+      const response = await fetch('/api/admin/performance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'measure' })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        toast.success('Performance analysis completed!');
+        
+        // Refresh data
+        const metricsResponse = await fetch('/api/admin/performance');
+        if (metricsResponse.ok) {
+          const metrics = await metricsResponse.json();
+          setCurrentMetrics(metrics);
+        }
+      } else {
+        toast.error('Failed to run performance analysis');
+      }
+    } catch (error) {
+      console.error('Error running analysis:', error);
+      toast.error('Error running performance analysis');
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   // All hooks must be called before any conditional returns
@@ -81,14 +119,16 @@ export default function PerformanceManagement() {
   }, [isAuthenticated, isLoading, router]);
 
   // Conditional returns after all hooks
-  if (isLoading) {
+  if (isLoading || isLoadingPerformance) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Loading...</p>
+      <AdminLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading performance data...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
@@ -127,7 +167,7 @@ export default function PerformanceManagement() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Page Speed Score</p>
-                  <p className="text-3xl font-bold text-foreground">{currentMetrics.pageSpeed}</p>
+                  <p className="text-3xl font-bold text-foreground">{currentMetrics.pageSpeed || 0}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
                   <Zap className="h-6 w-6 text-green-600" />
@@ -141,7 +181,7 @@ export default function PerformanceManagement() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Load Time</p>
-                  <p className="text-3xl font-bold text-foreground">{currentMetrics.loadTime}s</p>
+                  <p className="text-3xl font-bold text-foreground">{currentMetrics.loadTime || 0}s</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
                   <Clock className="h-6 w-6 text-blue-600" />
@@ -155,7 +195,7 @@ export default function PerformanceManagement() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">HTTP Requests</p>
-                  <p className="text-3xl font-bold text-foreground">{currentMetrics.requests}</p>
+                  <p className="text-3xl font-bold text-foreground">{currentMetrics.requests || 0}</p>
                 </div>
                 <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
                   <Activity className="h-6 w-6 text-purple-600" />
@@ -169,7 +209,7 @@ export default function PerformanceManagement() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Bundle Size</p>
-                  <p className="text-3xl font-bold text-foreground">{currentMetrics.bundleSize}</p>
+                  <p className="text-3xl font-bold text-foreground">{currentMetrics.bundleSize ? `${currentMetrics.bundleSize} KB` : '0 KB'}</p>
                 </div>
                 <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center">
                   <BarChart3 className="h-6 w-6 text-orange-600" />
@@ -235,22 +275,29 @@ export default function PerformanceManagement() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {recommendations.map((rec, index) => {
-                    const Icon = rec.icon;
-                    return (
-                      <div key={index} className="flex items-start space-x-3 p-4 rounded-lg bg-muted/30">
-                        <Icon className={`h-5 w-5 mt-0.5 ${
-                          rec.type === 'success' ? 'text-green-500' :
-                          rec.type === 'warning' ? 'text-yellow-500' :
-                          'text-blue-500'
-                        }`} />
-                        <div>
-                          <h4 className="font-semibold text-foreground">{rec.title}</h4>
-                          <p className="text-sm text-muted-foreground">{rec.description}</p>
+                  {recommendations.length > 0 ? (
+                    recommendations.map((rec, index) => {
+                      const Icon = rec.type === 'success' ? CheckCircle : 
+                                  rec.type === 'warning' ? AlertTriangle : Clock;
+                      return (
+                        <div key={index} className="flex items-start space-x-3 p-4 rounded-lg bg-muted/30">
+                          <Icon className={`h-5 w-5 mt-0.5 ${
+                            rec.type === 'success' ? 'text-green-500' :
+                            rec.type === 'warning' ? 'text-yellow-500' :
+                            'text-blue-500'
+                          }`} />
+                          <div>
+                            <h4 className="font-semibold text-foreground">{rec.title}</h4>
+                            <p className="text-sm text-muted-foreground">{rec.description}</p>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>No performance data available. Click "Run Analysis" to get started.</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -268,19 +315,19 @@ export default function PerformanceManagement() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Images</span>
-                      <span className="font-semibold">{currentMetrics.images}</span>
+                      <span className="font-semibold">{currentMetrics.images ? `${currentMetrics.images} KB` : '0 KB'}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">JavaScript</span>
-                      <span className="font-semibold">{currentMetrics.scripts}</span>
+                      <span className="font-semibold">{currentMetrics.scripts ? `${currentMetrics.scripts} KB` : '0 KB'}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">CSS</span>
-                      <span className="font-semibold">{currentMetrics.styles}</span>
+                      <span className="font-semibold">{currentMetrics.styles ? `${currentMetrics.styles} KB` : '0 KB'}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Total Bundle</span>
-                      <span className="font-semibold">{currentMetrics.bundleSize}</span>
+                      <span className="font-semibold">{currentMetrics.bundleSize ? `${currentMetrics.bundleSize} KB` : '0 KB'}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -297,36 +344,36 @@ export default function PerformanceManagement() {
                       <span className="text-sm text-muted-foreground">Performance</span>
                       <div className="flex items-center space-x-2">
                         <div className="w-20 bg-muted rounded-full h-2">
-                          <div className="bg-green-500 h-2 rounded-full" style={{ width: '96%' }}></div>
+                          <div className="bg-green-500 h-2 rounded-full" style={{ width: `${currentMetrics.pageSpeed || 0}%` }}></div>
                         </div>
-                        <span className="text-sm font-semibold">96</span>
+                        <span className="text-sm font-semibold">{currentMetrics.pageSpeed || 0}</span>
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Accessibility</span>
                       <div className="flex items-center space-x-2">
                         <div className="w-20 bg-muted rounded-full h-2">
-                          <div className="bg-green-500 h-2 rounded-full" style={{ width: '92%' }}></div>
+                          <div className="bg-green-500 h-2 rounded-full" style={{ width: `${currentMetrics.accessibility || 0}%` }}></div>
                         </div>
-                        <span className="text-sm font-semibold">92</span>
+                        <span className="text-sm font-semibold">{currentMetrics.accessibility || 0}</span>
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Best Practices</span>
                       <div className="flex items-center space-x-2">
                         <div className="w-20 bg-muted rounded-full h-2">
-                          <div className="bg-green-500 h-2 rounded-full" style={{ width: '95%' }}></div>
+                          <div className="bg-green-500 h-2 rounded-full" style={{ width: `${currentMetrics.bestPractices || 0}%` }}></div>
                         </div>
-                        <span className="text-sm font-semibold">95</span>
+                        <span className="text-sm font-semibold">{currentMetrics.bestPractices || 0}</span>
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">SEO</span>
                       <div className="flex items-center space-x-2">
                         <div className="w-20 bg-muted rounded-full h-2">
-                          <div className="bg-green-500 h-2 rounded-full" style={{ width: '94%' }}></div>
+                          <div className="bg-green-500 h-2 rounded-full" style={{ width: `${currentMetrics.seo || 0}%` }}></div>
                         </div>
-                        <span className="text-sm font-semibold">94</span>
+                        <span className="text-sm font-semibold">{currentMetrics.seo || 0}</span>
                       </div>
                     </div>
                   </div>

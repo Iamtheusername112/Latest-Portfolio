@@ -3,6 +3,7 @@
 import { useAdmin } from "@/contexts/admin-context";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import AdminLayout from "@/components/admin/admin-layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,8 @@ export default function AppearanceSettings() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("colors");
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isLoadingAppearance, setIsLoadingAppearance] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [appearanceData, setAppearanceData] = useState({
     colors: {
@@ -133,9 +136,54 @@ export default function AppearanceSettings() {
     });
   };
 
-  const handleSave = () => {
-    // In a real app, this would save to a database and update the CSS variables
-    console.log("Saving appearance settings...", appearanceData);
+  // Fetch appearance settings on component mount
+  useEffect(() => {
+    const fetchAppearanceSettings = async () => {
+      try {
+        setIsLoadingAppearance(true);
+        const response = await fetch('/api/admin/appearance');
+        if (response.ok) {
+          const data = await response.json();
+          setAppearanceData(data);
+        } else {
+          console.error('Failed to fetch appearance settings');
+        }
+      } catch (error) {
+        console.error('Error fetching appearance settings:', error);
+      } finally {
+        setIsLoadingAppearance(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchAppearanceSettings();
+    }
+  }, [isAuthenticated]);
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      const response = await fetch('/api/admin/appearance', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(appearanceData)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Appearance settings saved successfully:', result);
+        toast.success('Appearance settings saved successfully!');
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to save appearance settings:', errorData);
+        toast.error(`Failed to save appearance settings: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error saving appearance settings:', error);
+      toast.error('Error saving appearance settings. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleReset = () => {
@@ -186,14 +234,16 @@ export default function AppearanceSettings() {
   }, [isAuthenticated, isLoading, router]);
 
   // Conditional returns after all hooks
-  if (isLoading) {
+  if (isLoading || isLoadingAppearance) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Loading...</p>
+      <AdminLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading appearance settings...</p>
+          </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
@@ -231,10 +281,11 @@ export default function AppearanceSettings() {
             </Button>
             <Button
               onClick={handleSave}
+              disabled={isSaving}
               className="flex items-center space-x-2"
             >
-              <Save className="h-4 w-4" />
-              <span>Save Changes</span>
+              <Save className={`h-4 w-4 ${isSaving ? 'animate-pulse' : ''}`} />
+              <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
             </Button>
           </div>
         </div>

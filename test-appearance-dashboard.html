@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Appearance Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        .form-group { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .color-preview { width: 30px; height: 30px; border: 1px solid #ccc; display: inline-block; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Appearance Dashboard Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Fetch Appearance Settings</h2>
+        <button onclick="fetchAppearanceSettings()">Fetch Current Appearance Settings</button>
+        <div id="fetch-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Update Appearance Settings</h2>
+        <div class="form-group">
+            <label>Primary Color:</label>
+            <input type="color" id="primaryColor" value="#6366f1">
+            <div class="color-preview" id="primaryPreview" style="background-color: #6366f1;"></div>
+        </div>
+        <div class="form-group">
+            <label>Secondary Color:</label>
+            <input type="color" id="secondaryColor" value="#8b5cf6">
+            <div class="color-preview" id="secondaryPreview" style="background-color: #8b5cf6;"></div>
+        </div>
+        <div class="form-group">
+            <label>Font Family:</label>
+            <select id="fontFamily">
+                <option value="Inter">Inter</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="Lato">Lato</option>
+                <option value="Poppins">Poppins</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Theme Mode:</label>
+            <select id="themeMode">
+                <option value="system">System</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Max Width:</label>
+            <input type="text" id="maxWidth" value="1200px" placeholder="1200px">
+        </div>
+        <button onclick="updateAppearanceSettings()">Update Appearance Settings</button>
+        <div id="update-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Test CSS Variable Application</h2>
+        <button onclick="testCSSVariables()">Apply Settings to CSS Variables</button>
+        <div id="css-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Test Visual Effects</h2>
+        <button onclick="testVisualEffects()">Toggle Visual Effects</button>
+        <div id="effects-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Reset to Defaults</h2>
+        <button onclick="resetToDefaults()">Reset to Default Settings</button>
+        <div id="reset-result"></div>
+    </div>
+
+    <script>
+        // Color preview updates
+        document.getElementById('primaryColor').addEventListener('input', function(e) {
+            document.getElementById('primaryPreview').style.backgroundColor = e.target.value;
+        });
+
+        document.getElementById('secondaryColor').addEventListener('input', function(e) {
+            document.getElementById('secondaryPreview').style.backgroundColor = e.target.value;
+        });
+
+        async function fetchAppearanceSettings() {
+            const resultDiv = document.getElementById('fetch-result');
+            resultDiv.innerHTML = '<p>Loading appearance settings...</p>';
+            
+            try {
+                const response = await fetch('/api/admin/appearance');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Appearance Settings Fetched!</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    
+                    // Populate form fields
+                    if (data.colors) {
+                        document.getElementById('primaryColor').value = data.colors.primary || '#6366f1';
+                        document.getElementById('secondaryColor').value = data.colors.secondary || '#8b5cf6';
+                        document.getElementById('primaryPreview').style.backgroundColor = data.colors.primary || '#6366f1';
+                        document.getElementById('secondaryPreview').style.backgroundColor = data.colors.secondary || '#8b5cf6';
+                    }
+                    if (data.typography) {
+                        document.getElementById('fontFamily').value = data.typography.fontFamily || 'Inter';
+                    }
+                    if (data.theme) {
+                        document.getElementById('themeMode').value = data.theme.mode || 'system';
+                    }
+                    if (data.layout) {
+                        document.getElementById('maxWidth').value = data.layout.maxWidth || '1200px';
+                    }
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        async function updateAppearanceSettings() {
+            const resultDiv = document.getElementById('update-result');
+            resultDiv.innerHTML = '<p>Updating appearance settings...</p>';
+            
+            const appearanceData = {
+                colors: {
+                    primary: document.getElementById('primaryColor').value,
+                    secondary: document.getElementById('secondaryColor').value,
+                    accent: "#06b6d4",
+                    background: "#ffffff",
+                    foreground: "#0f0f0f",
+                    muted: "#f4f4f5",
+                    mutedForeground: "#71717a",
+                    border: "#e4e4e7",
+                    input: "#ffffff",
+                    ring: document.getElementById('primaryColor').value
+                },
+                typography: {
+                    fontFamily: document.getElementById('fontFamily').value,
+                    headingFont: document.getElementById('fontFamily').value,
+                    bodyFont: document.getElementById('fontFamily').value,
+                    fontSize: "16px",
+                    lineHeight: "1.6",
+                    letterSpacing: "0.025em"
+                },
+                layout: {
+                    maxWidth: document.getElementById('maxWidth').value,
+                    padding: "2rem",
+                    borderRadius: "0.5rem",
+                    shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                    animation: "smooth"
+                },
+                theme: {
+                    mode: document.getElementById('themeMode').value,
+                    glassmorphism: true,
+                    gradients: true,
+                    animations: true,
+                    particles: false
+                }
+            };
+            
+            try {
+                const response = await fetch('/api/admin/appearance', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(appearanceData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Appearance Settings Updated!</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        function testCSSVariables() {
+            const resultDiv = document.getElementById('css-result');
+            const root = document.documentElement;
+            
+            // Apply some test CSS variables
+            root.style.setProperty('--primary', document.getElementById('primaryColor').value);
+            root.style.setProperty('--secondary', document.getElementById('secondaryColor').value);
+            root.style.setProperty('--font-sans', document.getElementById('fontFamily').value);
+            root.style.setProperty('--max-width', document.getElementById('maxWidth').value);
+            
+            resultDiv.className = 'test-section success';
+            resultDiv.innerHTML = `
+                <h3>✅ CSS Variables Applied!</h3>
+                <p>Check the page styling - colors and fonts should have changed.</p>
+                <p>Primary: ${document.getElementById('primaryColor').value}</p>
+                <p>Secondary: ${document.getElementById('secondaryColor').value}</p>
+                <p>Font: ${document.getElementById('fontFamily').value}</p>
+                <p>Max Width: ${document.getElementById('maxWidth').value}</p>
+            `;
+        }
+
+        function testVisualEffects() {
+            const resultDiv = document.getElementById('effects-result');
+            const body = document.body;
+            
+            // Toggle some visual effects
+            body.classList.toggle('glassmorphism-enabled');
+            body.classList.toggle('gradients-enabled');
+            body.classList.toggle('animations-enabled');
+            
+            resultDiv.className = 'test-section success';
+            resultDiv.innerHTML = `
+                <h3>✅ Visual Effects Toggled!</h3>
+                <p>Check the page for visual changes:</p>
+                <ul>
+                    <li>Glassmorphism: ${body.classList.contains('glassmorphism-enabled') ? 'Enabled' : 'Disabled'}</li>
+                    <li>Gradients: ${body.classList.contains('gradients-enabled') ? 'Enabled' : 'Disabled'}</li>
+                    <li>Animations: ${body.classList.contains('animations-enabled') ? 'Enabled' : 'Disabled'}</li>
+                </ul>
+            `;
+        }
+
+        async function resetToDefaults() {
+            const resultDiv = document.getElementById('reset-result');
+            resultDiv.innerHTML = '<p>Resetting to default settings...</p>';
+            
+            const defaultData = {
+                colors: {
+                    primary: "#6366f1",
+                    secondary: "#8b5cf6",
+                    accent: "#06b6d4",
+                    background: "#ffffff",
+                    foreground: "#0f0f0f",
+                    muted: "#f4f4f5",
+                    mutedForeground: "#71717a",
+                    border: "#e4e4e7",
+                    input: "#ffffff",
+                    ring: "#6366f1"
+                },
+                typography: {
+                    fontFamily: "Inter",
+                    headingFont: "Inter",
+                    bodyFont: "Inter",
+                    fontSize: "16px",
+                    lineHeight: "1.6",
+                    letterSpacing: "0.025em"
+                },
+                layout: {
+                    maxWidth: "1200px",
+                    padding: "2rem",
+                    borderRadius: "0.5rem",
+                    shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                    animation: "smooth"
+                },
+                theme: {
+                    mode: "system",
+                    glassmorphism: true,
+                    gradients: true,
+                    animations: true,
+                    particles: false
+                }
+            };
+            
+            try {
+                const response = await fetch('/api/admin/appearance', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(defaultData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-section success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Reset to Defaults Successful!</h3>
+                        <p>Settings have been reset to default values.</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    
+                    // Reset form fields
+                    document.getElementById('primaryColor').value = '#6366f1';
+                    document.getElementById('secondaryColor').value = '#8b5cf6';
+                    document.getElementById('fontFamily').value = 'Inter';
+                    document.getElementById('themeMode').value = 'system';
+                    document.getElementById('maxWidth').value = '1200px';
+                    document.getElementById('primaryPreview').style.backgroundColor = '#6366f1';
+                    document.getElementById('secondaryPreview').style.backgroundColor = '#8b5cf6';
+                } else {
+                    resultDiv.className = 'test-section error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error!</h3>
+                        <p>Status: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-section error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Network Error!</h3>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+
+        // Load appearance settings on page load
+        window.onload = function() {
+            fetchAppearanceSettings();
+        };
+    </script>
+</body>
+</html>
