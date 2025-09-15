@@ -23,14 +23,13 @@ export const metadata = {
   authors: [{ name: "Iwu Francis" }],
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.svg", sizes: "16x16", type: "image/svg+xml" },
-      { url: "/favicon.svg", sizes: "32x32", type: "image/svg+xml" }
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/favicon.svg", type: "image/svg+xml" }
     ],
     apple: [
       { url: "/favicon.svg", sizes: "180x180", type: "image/svg+xml" }
     ],
-    shortcut: "/favicon.svg"
+    shortcut: "/favicon.ico"
   },
   openGraph: {
     title: "Iwu Francis - Full Stack Web Developer",
