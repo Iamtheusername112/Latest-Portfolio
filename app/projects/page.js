@@ -1,5 +1,5 @@
 import Header from '@/components/header'
-import DynamicProjects from '@/components/dynamic-projects'
+import Projects from '@/components/projects'
 import DynamicFooter from '@/components/dynamic-footer'
 
 export const metadata = {
@@ -15,7 +15,7 @@ export default function ProjectsPage() {
     <div className='min-h-screen'>
       <Header />
       <main>
-        <DynamicProjects />
+        <Projects />
       </main>
       <DynamicFooter />
     </div>
