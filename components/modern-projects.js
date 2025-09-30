@@ -123,11 +123,11 @@ export default function ModernProjects() {
   }
 
   return (
-    <section className='py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden'>
+    <section className='py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden'>
       {/* Background Elements */}
       <div className='absolute inset-0 opacity-10'>
-        <div className='absolute top-20 left-10 w-96 h-96 bg-purple-200 rounded-full filter blur-3xl'></div>
-        <div className='absolute bottom-20 right-10 w-96 h-96 bg-pink-200 rounded-full filter blur-3xl'></div>
+        <div className='absolute top-20 left-10 w-96 h-96 bg-purple-200 dark:bg-purple-800 rounded-full filter blur-3xl'></div>
+        <div className='absolute bottom-20 right-10 w-96 h-96 bg-pink-200 dark:bg-pink-800 rounded-full filter blur-3xl'></div>
       </div>
 
       <div className='container mx-auto px-4 relative z-10'>
@@ -138,13 +138,13 @@ export default function ModernProjects() {
           viewport={{ once: true }}
           className='text-center mb-16'
         >
-          <h2 className='text-5xl md:text-6xl font-bold text-gray-900 mb-6'>
+          <h2 className='text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6'>
             My{' '}
             <span className='bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'>
               Projects
             </span>
           </h2>
-          <p className='text-xl text-gray-600 max-w-3xl mx-auto'>
+          <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto'>
             A collection of projects that showcase my skills and passion for
             creating innovative digital solutions.
           </p>
@@ -157,7 +157,7 @@ export default function ModernProjects() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className='text-3xl font-bold text-gray-900 mb-12 text-center'
+            className='text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center'
           >
             Featured Projects
           </motion.h3>
@@ -174,7 +174,7 @@ export default function ModernProjects() {
                 onMouseEnter={() => setHoveredProject(project.id)}
                 onMouseLeave={() => setHoveredProject(null)}
               >
-                <div className='bg-white rounded-2xl overflow-hidden border border-gray-200 hover:border-purple-500 transition-all duration-300 transform hover:scale-105 shadow-lg'>
+                <div className='bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-300 transform hover:scale-105 shadow-lg'>
                   <div className='relative overflow-hidden'>
                     {project.imageUrl ? (
                       <img
@@ -219,10 +219,10 @@ export default function ModernProjects() {
                   </div>
 
                   <div className='p-6'>
-                    <h3 className='text-2xl font-bold text-gray-900 mb-3'>
+                    <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-3'>
                       {project.title}
                     </h3>
-                    <p className='text-gray-600 mb-4 leading-relaxed'>
+                    <p className='text-gray-600 dark:text-gray-300 mb-4 leading-relaxed'>
                       {project.description}
                     </p>
 
@@ -230,7 +230,7 @@ export default function ModernProjects() {
                       {project.technologies.map((tech) => (
                         <span
                           key={tech}
-                          className='px-3 py-1 bg-gray-100 text-purple-600 rounded-full text-sm font-medium'
+                          className='px-3 py-1 bg-gray-100 dark:bg-gray-700 text-purple-600 dark:text-purple-400 rounded-full text-sm font-medium'
                         >
                           {tech}
                         </span>
@@ -250,7 +250,7 @@ export default function ModernProjects() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className='text-3xl font-bold text-gray-900 mb-12 text-center'
+            className='text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center'
           >
             More Projects
           </motion.h3>
@@ -267,7 +267,7 @@ export default function ModernProjects() {
                 onMouseEnter={() => setHoveredProject(project.id)}
                 onMouseLeave={() => setHoveredProject(null)}
               >
-                <div className='bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-purple-500 transition-all duration-300 transform hover:scale-105 shadow-lg'>
+                <div className='bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-300 transform hover:scale-105 shadow-lg'>
                   <div className='relative overflow-hidden'>
                     {project.imageUrl ? (
                       <img
@@ -313,10 +313,10 @@ export default function ModernProjects() {
                   </div>
 
                   <div className='p-4'>
-                    <h3 className='text-lg font-bold text-gray-900 mb-2'>
+                    <h3 className='text-lg font-bold text-gray-900 dark:text-white mb-2'>
                       {project.title}
                     </h3>
-                    <p className='text-gray-600 text-sm mb-3 line-clamp-2'>
+                    <p className='text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2'>
                       {project.description}
                     </p>
 
@@ -324,13 +324,13 @@ export default function ModernProjects() {
                       {project.technologies.slice(0, 3).map((tech) => (
                         <span
                           key={tech}
-                          className='px-2 py-1 bg-gray-100 text-purple-600 rounded text-xs font-medium'
+                          className='px-2 py-1 bg-gray-100 dark:bg-gray-700 text-purple-600 dark:text-purple-400 rounded text-xs font-medium'
                         >
                           {tech}
                         </span>
                       ))}
                       {project.technologies.length > 3 && (
-                        <span className='px-2 py-1 bg-gray-100 text-gray-500 rounded text-xs'>
+                        <span className='px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded text-xs'>
                           +{project.technologies.length - 3}
                         </span>
                       )}

@@ -45,7 +45,7 @@ export default function ModernHeader() {
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-lg'
+          ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-lg'
           : 'bg-transparent'
       }`}
     >
@@ -56,7 +56,7 @@ export default function ModernHeader() {
             whileHover={{ scale: 1.05 }}
             className='flex items-center gap-2'
           >
-            <DynamicLogo size='lg' showText={true} className='text-gray-900' />
+            <DynamicLogo size='lg' showText={true} className='text-gray-900 dark:text-white' />
           </motion.div>
 
           {/* Desktop Navigation */}
@@ -69,7 +69,7 @@ export default function ModernHeader() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -2 }}
-                className='text-gray-600 hover:text-gray-900 transition-colors duration-300 font-medium relative group'
+                className='text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors duration-300 font-medium relative group'
               >
                 {item.name}
                 <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 group-hover:w-full transition-all duration-300'></span>

@@ -106,12 +106,12 @@ export default function ModernHero() {
   }
 
   return (
-    <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-blue-50 to-purple-50'>
+    <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900'>
       {/* Animated Background Elements */}
       <div className='absolute inset-0'>
-        <div className='absolute top-1/4 left-1/4 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob'></div>
-        <div className='absolute top-1/3 right-1/4 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-2000'></div>
-        <div className='absolute -bottom-8 left-1/3 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-4000'></div>
+        <div className='absolute top-1/4 left-1/4 w-72 h-72 bg-purple-200 dark:bg-purple-800 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob'></div>
+        <div className='absolute top-1/3 right-1/4 w-72 h-72 bg-blue-200 dark:bg-blue-800 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-2000'></div>
+        <div className='absolute -bottom-8 left-1/3 w-72 h-72 bg-pink-200 dark:bg-pink-800 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-4000'></div>
       </div>
 
       {/* Floating Particles */}
@@ -152,19 +152,19 @@ export default function ModernHero() {
           transition={{ duration: 0.8 }}
           className='mb-8'
         >
-          <h1 className='text-6xl md:text-8xl font-bold text-gray-900 mb-6'>
+          <h1 className='text-6xl md:text-8xl font-bold text-gray-900 dark:text-white mb-6'>
             <span className='bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent'>
               Hello, I'm
             </span>
             <br />
-            <span className='text-gray-800'>
+            <span className='text-gray-800 dark:text-gray-200'>
               {heroData?.name || 'Your Name'}
             </span>
           </h1>
 
-          <div className='text-3xl md:text-5xl font-semibold text-gray-700 mb-8 h-16 flex items-center justify-center'>
-            <span className='text-purple-600'>I'm a </span>
-            <span className='text-gray-900 ml-2 border-r-2 border-purple-600 animate-pulse'>
+          <div className='text-3xl md:text-5xl font-semibold text-gray-700 dark:text-gray-300 mb-8 h-16 flex items-center justify-center'>
+            <span className='text-purple-600 dark:text-purple-400'>I'm a </span>
+            <span className='text-gray-900 dark:text-white ml-2 border-r-2 border-purple-600 dark:border-purple-400 animate-pulse'>
               {currentText}
             </span>
           </div>
@@ -176,7 +176,7 @@ export default function ModernHero() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className='mb-12'
         >
-          <p className='text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
+          <p className='text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed'>
             {heroData?.description ||
               'Crafting digital experiences that blend creativity with cutting-edge technology. Passionate about building solutions that make a difference.'}
           </p>
@@ -222,12 +222,12 @@ export default function ModernHero() {
             onClick={() => handleNavClick('#about')}
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className='w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center cursor-pointer hover:border-purple-600 transition-colors duration-300'
+            className='w-6 h-10 border-2 border-gray-400 dark:border-gray-500 rounded-full flex justify-center cursor-pointer hover:border-purple-600 dark:hover:border-purple-400 transition-colors duration-300'
           >
             <motion.div
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className='w-1 h-3 bg-gray-400 rounded-full mt-2'
+              className='w-1 h-3 bg-gray-400 dark:bg-gray-500 rounded-full mt-2'
             />
           </motion.button>
         </motion.div>

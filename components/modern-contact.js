@@ -89,12 +89,12 @@ export default function ModernContact() {
   return (
     <section
       id='contact'
-      className='py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden'
+      className='py-20 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 relative overflow-hidden'
     >
       {/* Background Elements */}
       <div className='absolute inset-0'>
-        <div className='absolute top-1/4 left-1/4 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob'></div>
-        <div className='absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000'></div>
+        <div className='absolute top-1/4 left-1/4 w-96 h-96 bg-purple-200 dark:bg-purple-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob'></div>
+        <div className='absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-200 dark:bg-pink-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000'></div>
       </div>
 
       <div className='container mx-auto px-4 relative z-10'>
@@ -105,13 +105,13 @@ export default function ModernContact() {
           viewport={{ once: true }}
           className='text-center mb-16'
         >
-          <h2 className='text-5xl md:text-6xl font-bold text-gray-900 mb-6'>
+          <h2 className='text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6'>
             Get In{' '}
             <span className='bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'>
               Touch
             </span>
           </h2>
-          <p className='text-xl text-gray-600 max-w-3xl mx-auto'>
+          <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto'>
             Ready to bring your ideas to life? Let's discuss your project and
             create something amazing together.
           </p>
@@ -126,11 +126,11 @@ export default function ModernContact() {
             viewport={{ once: true }}
             className='space-y-8'
           >
-            <div className='bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 shadow-lg'>
-              <h3 className='text-2xl font-bold text-gray-900 mb-6'>
+            <div className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg'>
+              <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-6'>
                 Let's Connect
               </h3>
-              <p className='text-gray-600 mb-8 leading-relaxed'>
+              <p className='text-gray-600 dark:text-gray-300 mb-8 leading-relaxed'>
                 I'm always excited to work on new projects and collaborate with
                 amazing people. Whether you have a specific project in mind or
                 just want to chat about technology, I'd love to hear from you!
@@ -146,14 +146,14 @@ export default function ModernContact() {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     viewport={{ once: true }}
                     whileHover={{ scale: 1.02 }}
-                    className='flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-300 group'
+                    className='flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-300 group'
                   >
                     <div className='text-2xl'>{info.icon}</div>
                     <div>
-                      <h4 className='text-gray-900 font-semibold group-hover:text-purple-600 transition-colors'>
+                      <h4 className='text-gray-900 dark:text-white font-semibold group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors'>
                         {info.title}
                       </h4>
-                      <p className='text-gray-600 text-sm'>{info.value}</p>
+                      <p className='text-gray-600 dark:text-gray-300 text-sm'>{info.value}</p>
                     </div>
                   </motion.a>
                 ))}
@@ -166,9 +166,9 @@ export default function ModernContact() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className='bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 shadow-lg'
+              className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg'
             >
-              <h3 className='text-xl font-bold text-gray-900 mb-6'>
+              <h3 className='text-xl font-bold text-gray-900 dark:text-white mb-6'>
                 Follow Me
               </h3>
               <div className='flex gap-4'>
