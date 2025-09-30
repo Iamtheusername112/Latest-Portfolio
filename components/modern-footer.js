@@ -1,12 +1,29 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 
 export default function ModernFooter() {
   const currentYear = new Date().getFullYear()
   const [footerData, setFooterData] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  // Accordion state for mobile
+  const [openSections, setOpenSections] = useState({
+    brand: false,
+    quickLinks: false,
+    services: false,
+    contact: false,
+  })
+
+  // Toggle accordion section
+  const toggleSection = (section) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }))
+  }
 
   // Fetch footer data from API
   useEffect(() => {
@@ -132,6 +149,41 @@ export default function ModernFooter() {
     )
   }
 
+  // Accordion Item Component
+  const AccordionItem = ({ title, section, children, isOpen, onToggle }) => (
+    <div className='border-b border-gray-200 last:border-b-0'>
+      <button
+        onClick={() => onToggle(section)}
+        className='w-full flex items-center justify-between py-4 px-0 text-left focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset rounded-lg'
+      >
+        <h3 className='text-gray-900 font-bold text-lg'>{title}</h3>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {isOpen ? (
+            <ChevronUp className='w-5 h-5 text-gray-600' />
+          ) : (
+            <ChevronDown className='w-5 h-5 text-gray-600' />
+          )}
+        </motion.div>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className='overflow-hidden'
+          >
+            <div className='pb-4'>{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+
   return (
     <footer className='bg-gradient-to-b from-gray-50 to-white relative overflow-hidden border-t border-gray-200'>
       {/* Background Elements */}
@@ -141,8 +193,159 @@ export default function ModernFooter() {
       </div>
 
       <div className='container mx-auto px-4 relative z-10'>
-        {/* Main Footer Content */}
-        <div className='py-16'>
+        {/* Mobile Accordion Layout */}
+        <div className='block md:hidden py-8'>
+          <AccordionItem
+            title='About'
+            section='brand'
+            isOpen={openSections.brand}
+            onToggle={toggleSection}
+          >
+            <div className='flex items-center gap-2 mb-4'>
+              <div className='w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center'>
+                <span className='text-white font-bold text-sm'>
+                  {footerData?.brand?.name?.charAt(0) || 'Y'}
+                </span>
+              </div>
+              <span className='text-gray-900 font-bold text-lg'>
+                {footerData?.brand?.name || 'YourName'}
+              </span>
+            </div>
+            <p className='text-gray-600 mb-4 leading-relaxed text-sm'>
+              {footerData?.brand?.description ||
+                "Passionate developer creating digital experiences that make a difference. Let's build something amazing together."}
+            </p>
+            <div className='flex gap-3'>
+              {socialLinks.map((social, index) => (
+                <motion.a
+                  key={social.key}
+                  href={social.url}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 ${social.color} transition-all duration-300`}
+                  title={social.name}
+                >
+                  <span className='text-sm'>{social.icon}</span>
+                </motion.a>
+              ))}
+            </div>
+          </AccordionItem>
+
+          <AccordionItem
+            title='Quick Links'
+            section='quickLinks'
+            isOpen={openSections.quickLinks}
+            onToggle={toggleSection}
+          >
+            <ul className='space-y-3'>
+              {quickLinks.map((link, index) => (
+                <motion.li
+                  key={link.key}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <a
+                    href={link.href}
+                    className='text-gray-600 hover:text-purple-600 transition-colors duration-300 flex items-center group text-sm'
+                  >
+                    <span className='w-0 group-hover:w-2 h-0.5 bg-purple-400 mr-0 group-hover:mr-2 transition-all duration-300'></span>
+                    {link.name}
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+          </AccordionItem>
+
+          <AccordionItem
+            title='Services'
+            section='services'
+            isOpen={openSections.services}
+            onToggle={toggleSection}
+          >
+            <ul className='space-y-3'>
+              {services.map((service, index) => (
+                <motion.li
+                  key={service.key}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <a
+                    href={service.href}
+                    className='text-gray-600 hover:text-purple-600 transition-colors duration-300 flex items-center group text-sm'
+                  >
+                    <span className='w-0 group-hover:w-2 h-0.5 bg-purple-400 mr-0 group-hover:mr-2 transition-all duration-300'></span>
+                    {service.name}
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+          </AccordionItem>
+
+          <AccordionItem
+            title='Contact'
+            section='contact'
+            isOpen={openSections.contact}
+            onToggle={toggleSection}
+          >
+            <div className='space-y-4'>
+              <div className='flex items-center gap-3'>
+                <span className='text-purple-600 text-sm'>📧</span>
+                <a
+                  href={`mailto:${
+                    footerData?.contactInfo?.email || 'hello@example.com'
+                  }`}
+                  className='text-gray-600 hover:text-gray-900 transition-colors duration-300 text-sm'
+                >
+                  {footerData?.contactInfo?.email || 'hello@example.com'}
+                </a>
+              </div>
+
+              <div className='flex items-center gap-3'>
+                <span className='text-purple-600 text-sm'>📍</span>
+                <span className='text-gray-600 text-sm'>
+                  {footerData?.contactInfo?.location || 'Your City, Country'}
+                </span>
+              </div>
+
+              <div className='flex items-center gap-3'>
+                <span className='text-purple-600 text-sm'>💼</span>
+                <span className='text-gray-600 text-sm'>
+                  {footerData?.contactInfo?.availability ||
+                    'Available for remote work'}
+                </span>
+              </div>
+
+              {/* Newsletter Signup */}
+              <div className='mt-4'>
+                <h4 className='text-gray-900 font-semibold mb-2 text-sm'>
+                  Stay Updated
+                </h4>
+                <div className='flex gap-2'>
+                  <input
+                    type='email'
+                    placeholder='Your email'
+                    className='flex-1 px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:border-purple-500 focus:outline-none text-xs'
+                  />
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className='px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg text-xs font-semibold hover:shadow-lg transition-all duration-300'
+                  >
+                    Subscribe
+                  </motion.button>
+                </div>
+              </div>
+            </div>
+          </AccordionItem>
+        </div>
+
+        {/* Desktop Layout */}
+        <div className='hidden md:block py-16'>
           <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-8'>
             {/* Brand Section */}
             <motion.div
@@ -310,44 +513,44 @@ export default function ModernFooter() {
             </motion.div>
           </div>
         </div>
-
-        {/* Bottom Bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className='border-t border-gray-200 py-6'
-        >
-          <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
-            <p className='text-gray-400 text-sm'>
-              © {currentYear} {footerData?.brand?.name || 'YourName'}. All
-              rights reserved.
-            </p>
-
-            <div className='flex gap-6 text-sm'>
-              <a
-                href='#'
-                className='text-gray-500 hover:text-gray-900 transition-colors duration-300'
-              >
-                Privacy Policy
-              </a>
-              <a
-                href='#'
-                className='text-gray-500 hover:text-gray-900 transition-colors duration-300'
-              >
-                Terms of Service
-              </a>
-              <a
-                href='#'
-                className='text-gray-500 hover:text-gray-900 transition-colors duration-300'
-              >
-                Cookie Policy
-              </a>
-            </div>
-          </div>
-        </motion.div>
       </div>
+
+      {/* Bottom Bar */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className='border-t border-gray-200 py-6'
+      >
+        <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
+          <p className='text-gray-400 text-sm'>
+            © {currentYear} {footerData?.brand?.name || 'YourName'}. All rights
+            reserved.
+          </p>
+
+          <div className='flex gap-6 text-sm'>
+            <a
+              href='#'
+              className='text-gray-500 hover:text-gray-900 transition-colors duration-300'
+            >
+              Privacy Policy
+            </a>
+            <a
+              href='#'
+              className='text-gray-500 hover:text-gray-900 transition-colors duration-300'
+            >
+              Terms of Service
+            </a>
+            <a
+              href='#'
+              className='text-gray-500 hover:text-gray-900 transition-colors duration-300'
+            >
+              Cookie Policy
+            </a>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Floating Elements */}
       <div className='absolute inset-0 pointer-events-none'>
