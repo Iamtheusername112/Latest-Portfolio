@@ -64,7 +64,7 @@ const DynamicFooter = () => {
             },
             {
               platform: 'mail',
-              url: 'mailto:iwufrancis571@gmail.com',
+              url: 'mailto:iwufrancischisom20@gmail.com',
               label: 'Email',
             },
           ],
@@ -75,7 +75,7 @@ const DynamicFooter = () => {
             { name: 'Contact', href: '#contact', type: 'scroll' },
           ],
           contactInfo: {
-            email: 'iwufrancis571@gmail.com',
+            email: 'iwufrancischisom20@gmail.com',
             location: 'Berlin, Germany',
             availability: 'Available for remote work',
           },
@@ -235,7 +235,10 @@ const DynamicFooter = () => {
                     size='icon'
                     className='h-10 w-10 rounded-full glass hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover:scale-110'
                     onClick={() =>
-                      window.open('mailto:iwufrancis571@gmail.com', '_blank')
+                      window.open(
+                        'mailto:iwufrancischisom20@gmail.com',
+                        '_blank'
+                      )
                     }
                     aria-label='Email'
                   >
@@ -278,7 +281,7 @@ const DynamicFooter = () => {
                   Get In Touch
                 </h3>
                 <div className='space-y-2 text-sm text-muted-foreground'>
-                  <p>iwufrancis571@gmail.com</p>
+                  <p>iwufrancischisom20@gmail.com</p>
                   <p>Berlin, Germany</p>
                   <p>Available for remote work</p>
                 </div>

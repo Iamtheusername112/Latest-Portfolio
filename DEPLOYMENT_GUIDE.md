@@ -12,6 +12,7 @@ This guide will walk you through deploying your Next.js portfolio application to
 ## Step 1: Prepare Your Application for Production
 
 ### 1.1 Environment Variables
+
 Create a `.env.production` file with your production settings:
 
 ```env
@@ -27,11 +28,12 @@ NEXT_PUBLIC_APP_URL="https://yourdomain.com"
 NODE_ENV="production"
 
 # Security
-ADMIN_EMAIL="iwufrancis571@gmail.com"
+ADMIN_EMAIL="iwufrancischisom20@gmail.com"
 ADMIN_PASSWORD="YourSecurePassword123!"
 ```
 
 ### 1.2 Build Optimization
+
 Update your `next.config.mjs` for production:
 
 ```javascript
@@ -51,17 +53,19 @@ const nextConfig = {
   httpAgentOptions: {
     keepAlive: true,
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
 ```
 
 ### 1.3 Security Headers
+
 Your middleware.js already includes security headers, but ensure they're production-ready.
 
 ## Step 2: Set Up Hostinger VPS/Cloud Hosting
 
 ### 2.1 Access Your VPS
+
 1. Log into your Hostinger control panel
 2. Go to VPS section
 3. Access your VPS via SSH or terminal
@@ -166,7 +170,7 @@ server {
     # SSL Configuration (will be set up with Let's Encrypt)
     ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
-    
+
     # Security headers
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-XSS-Protection "1; mode=block" always;
@@ -248,21 +252,23 @@ Add the following:
 
 ```javascript
 module.exports = {
-  apps: [{
-    name: 'portfolio',
-    script: 'npm',
-    args: 'start',
-    cwd: '/var/www/portfolio',
-    instances: 1,
-    autorestart: true,
-    watch: false,
-    max_memory_restart: '1G',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000
-    }
-  }]
-};
+  apps: [
+    {
+      name: 'portfolio',
+      script: 'npm',
+      args: 'start',
+      cwd: '/var/www/portfolio',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+      },
+    },
+  ],
+}
 ```
 
 ### 6.2 Start the Application
@@ -292,6 +298,7 @@ sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -
 ### 7.2 Wait for DNS Propagation
 
 DNS changes can take 24-48 hours to fully propagate. You can check status using:
+
 - https://dnschecker.org
 - `nslookup yourdomain.com`
 

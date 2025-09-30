@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import { Github, Linkedin, Mail, Globe, Phone } from 'lucide-react'
 
 export default function ModernContact() {
   const [formData, setFormData] = useState({
@@ -62,26 +63,26 @@ export default function ModernContact() {
     {
       icon: '📧',
       title: 'Email',
-      value: 'hello@yourname.com',
-      link: 'mailto:hello@yourname.com',
+      value: 'iwufrancischisom20@gmail.com',
+      link: 'mailto:iwufrancischisom20@gmail.com',
     },
     {
       icon: '📱',
       title: 'Phone',
-      value: '+1 (555) 123-4567',
-      link: 'tel:+15551234567',
+      value: '+4915238291223',
+      link: 'tel:+4915238291223',
     },
     {
-      icon: '📍',
-      title: 'Location',
-      value: 'San Francisco, CA',
-      link: '#',
+      icon: '🌐',
+      title: 'Portfolio',
+      value: 'www.francisiwu.com',
+      link: 'https://www.francisiwu.com',
     },
     {
       icon: '💼',
       title: 'LinkedIn',
-      value: 'linkedin.com/in/yourname',
-      link: 'https://linkedin.com/in/yourname',
+      value: 'linkedin.com/in/francis-iwu',
+      link: 'https://www.linkedin.com/in/francis-iwu?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
     },
   ]
 
@@ -172,19 +173,42 @@ export default function ModernContact() {
               </h3>
               <div className='flex gap-4'>
                 {[
-                  { name: 'GitHub', icon: '🐙', color: 'hover:bg-gray-600' },
-                  { name: 'Twitter', icon: '🐦', color: 'hover:bg-blue-500' },
-                  { name: 'LinkedIn', icon: '💼', color: 'hover:bg-blue-600' },
-                  { name: 'Instagram', icon: '📸', color: 'hover:bg-pink-500' },
+                  {
+                    name: 'GitHub',
+                    icon: <Github className='h-6 w-6' />,
+                    color: 'hover:bg-gray-600',
+                    href: 'https://github.com/Iamtheusername112/Latest-Portfolio',
+                  },
+                  {
+                    name: 'LinkedIn',
+                    icon: <Linkedin className='h-6 w-6' />,
+                    color: 'hover:bg-blue-600',
+                    href: 'https://www.linkedin.com/in/francis-iwu?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
+                  },
+                  {
+                    name: 'Email',
+                    icon: <Mail className='h-6 w-6' />,
+                    color: 'hover:bg-red-500',
+                    href: 'mailto:iwufrancischisom20@gmail.com',
+                  },
+                  {
+                    name: 'Portfolio',
+                    icon: <Globe className='h-6 w-6' />,
+                    color: 'hover:bg-green-500',
+                    href: 'https://www.francisiwu.com',
+                  },
                 ].map((social, index) => (
                   <motion.a
                     key={social.name}
-                    href='#'
+                    href={social.href}
+                    target='_blank'
+                    rel='noopener noreferrer'
                     whileHover={{ scale: 1.1, y: -5 }}
                     whileTap={{ scale: 0.95 }}
                     className={`w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-700 ${social.color} transition-colors duration-300`}
+                    title={social.name}
                   >
-                    <span className='text-lg'>{social.icon}</span>
+                    {social.icon}
                   </motion.a>
                 ))}
               </div>

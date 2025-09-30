@@ -37,18 +37,25 @@ export default function ModernFooter() {
         // Fallback data
         setFooterData({
           brand: {
-            name: 'Your Name',
+            name: 'Francis Iwu',
             tagline: 'Full Stack Developer',
             description:
               'Full Stack Web Developer passionate about creating innovative digital solutions and beautiful user experiences.',
           },
           socialLinks: [
-            { platform: 'github', url: '#', label: 'GitHub' },
-            { platform: 'linkedin', url: '#', label: 'LinkedIn' },
-            { platform: 'instagram', url: '#', label: 'Instagram' },
+            {
+              platform: 'github',
+              url: 'https://github.com/Iamtheusername112/Latest-Portfolio',
+              label: 'GitHub',
+            },
+            {
+              platform: 'linkedin',
+              url: 'https://www.linkedin.com/in/francis-iwu?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
+              label: 'LinkedIn',
+            },
             {
               platform: 'mail',
-              url: 'mailto:hello@example.com',
+              url: 'mailto:iwufrancischisom20@gmail.com',
               label: 'Email',
             },
           ],
@@ -59,9 +66,11 @@ export default function ModernFooter() {
             { name: 'Contact', href: '#contact' },
           ],
           contactInfo: {
-            email: 'hello@example.com',
-            location: 'Your City, Country',
+            email: 'iwufrancischisom20@gmail.com',
+            location: 'Germany',
             availability: 'Available for remote work',
+            phone: '+4915238291223',
+            website: 'www.francisiwu.com',
           },
         })
       } finally {
