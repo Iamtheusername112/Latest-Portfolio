@@ -1,30 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Github, Linkedin, Mail } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Mail } from 'lucide-react'
 import Logo from '@/components/logo'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
 
-  const socialLinks = [
-    {
-      icon: <Github className='h-5 w-5' />,
-      href: 'https://github.com/Iamtheusername112/Latest-Portfolio',
-      label: 'GitHub',
-    },
-    {
-      icon: <Linkedin className='h-5 w-5' />,
-      href: 'https://www.linkedin.com/in/francis-iwu?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
-      label: 'LinkedIn',
-    },
-    {
-      icon: <Mail className='h-5 w-5' />,
-      href: 'mailto:iwufrancischisom20@gmail.com',
-      label: 'Email',
-    },
-  ]
 
   const quickLinks = [
     { name: 'Home', href: '#home' },
