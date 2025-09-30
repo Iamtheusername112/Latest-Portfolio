@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import DynamicLogo from './dynamic-logo'
 
 export default function ModernHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -55,10 +56,7 @@ export default function ModernHeader() {
             whileHover={{ scale: 1.05 }}
             className='flex items-center gap-2'
           >
-            <div className='w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center'>
-              <span className='text-white font-bold text-lg'>Y</span>
-            </div>
-            <span className='text-gray-900 font-bold text-xl'>YourName</span>
+            <DynamicLogo size='lg' showText={true} className='text-gray-900' />
           </motion.div>
 
           {/* Desktop Navigation */}

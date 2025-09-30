@@ -147,6 +147,13 @@ export default function AdminDashboard() {
       color: "bg-blue-500",
     },
     {
+      title: "Manage Logo",
+      description: "Customize your site's logo and branding",
+      icon: Palette,
+      href: "/admin/logo",
+      color: "bg-green-500",
+    },
+    {
       title: "Manage Media",
       description: "Upload and organize images and files",
       icon: Image,

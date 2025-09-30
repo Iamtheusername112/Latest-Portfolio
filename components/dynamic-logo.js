@@ -98,7 +98,7 @@ const DynamicLogo = ({
         />
       )}
 
-      {/* Text alongside logo */}
+      {/* Text alongside logo (only for image/svg types when showText is true) */}
       {shouldShowText && textContent && type !== 'text' && (
         <span className={cn('font-bold gradient-text', textSizeClasses[textSize || size])}>
           {textContent}

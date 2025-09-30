@@ -97,16 +97,57 @@ export default function LogoManagement() {
     const file = event.target.files[0];
     if (!file) return;
 
-    // For now, we'll use a placeholder URL
-    // In production, you'd upload to a cloud storage service
-    const imageUrl = URL.createObjectURL(file);
-    
-    setLogoData(prev => ({
-      ...prev,
-      type: 'image',
-      imageUrl,
-      alt: file.name.split('.')[0]
-    }));
+    // Validate file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      setMessage('File size must be less than 5MB');
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setMessage('Please upload a valid image file (PNG, JPG, JPEG, SVG, or WebP)');
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      setMessage('');
+
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'logo');
+
+      // Upload file to the media API
+      const uploadResponse = await fetch('/api/admin/media/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        
+        setLogoData(prev => ({
+          ...prev,
+          type: 'image',
+          imageUrl: uploadData.url,
+          alt: file.name.split('.')[0]
+        }));
+        
+        setMessage('Logo image uploaded successfully!');
+        setTimeout(() => setMessage(''), 3000);
+      } else {
+        const error = await uploadResponse.json();
+        setMessage(error.message || 'Error uploading logo image');
+      }
+    } catch (error) {
+      console.error('Error uploading logo:', error);
+      setMessage('Error uploading logo image');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleTypeChange = (type) => {
@@ -281,21 +322,42 @@ export default function LogoManagement() {
                   <Input
                     id="imageUpload"
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
                     onChange={handleFileUpload}
                     className="flex-1"
+                    disabled={isSaving}
                   />
-                  <Button variant="outline" size="icon">
+                  <Button variant="outline" size="icon" disabled={isSaving}>
                     <Upload className="h-4 w-4" />
                   </Button>
                 </div>
+                <p className="text-xs text-muted-foreground">
+                  Supported formats: PNG, JPG, JPEG, SVG, WebP (Max size: 5MB)
+                </p>
                 {logoData.imageUrl && (
-                  <Input
-                    value={logoData.imageUrl}
-                    onChange={(e) => setLogoData(prev => ({ ...prev, imageUrl: e.target.value }))}
-                    placeholder="Or enter image URL"
-                    className="mt-2"
-                  />
+                  <div className="mt-3">
+                    <label className="text-sm font-medium">Current Image URL</label>
+                    <Input
+                      value={logoData.imageUrl}
+                      onChange={(e) => setLogoData(prev => ({ ...prev, imageUrl: e.target.value }))}
+                      placeholder="Or enter image URL"
+                      className="mt-1"
+                    />
+                    <div className="mt-2 p-2 border rounded-lg bg-muted/30">
+                      <img 
+                        src={logoData.imageUrl} 
+                        alt="Logo preview"
+                        className="max-h-20 max-w-32 object-contain"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
+                      <div className="hidden text-xs text-muted-foreground">
+                        Image preview unavailable
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             )}
