@@ -141,13 +141,13 @@ export default function ModernAbout() {
           viewport={{ once: true }}
           className='text-center mb-16'
         >
-          <h2 className='text-5xl md:text-6xl font-bold text-gray-900 mb-6'>
+          <h2 className='text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6'>
             {aboutData?.title || 'About'}{' '}
             <span className='bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'>
               Me
             </span>
           </h2>
-          <p className='text-xl text-gray-600 max-w-3xl mx-auto'>
+          <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto'>
             {aboutData?.content ||
               'Passionate developer with a love for creating beautiful, functional, and user-centered digital experiences.'}
           </p>
@@ -155,7 +155,7 @@ export default function ModernAbout() {
 
         {/* Tab Navigation */}
         <div className='flex justify-center mb-12'>
-          <div className='bg-gray-100 rounded-full p-2 flex gap-2'>
+          <div className='bg-gray-100 dark:bg-gray-800 rounded-full p-2 flex gap-2'>
             {[
               { id: 'about', label: 'About' },
               { id: 'skills', label: 'Skills' },
@@ -167,7 +167,7 @@ export default function ModernAbout() {
                 className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
                   activeTab === tab.id
                     ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
                 }`}
               >
                 {tab.label}
@@ -193,19 +193,19 @@ export default function ModernAbout() {
                 viewport={{ once: true }}
                 className='relative'
               >
-                <div className='bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-300 border border-purple-200'>
-                  <div className='bg-white rounded-xl p-6 transform -rotate-3 shadow-lg'>
-                    <h3 className='text-2xl font-bold text-gray-900 mb-4'>
+                <div className='bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-2xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-300 border border-purple-200 dark:border-purple-700'>
+                  <div className='bg-white dark:bg-gray-800 rounded-xl p-6 transform -rotate-3 shadow-lg'>
+                    <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
                       My Story
                     </h3>
-                    <p className='text-gray-600 leading-relaxed mb-4'>
+                    <p className='text-gray-600 dark:text-gray-300 leading-relaxed mb-4'>
                       I'm a passionate full-stack developer with over 5 years of
                       experience creating digital solutions that make a real
                       impact. My journey began with curiosity about how things
                       work, and it evolved into a love for building applications
                       that solve real-world problems.
                     </p>
-                    <p className='text-gray-600 leading-relaxed'>
+                    <p className='text-gray-600 dark:text-gray-300 leading-relaxed'>
                       When I'm not coding, you'll find me exploring new
                       technologies, contributing to open-source projects, or
                       sharing knowledge with the developer community.
@@ -221,21 +221,21 @@ export default function ModernAbout() {
                 viewport={{ once: true }}
                 className='space-y-6'
               >
-                <div className='bg-white rounded-xl p-6 border border-gray-200 shadow-lg'>
-                  <h4 className='text-xl font-semibold text-gray-900 mb-3'>
+                <div className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg'>
+                  <h4 className='text-xl font-semibold text-gray-900 dark:text-white mb-3'>
                     🎯 Mission
                   </h4>
-                  <p className='text-gray-600'>
+                  <p className='text-gray-600 dark:text-gray-300'>
                     To create technology that enhances human experiences and
                     solves complex problems with elegant solutions.
                   </p>
                 </div>
 
-                <div className='bg-white rounded-xl p-6 border border-gray-200 shadow-lg'>
-                  <h4 className='text-xl font-semibold text-gray-900 mb-3'>
+                <div className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg'>
+                  <h4 className='text-xl font-semibold text-gray-900 dark:text-white mb-3'>
                     💡 Philosophy
                   </h4>
-                  <p className='text-gray-600'>
+                  <p className='text-gray-600 dark:text-gray-300'>
                     I believe in continuous learning, clean code, and putting
                     users at the center of every design decision.
                   </p>
