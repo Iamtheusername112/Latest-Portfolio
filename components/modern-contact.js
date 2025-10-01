@@ -93,8 +93,8 @@ export default function ModernContact() {
     >
       {/* Background Elements */}
       <div className='absolute inset-0'>
-        <div className='absolute top-1/4 left-1/4 w-96 h-96 bg-purple-200 dark:bg-purple-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob'></div>
-        <div className='absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-200 dark:bg-pink-800 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000'></div>
+        <div className='absolute top-1/4 left-1/4 w-96 h-96 bg-blue-200 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-3xl opacity-40 animate-blob'></div>
+        <div className='absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-200 dark:bg-cyan-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-3xl opacity-40 animate-blob animation-delay-2000'></div>
       </div>
 
       <div className='container mx-auto px-4 relative z-10'>
@@ -107,7 +107,7 @@ export default function ModernContact() {
         >
           <h2 className='text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6'>
             Get In{' '}
-            <span className='bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'>
+            <span className='text-theme-gradient'>
               Touch
             </span>
           </h2>
@@ -150,7 +150,7 @@ export default function ModernContact() {
                   >
                     <div className='text-2xl'>{info.icon}</div>
                     <div>
-                      <h4 className='text-gray-900 dark:text-white font-semibold group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors'>
+                      <h4 className='text-gray-900 dark:text-white font-semibold group-hover:text-theme-accent transition-colors'>
                         {info.title}
                       </h4>
                       <p className='text-gray-600 dark:text-gray-300 text-sm'>{info.value}</p>
@@ -285,7 +285,7 @@ export default function ModernContact() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className='w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-colors duration-300'
+                  className='w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:border-theme-accent focus:outline-none transition-colors duration-300'
                   placeholder="What's this about?"
                 />
               </motion.div>
@@ -305,7 +305,7 @@ export default function ModernContact() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className='w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-colors duration-300 resize-none'
+                  className='w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:border-theme-accent focus:outline-none transition-colors duration-300 resize-none'
                   placeholder='Tell me about your project...'
                 />
               </motion.div>
@@ -315,7 +315,7 @@ export default function ModernContact() {
                 disabled={isSubmitting}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className='w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
+                className='w-full py-4 btn-theme-primary font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
               >
                 {isSubmitting ? (
                   <div className='flex items-center justify-center gap-2'>

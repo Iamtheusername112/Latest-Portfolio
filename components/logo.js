@@ -36,7 +36,7 @@ const Logo = ({
         className={cn(sizeClasses[size])}
       />
       {showText && (
-        <span className={cn("font-bold gradient-text", textSizeClasses[size])}>
+        <span className={cn("font-bold text-theme-gradient", textSizeClasses[size])}>
           Iwu Francis
         </span>
       )}

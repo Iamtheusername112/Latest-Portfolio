@@ -59,8 +59,8 @@ export default function ModernAbout() {
           'from-green-500 to-emerald-500',
           'from-blue-600 to-indigo-600',
           'from-yellow-500 to-orange-500',
-          'from-pink-500 to-rose-500',
-          'from-purple-500 to-violet-500',
+          'from-teal-500 to-cyan-500',
+          'from-blue-500 to-indigo-500',
         ][index % 6],
       }))
     : [
@@ -72,11 +72,11 @@ export default function ModernAbout() {
         { name: 'Node.js', level: 90, color: 'from-green-500 to-emerald-500' },
         { name: 'TypeScript', level: 88, color: 'from-blue-600 to-indigo-600' },
         { name: 'Python', level: 85, color: 'from-yellow-500 to-orange-500' },
-        { name: 'UI/UX Design', level: 92, color: 'from-pink-500 to-rose-500' },
+        { name: 'UI/UX Design', level: 92, color: 'from-teal-500 to-cyan-500' },
         {
           name: 'Database Design',
           level: 87,
-          color: 'from-purple-500 to-violet-500',
+          color: 'from-blue-500 to-indigo-500',
         },
       ]
 
@@ -113,7 +113,7 @@ export default function ModernAbout() {
       <section className='py-20 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 relative overflow-hidden'>
         <div className='container mx-auto px-4'>
           <div className='text-center'>
-            <div className='w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
+            <div className='w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
             <p className='text-gray-900 dark:text-gray-300 font-medium'>Loading about section...</p>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default function ModernAbout() {
         >
           <h2 className='text-5xl md:text-6xl font-bold mb-6'>
             <span className='text-black dark:text-white'>{aboutData?.title || 'About'}</span>{' '}
-            <span className='bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'>
+            <span className='text-theme-gradient'>
               Me
             </span>
           </h2>
@@ -166,7 +166,7 @@ export default function ModernAbout() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
                   activeTab === tab.id
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                    ? 'btn-theme-primary shadow-lg'
                     : 'text-gray-900 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 font-semibold'
                 }`}
               >
@@ -193,7 +193,7 @@ export default function ModernAbout() {
                 viewport={{ once: true }}
                 className='relative'
               >
-                <div className='bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-2xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-300 border border-purple-200 dark:border-purple-700'>
+                <div className='bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 rounded-2xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-300 border border-blue-200 dark:border-blue-700'>
                   <div className='bg-white dark:bg-gray-800 rounded-xl p-6 transform -rotate-3 shadow-lg'>
                     <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
                       My Story
@@ -259,7 +259,7 @@ export default function ModernAbout() {
                     <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
                       {skill.name}
                     </h3>
-                    <span className='text-purple-600 font-semibold'>
+                    <span className='text-theme-accent font-semibold'>
                       {skill.level}%
                     </span>
                   </div>
@@ -286,7 +286,7 @@ export default function ModernAbout() {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.2 }}
                   viewport={{ once: true }}
-                  className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400 transition-colors duration-300 shadow-lg'
+                  className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-theme-accent transition-colors duration-300 shadow-lg'
                 >
                   <div className='flex items-start gap-4'>
                     <div className='text-3xl'>{exp.icon}</div>
@@ -294,7 +294,7 @@ export default function ModernAbout() {
                       <h3 className='text-xl font-semibold text-gray-900 dark:text-white mb-2'>
                         {exp.title}
                       </h3>
-                      <p className='text-purple-600 font-medium mb-2'>
+                      <p className='text-theme-accent font-medium mb-2'>
                         {exp.company} • {exp.period}
                       </p>
                       <p className='text-gray-900 dark:text-gray-300 font-normal'>{exp.description}</p>

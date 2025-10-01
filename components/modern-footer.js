@@ -150,7 +150,7 @@ export default function ModernFooter() {
       <footer className='bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden border-t border-gray-200 dark:border-gray-700'>
         <div className='container mx-auto px-4 py-8'>
           <div className='text-center'>
-            <div className='w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
+            <div className='w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
             <p className='text-gray-600 dark:text-gray-300'>Loading footer...</p>
           </div>
         </div>
@@ -163,7 +163,7 @@ export default function ModernFooter() {
     <div className='border-b border-gray-200 last:border-b-0'>
       <button
         onClick={() => onToggle(section)}
-        className='w-full flex items-center justify-between py-4 px-0 text-left focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-inset rounded-lg'
+        className='w-full flex items-center justify-between py-4 px-0 text-left focus:outline-none focus:ring-2 focus:ring-theme-accent focus:ring-inset rounded-lg'
       >
         <h3 className='text-gray-900 dark:text-white dark:text-white font-bold text-lg'>{title}</h3>
         <motion.div
@@ -197,8 +197,8 @@ export default function ModernFooter() {
     <footer className='bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden border-t border-gray-200 dark:border-gray-700'>
       {/* Background Elements */}
       <div className='absolute inset-0 opacity-10'>
-        <div className='absolute top-0 left-1/4 w-96 h-96 bg-purple-200 dark:bg-purple-800 rounded-full filter blur-3xl'></div>
-        <div className='absolute bottom-0 right-1/4 w-96 h-96 bg-pink-200 dark:bg-pink-800 rounded-full filter blur-3xl'></div>
+        <div className='absolute top-0 left-1/4 w-96 h-96 bg-blue-200 dark:bg-blue-900 rounded-full filter blur-3xl'></div>
+        <div className='absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-200 dark:bg-cyan-900 rounded-full filter blur-3xl'></div>
       </div>
 
       <div className='container mx-auto px-4 relative z-10'>
@@ -211,7 +211,7 @@ export default function ModernFooter() {
             onToggle={toggleSection}
           >
             <div className='flex items-center gap-2 mb-4'>
-              <div className='w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center'>
+              <div className='w-8 h-8 bg-theme-gradient rounded-lg flex items-center justify-center'>
                 <span className='text-white font-bold text-sm'>
                   {footerData?.brand?.name?.charAt(0) || 'Y'}
                 </span>
@@ -303,7 +303,7 @@ export default function ModernFooter() {
           >
             <div className='space-y-4'>
               <div className='flex items-center gap-3'>
-                <span className='text-purple-600 text-sm'>📧</span>
+                <span className='text-theme-accent text-sm'>📧</span>
                 <a
                   href={`mailto:${
                     footerData?.contactInfo?.email || 'hello@example.com'
@@ -315,14 +315,14 @@ export default function ModernFooter() {
               </div>
 
               <div className='flex items-center gap-3'>
-                <span className='text-purple-600 text-sm'>📍</span>
+                <span className='text-theme-accent text-sm'>📍</span>
                 <span className='text-gray-600 dark:text-gray-300 text-sm'>
                   {footerData?.contactInfo?.location || 'Your City, Country'}
                 </span>
               </div>
 
               <div className='flex items-center gap-3'>
-                <span className='text-purple-600 text-sm'>💼</span>
+                <span className='text-theme-accent text-sm'>💼</span>
                 <span className='text-gray-600 dark:text-gray-300 text-sm'>
                   {footerData?.contactInfo?.availability ||
                     'Available for remote work'}
@@ -338,12 +338,12 @@ export default function ModernFooter() {
                   <input
                     type='email'
                     placeholder='Your email'
-                    className='flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-purple-500 focus:outline-none text-xs'
+                    className='flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-theme-accent focus:outline-none text-xs'
                   />
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className='px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg text-xs font-semibold hover:shadow-lg transition-all duration-300'
+                    className='px-3 py-2 btn-theme-primary rounded-lg text-xs font-semibold hover:shadow-lg transition-all duration-300'
                   >
                     Subscribe
                   </motion.button>
@@ -365,7 +365,7 @@ export default function ModernFooter() {
               className='lg:col-span-1'
             >
               <div className='flex items-center gap-2 mb-6'>
-                <div className='w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center'>
+                <div className='w-10 h-10 bg-theme-gradient rounded-lg flex items-center justify-center'>
                   <span className='text-white font-bold text-lg'>
                     {footerData?.brand?.name?.charAt(0) || 'Y'}
                   </span>
@@ -421,7 +421,7 @@ export default function ModernFooter() {
                   >
                     <a
                       href={link.href}
-                      className='text-gray-600 dark:text-gray-300 hover:text-purple-600 transition-colors duration-300 flex items-center group'
+                      className='text-gray-600 dark:text-gray-300 hover:text-blue-700 transition-colors duration-300 flex items-center group'
                     >
                       <span className='w-0 group-hover:w-2 h-0.5 bg-purple-400 mr-0 group-hover:mr-2 transition-all duration-300'></span>
                       {link.name}
@@ -450,7 +450,7 @@ export default function ModernFooter() {
                   >
                     <a
                       href={service.href}
-                      className='text-gray-600 dark:text-gray-300 hover:text-purple-600 transition-colors duration-300 flex items-center group'
+                      className='text-gray-600 dark:text-gray-300 hover:text-blue-700 transition-colors duration-300 flex items-center group'
                     >
                       <span className='w-0 group-hover:w-2 h-0.5 bg-purple-400 mr-0 group-hover:mr-2 transition-all duration-300'></span>
                       {service.name}
@@ -472,7 +472,7 @@ export default function ModernFooter() {
               </h3>
               <div className='space-y-4'>
                 <div className='flex items-center gap-3'>
-                  <span className='text-purple-600'>📧</span>
+                  <span className='text-theme-accent'>📧</span>
                   <a
                     href={`mailto:${
                       footerData?.contactInfo?.email || 'hello@example.com'
@@ -484,14 +484,14 @@ export default function ModernFooter() {
                 </div>
 
                 <div className='flex items-center gap-3'>
-                  <span className='text-purple-600'>📍</span>
+                  <span className='text-theme-accent'>📍</span>
                   <span className='text-gray-600 dark:text-gray-300'>
                     {footerData?.contactInfo?.location || 'Your City, Country'}
                   </span>
                 </div>
 
                 <div className='flex items-center gap-3'>
-                  <span className='text-purple-600'>💼</span>
+                  <span className='text-theme-accent'>💼</span>
                   <span className='text-gray-600 dark:text-gray-300'>
                     {footerData?.contactInfo?.availability ||
                       'Available for remote work'}
@@ -508,12 +508,12 @@ export default function ModernFooter() {
                   <input
                     type='email'
                     placeholder='Your email'
-                    className='flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-purple-500 focus:outline-none text-sm'
+                    className='flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-theme-accent focus:outline-none text-sm'
                   />
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className='px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg text-sm font-semibold hover:shadow-lg transition-all duration-300'
+                    className='px-4 py-2 btn-theme-primary rounded-lg text-sm font-semibold hover:shadow-lg transition-all duration-300'
                   >
                     Subscribe
                   </motion.button>

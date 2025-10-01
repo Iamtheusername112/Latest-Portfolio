@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider as ColorThemeProvider } from "@/contexts/theme-context";
 import { AdminProvider } from "@/contexts/admin-context";
 import ThemeTransition from "@/components/theme-transition";
 import DynamicMetadata from "@/components/dynamic-metadata";
@@ -49,7 +50,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-        <meta name="theme-color" content="#6366f1" />
+        <meta name="theme-color" content="#1E40AF" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
@@ -61,14 +62,16 @@ export default function RootLayout({ children }) {
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-          storageKey="portfolio-theme"
+          storageKey="portfolio-dark-mode"
         >
-          <AdminProvider>
-            <ThemeTransition />
-            <DynamicMetadata />
-            {children}
-            <Toaster richColors position="top-right" />
-          </AdminProvider>
+          <ColorThemeProvider>
+            <AdminProvider>
+              <ThemeTransition />
+              <DynamicMetadata />
+              {children}
+              <Toaster richColors position="top-right" />
+            </AdminProvider>
+          </ColorThemeProvider>
         </ThemeProvider>
       </body>
     </html>

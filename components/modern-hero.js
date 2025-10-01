@@ -96,9 +96,9 @@ export default function ModernHero() {
 
   if (loading) {
     return (
-      <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900'>
+      <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-gray-900 dark:via-slate-900 dark:to-blue-950'>
         <div className='text-center'>
-          <div className='w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
+          <div className='w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
           <p className='text-gray-600 dark:text-gray-300'>Loading...</p>
         </div>
       </section>
@@ -106,12 +106,12 @@ export default function ModernHero() {
   }
 
   return (
-    <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900'>
+    <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-gray-900 dark:via-slate-900 dark:to-blue-950'>
       {/* Animated Background Elements */}
       <div className='absolute inset-0'>
-        <div className='absolute top-1/4 left-1/4 w-72 h-72 bg-purple-200 dark:bg-purple-800 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob'></div>
-        <div className='absolute top-1/3 right-1/4 w-72 h-72 bg-blue-200 dark:bg-blue-800 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-2000'></div>
-        <div className='absolute -bottom-8 left-1/3 w-72 h-72 bg-pink-200 dark:bg-pink-800 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-4000'></div>
+        <div className='absolute top-1/4 left-1/4 w-72 h-72 bg-blue-200 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-xl opacity-60 animate-blob'></div>
+        <div className='absolute top-1/3 right-1/4 w-72 h-72 bg-cyan-200 dark:bg-cyan-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-xl opacity-60 animate-blob animation-delay-2000'></div>
+        <div className='absolute -bottom-8 left-1/3 w-72 h-72 bg-slate-200 dark:bg-slate-800 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-xl opacity-60 animate-blob animation-delay-4000'></div>
       </div>
 
       {/* Floating Particles */}
@@ -126,7 +126,7 @@ export default function ModernHero() {
           return (
             <motion.div
               key={i}
-              className='absolute w-1 h-1 bg-purple-400 rounded-full opacity-30'
+              className='absolute w-1 h-1 bg-blue-400 dark:bg-blue-500 rounded-full opacity-30'
               style={{
                 left: `${left}%`,
                 top: `${top}%`,
@@ -153,7 +153,7 @@ export default function ModernHero() {
           className='mb-8'
         >
           <h1 className='text-6xl md:text-8xl font-bold text-gray-900 dark:text-white mb-6'>
-            <span className='bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent'>
+            <span className='text-theme-gradient'>
               Hello, I'm
             </span>
             <br />
@@ -163,8 +163,8 @@ export default function ModernHero() {
           </h1>
 
           <div className='text-3xl md:text-5xl font-semibold text-gray-700 dark:text-gray-300 mb-8 h-16 flex items-center justify-center'>
-            <span className='text-purple-600 dark:text-purple-400'>I'm a </span>
-            <span className='text-gray-900 dark:text-white ml-2 border-r-2 border-purple-600 dark:border-purple-400 animate-pulse'>
+            <span className='text-theme-accent'>I'm a </span>
+            <span className='text-gray-900 dark:text-white ml-2 border-r-2 border-theme-accent animate-pulse'>
               {currentText}
             </span>
           </div>
@@ -194,7 +194,7 @@ export default function ModernHero() {
             }
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-lg'
+            className='px-8 py-4 btn-theme-primary font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-lg'
           >
             {heroData?.primaryButtonText || 'View My Work'}
           </motion.button>
@@ -205,7 +205,7 @@ export default function ModernHero() {
             }
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='px-8 py-4 border-2 border-purple-400 text-purple-400 font-semibold rounded-full hover:bg-purple-400 hover:text-white transition-all duration-300 text-lg'
+            className='px-8 py-4 btn-theme-outline font-semibold rounded-full transition-all duration-300 text-lg'
           >
             {heroData?.secondaryButtonText || 'Get In Touch'}
           </motion.button>
@@ -222,7 +222,7 @@ export default function ModernHero() {
             onClick={() => handleNavClick('#about')}
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className='w-6 h-10 border-2 border-gray-400 dark:border-gray-500 rounded-full flex justify-center cursor-pointer hover:border-purple-600 dark:hover:border-purple-400 transition-colors duration-300'
+            className='w-6 h-10 border-2 border-gray-400 dark:border-gray-500 rounded-full flex justify-center cursor-pointer hover:border-theme-accent transition-colors duration-300'
           >
             <motion.div
               animate={{ y: [0, 12, 0] }}

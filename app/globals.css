@@ -3,7 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #0a0a0a;
-  --primary: #6366f1;
+  --primary: #1E40AF;
   --primary-foreground: #ffffff;
   --secondary: #f8fafc;
   --secondary-foreground: #0f172a;
@@ -15,12 +15,20 @@
   --destructive-foreground: #ffffff;
   --border: #e2e8f0;
   --input: #e2e8f0;
-  --ring: #6366f1;
+  --ring: #1E40AF;
   --radius: 0.75rem;
   --card: #ffffff;
   --card-foreground: #0a0a0a;
   --popover: #ffffff;
   --popover-foreground: #0a0a0a;
+  
+  /* Dynamic theme colors */
+  --theme-primary: #1E40AF;
+  --theme-secondary: #0F172A;
+  --theme-accent: #3B82F6;
+  --theme-accent-light: #60A5FA;
+  --theme-gradient-from: #1E40AF;
+  --theme-gradient-to: #0F172A;
 }
 
 @theme inline {
@@ -46,7 +54,7 @@
 .dark {
   --background: #0f0f0f;
   --foreground: #fafafa;
-  --primary: #8b5cf6;
+  --primary: #3B82F6;
   --primary-foreground: #ffffff;
   --secondary: #1a1a1a;
   --secondary-foreground: #fafafa;
@@ -58,11 +66,19 @@
   --destructive-foreground: #ffffff;
   --border: #262626;
   --input: #262626;
-  --ring: #8b5cf6;
+  --ring: #3B82F6;
   --card: #111111;
   --card-foreground: #fafafa;
   --popover: #111111;
   --popover-foreground: #fafafa;
+  
+  /* Dynamic theme colors for dark mode */
+  --theme-primary: var(--theme-primary, #3B82F6);
+  --theme-secondary: var(--theme-secondary, #1E293B);
+  --theme-accent: var(--theme-accent, #60A5FA);
+  --theme-accent-light: var(--theme-accent-light, #93C5FD);
+  --theme-gradient-from: var(--theme-gradient-from, #3B82F6);
+  --theme-gradient-to: var(--theme-gradient-to, #1E293B);
 }
 
 * {
@@ -125,6 +141,77 @@ div {
 * {
   transition: color 0.3s ease, background-color 0.3s ease,
     border-color 0.3s ease;
+}
+
+/* Dynamic theme utility classes */
+.bg-theme-primary {
+  background-color: var(--theme-primary) !important;
+}
+
+.bg-theme-accent {
+  background-color: var(--theme-accent) !important;
+}
+
+.text-theme-primary {
+  color: var(--theme-primary) !important;
+}
+
+.text-theme-accent {
+  color: var(--theme-accent) !important;
+}
+
+.border-theme-accent {
+  border-color: var(--theme-accent) !important;
+}
+
+.bg-theme-gradient {
+  background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to)) !important;
+}
+
+.text-theme-gradient {
+  background: linear-gradient(135deg, var(--theme-gradient-from), var(--theme-accent), var(--theme-accent-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Buttons with theme colors */
+.btn-theme-primary {
+  background: linear-gradient(to right, var(--theme-gradient-from), var(--theme-accent)) !important;
+  color: white !important;
+  transition: all 0.3s ease;
+}
+
+.btn-theme-primary:hover {
+  opacity: 0.9;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-theme-outline {
+  border: 2px solid var(--theme-accent) !important;
+  color: var(--theme-accent) !important;
+  transition: all 0.3s ease;
+}
+
+.btn-theme-outline:hover {
+  background-color: var(--theme-accent) !important;
+  color: white !important;
+}
+
+/* Background blobs with theme colors */
+.blob-theme-primary {
+  background-color: var(--theme-primary);
+  opacity: 0.6;
+}
+
+.blob-theme-accent {
+  background-color: var(--theme-accent);
+  opacity: 0.6;
+}
+
+.blob-theme-secondary {
+  background-color: var(--theme-secondary);
+  opacity: 0.6;
 }
 
 /* Theme transition class for smooth changes */
@@ -205,10 +292,10 @@ html {
 @keyframes glow {
   0%,
   100% {
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 20px rgba(30, 64, 175, 0.3);
   }
   50% {
-    box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
   }
 }
 
@@ -287,7 +374,7 @@ html {
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, var(--primary), #8b5cf6, #ec4899);
+  background: linear-gradient(135deg, #1E40AF, #3B82F6, #06B6D4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -306,7 +393,7 @@ html {
 
 /* Ensure gradient text is visible in both themes */
 .dark .gradient-text {
-  background: linear-gradient(135deg, #8b5cf6, #a855f7, #ec4899);
+  background: linear-gradient(135deg, #3B82F6, #60A5FA, #22D3EE);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -315,7 +402,7 @@ html {
 
 /* Light theme gradient text */
 .light .gradient-text {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+  background: linear-gradient(135deg, #1E40AF, #3B82F6, #06B6D4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -414,12 +501,12 @@ button[data-variant='ghost']:hover {
 .bg-pattern {
   background-image: radial-gradient(
       circle at 25% 25%,
-      rgba(99, 102, 241, 0.1) 0%,
+      rgba(30, 64, 175, 0.1) 0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 75% 75%,
-      rgba(139, 92, 246, 0.1) 0%,
+      rgba(59, 130, 246, 0.1) 0%,
       transparent 50%
     );
 }
@@ -427,12 +514,12 @@ button[data-variant='ghost']:hover {
 .dark .bg-pattern {
   background-image: radial-gradient(
       circle at 25% 25%,
-      rgba(99, 102, 241, 0.2) 0%,
+      rgba(59, 130, 246, 0.2) 0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 75% 75%,
-      rgba(139, 92, 246, 0.2) 0%,
+      rgba(96, 165, 250, 0.2) 0%,
       transparent 50%
     );
 }
@@ -555,7 +642,7 @@ button[data-variant='ghost']:hover {
 /* Gradient borders */
 .gradient-border {
   position: relative;
-  background: linear-gradient(45deg, #8b5cf6, #ec4899, #f59e0b, #10b981);
+  background: linear-gradient(45deg, #1E40AF, #3B82F6, #06B6D4, #0E7490);
   padding: 2px;
   border-radius: 12px;
 }
@@ -585,7 +672,7 @@ button[data-variant='ghost']:hover {
 
 /* Text gradient animations */
 .text-gradient-animated {
-  background: linear-gradient(45deg, #8b5cf6, #ec4899, #f59e0b, #10b981);
+  background: linear-gradient(45deg, #1E40AF, #3B82F6, #06B6D4, #0E7490);
   background-size: 300% 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

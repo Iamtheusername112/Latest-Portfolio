@@ -62,7 +62,7 @@ const DynamicLogo = ({
     // Fallback to default text logo
     return (
       <div className={cn('flex items-center space-x-2', className)}>
-        <span className={cn('font-bold gradient-text', textSizeClasses[size])}>
+        <span className={cn('font-bold text-theme-gradient', textSizeClasses[size])}>
           {fallback}
         </span>
       </div>
@@ -76,7 +76,7 @@ const DynamicLogo = ({
     <div className={cn('flex items-center space-x-2', className)}>
       {/* Logo Icon/Image */}
       {type === 'text' && (
-        <span className={cn('font-bold gradient-text', textSizeClasses[textSize || size])}>
+        <span className={cn('font-bold text-theme-gradient', textSizeClasses[textSize || size])}>
           {textContent || fallback}
         </span>
       )}
@@ -100,7 +100,7 @@ const DynamicLogo = ({
 
       {/* Text alongside logo (only for image/svg types when showText is true) */}
       {shouldShowText && textContent && type !== 'text' && (
-        <span className={cn('font-bold gradient-text', textSizeClasses[textSize || size])}>
+        <span className={cn('font-bold text-theme-gradient', textSizeClasses[textSize || size])}>
           {textContent}
         </span>
       )}

@@ -62,7 +62,7 @@ export default function ModernProjects() {
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                       isCurrent
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white scale-110 shadow-lg'
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-800 text-white scale-110 shadow-lg'
                         : isCompleted
                         ? 'bg-green-500 text-white'
                         : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
@@ -73,7 +73,7 @@ export default function ModernProjects() {
                   <span
                     className={`mt-2 text-xs font-medium text-center ${
                       isCurrent
-                        ? 'text-purple-600 dark:text-purple-400 font-semibold'
+                        ? 'text-blue-600 dark:text-blue-400 font-semibold'
                         : isCompleted
                         ? 'text-green-600 dark:text-green-400'
                         : 'text-gray-400 dark:text-gray-500'
@@ -110,7 +110,7 @@ export default function ModernProjects() {
                 
                 if (isCurrent) {
                   return (
-                    <span key={stage.key} className='px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-xs font-semibold flex items-center gap-1'>
+                    <span key={stage.key} className='px-3 py-1 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-full text-xs font-semibold flex items-center gap-1'>
                       <StageIcon className='h-3 w-3' />
                       {stage.label}
                     </span>
@@ -133,7 +133,7 @@ export default function ModernProjects() {
                   <div
                     className={`h-1.5 rounded-full transition-all duration-500 ${
                       isCurrent
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500'
+                        ? 'bg-gradient-to-r from-blue-600 to-blue-800'
                         : isCompleted
                         ? 'bg-green-500'
                         : 'bg-gray-200 dark:bg-gray-700'
@@ -155,7 +155,7 @@ export default function ModernProjects() {
                   key={stage.key}
                   className={`text-[10px] font-medium ${
                     isCurrent
-                      ? 'text-purple-600 dark:text-purple-400'
+                      ? 'text-blue-600 dark:text-blue-400'
                       : isCompleted
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-gray-400 dark:text-gray-600'
@@ -277,7 +277,7 @@ export default function ModernProjects() {
       <section className='py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden'>
         <div className='container mx-auto px-4'>
           <div className='text-center'>
-            <div className='w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
+            <div className='w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
             <p className='text-gray-600 dark:text-gray-300'>Loading projects...</p>
           </div>
         </div>
@@ -289,8 +289,8 @@ export default function ModernProjects() {
     <section className='py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden'>
       {/* Background Elements */}
       <div className='absolute inset-0 opacity-10'>
-        <div className='absolute top-20 left-10 w-96 h-96 bg-purple-200 dark:bg-purple-800 rounded-full filter blur-3xl'></div>
-        <div className='absolute bottom-20 right-10 w-96 h-96 bg-pink-200 dark:bg-pink-800 rounded-full filter blur-3xl'></div>
+        <div className='absolute top-20 left-10 w-96 h-96 bg-blue-200 dark:bg-blue-900 rounded-full filter blur-3xl'></div>
+        <div className='absolute bottom-20 right-10 w-96 h-96 bg-cyan-200 dark:bg-cyan-900 rounded-full filter blur-3xl'></div>
       </div>
 
       <div className='container mx-auto px-4 relative z-10'>
@@ -303,7 +303,7 @@ export default function ModernProjects() {
         >
           <h2 className='text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6'>
             My{' '}
-            <span className='bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'>
+            <span className='text-theme-gradient'>
               Projects
             </span>
           </h2>
@@ -339,7 +339,7 @@ export default function ModernProjects() {
                 viewport={{ once: true }}
                 className='group relative'
               >
-                <div className='bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border-2 border-gray-100 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-500 transition-all duration-500 shadow-xl hover:shadow-2xl'>
+                <div className='bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border-2 border-gray-100 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-500 shadow-xl hover:shadow-2xl'>
                   {/* Image Section with Gradient Overlay */}
                   <div className='relative overflow-hidden h-72'>
                     {project.imageUrl ? (
@@ -349,7 +349,7 @@ export default function ModernProjects() {
                         className='w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700'
                       />
                     ) : (
-                      <div className='w-full h-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center'>
+                      <div className='w-full h-full bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600 flex items-center justify-center'>
                         <span className='text-white text-2xl font-bold'>
                           {project.title}
                         </span>
@@ -410,7 +410,7 @@ export default function ModernProjects() {
                       {project.technologies.map((tech) => (
                         <span
                           key={tech}
-                          className='px-3 py-1 bg-gray-100 dark:bg-gray-700 text-purple-600 dark:text-purple-400 rounded-full text-sm font-medium'
+                          className='px-3 py-1 bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium'
                         >
                           {tech}
                         </span>
@@ -450,7 +450,7 @@ export default function ModernProjects() {
                 viewport={{ once: true }}
                 className='group h-full'
               >
-                <div className='bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border-2 border-gray-100 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-500 transition-all duration-500 shadow-lg hover:shadow-xl h-full flex flex-col'>
+                <div className='bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border-2 border-gray-100 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-500 shadow-lg hover:shadow-xl h-full flex flex-col'>
                   {/* Image Section */}
                   <div className='relative overflow-hidden h-48'>
                     {project.imageUrl ? (
@@ -460,7 +460,7 @@ export default function ModernProjects() {
                         className='w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700'
                       />
                     ) : (
-                      <div className='w-full h-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center'>
+                      <div className='w-full h-full bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-700 flex items-center justify-center'>
                         <span className='text-white font-bold text-lg'>
                           {project.title}
                         </span>
@@ -521,7 +521,7 @@ export default function ModernProjects() {
                       {project.technologies.slice(0, 3).map((tech) => (
                         <span
                           key={tech}
-                          className='px-2 py-1 bg-gray-100 dark:bg-gray-700 text-purple-600 dark:text-purple-400 rounded text-xs font-medium'
+                          className='px-2 py-1 bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 rounded text-xs font-medium'
                         >
                           {tech}
                         </span>
@@ -552,7 +552,7 @@ export default function ModernProjects() {
             onClick={() => handleNavClick('#contact')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-lg'
+            className='px-8 py-4 btn-theme-primary font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-lg'
           >
             Let's Work Together
           </motion.button>

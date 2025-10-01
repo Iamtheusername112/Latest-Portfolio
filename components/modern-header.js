@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import DynamicLogo from './dynamic-logo'
+import ThemeSwitcher from './theme-switcher'
 
 export default function ModernHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -60,7 +61,7 @@ export default function ModernHeader() {
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className='hidden md:flex items-center gap-8'>
+          <div className='hidden md:flex items-center gap-6'>
             {navItems.map((item, index) => (
               <motion.button
                 key={item.name}
@@ -72,9 +73,14 @@ export default function ModernHeader() {
                 className='text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors duration-300 font-medium relative group'
               >
                 {item.name}
-                <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-500 to-pink-500 group-hover:w-full transition-all duration-300'></span>
+                <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-theme-gradient group-hover:w-full transition-all duration-300'></span>
               </motion.button>
             ))}
+          </div>
+
+          {/* Theme Switcher */}
+          <div className='hidden md:block'>
+            <ThemeSwitcher />
           </div>
 
           {/* CTA Button */}
@@ -88,7 +94,7 @@ export default function ModernHeader() {
               onClick={() => handleNavClick('#contact')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className='px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-full hover:shadow-lg transition-all duration-300'
+              className='px-6 py-2 btn-theme-primary font-semibold rounded-full hover:shadow-lg transition-all duration-300'
             >
               Let's Talk
             </motion.button>
@@ -158,7 +164,7 @@ export default function ModernHeader() {
               }}
               transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
               whileTap={{ scale: 0.95 }}
-              className='w-full mt-4 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-full'
+              className='w-full mt-4 px-6 py-3 btn-theme-primary font-semibold rounded-full'
             >
               Let's Talk
             </motion.button>
