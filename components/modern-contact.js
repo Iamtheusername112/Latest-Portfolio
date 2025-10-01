@@ -105,13 +105,13 @@ export default function ModernContact() {
           viewport={{ once: true }}
           className='text-center mb-16'
         >
-          <h2 className='text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6'>
+          <h2 className='text-5xl md:text-6xl font-bold mb-6' style={{ color: 'var(--foreground)' }}>
             Get In{' '}
             <span className='text-theme-gradient'>
               Touch
             </span>
           </h2>
-          <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto'>
+          <p className='text-xl max-w-3xl mx-auto' style={{ color: 'var(--foreground)' }}>
             Ready to bring your ideas to life? Let's discuss your project and
             create something amazing together.
           </p>
@@ -127,10 +127,10 @@ export default function ModernContact() {
             className='space-y-8'
           >
             <div className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg'>
-              <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-6'>
+              <h3 className='text-2xl font-bold mb-6' style={{ color: 'var(--foreground)' }}>
                 Let's Connect
               </h3>
-              <p className='text-gray-600 dark:text-gray-300 mb-8 leading-relaxed'>
+              <p className='mb-8 leading-relaxed' style={{ color: 'var(--foreground)' }}>
                 I'm always excited to work on new projects and collaborate with
                 amazing people. Whether you have a specific project in mind or
                 just want to chat about technology, I'd love to hear from you!
@@ -168,7 +168,7 @@ export default function ModernContact() {
               viewport={{ once: true }}
               className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg'
             >
-              <h3 className='text-xl font-bold text-gray-900 dark:text-white mb-6'>
+              <h3 className='text-xl font-bold mb-6' style={{ color: 'var(--foreground)' }}>
                 Follow Me
               </h3>
               <div className='flex gap-4'>
@@ -223,7 +223,7 @@ export default function ModernContact() {
             viewport={{ once: true }}
             className='bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 shadow-lg'
           >
-            <h3 className='text-2xl font-bold text-gray-900 mb-6'>
+            <h3 className='text-2xl font-bold mb-6' style={{ color: 'var(--foreground)' }}>
               Send a Message
             </h3>
 
@@ -235,7 +235,7 @@ export default function ModernContact() {
                   transition={{ duration: 0.5 }}
                   viewport={{ once: true }}
                 >
-                  <label className='block text-gray-900 font-semibold mb-2'>
+                  <label className='block font-semibold mb-2' style={{ color: 'var(--foreground)' }}>
                     Name
                   </label>
                   <input
@@ -255,7 +255,7 @@ export default function ModernContact() {
                   transition={{ duration: 0.5, delay: 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <label className='block text-gray-900 font-semibold mb-2'>
+                  <label className='block font-semibold mb-2' style={{ color: 'var(--foreground)' }}>
                     Email
                   </label>
                   <input
@@ -276,7 +276,7 @@ export default function ModernContact() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                <label className='block text-gray-900 font-semibold mb-2'>
+                <label className='block font-semibold mb-2' style={{ color: 'var(--foreground)' }}>
                   Subject
                 </label>
                 <input
@@ -296,7 +296,7 @@ export default function ModernContact() {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 viewport={{ once: true }}
               >
-                <label className='block text-gray-900 font-semibold mb-2'>
+                <label className='block font-semibold mb-2' style={{ color: 'var(--foreground)' }}>
                   Message
                 </label>
                 <textarea

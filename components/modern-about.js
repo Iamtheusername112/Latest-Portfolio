@@ -142,12 +142,12 @@ export default function ModernAbout() {
           className='text-center mb-16'
         >
           <h2 className='text-5xl md:text-6xl font-bold mb-6'>
-            <span className='text-black dark:text-white'>{aboutData?.title || 'About'}</span>{' '}
+            <span style={{ color: 'var(--foreground)' }}>{aboutData?.title || 'About'}</span>{' '}
             <span className='text-theme-gradient'>
               Me
             </span>
           </h2>
-          <p className='text-xl text-gray-900 dark:text-gray-300 max-w-3xl mx-auto font-medium'>
+          <p className='text-xl max-w-3xl mx-auto font-medium' style={{ color: 'var(--foreground)' }}>
             {aboutData?.content ||
               'Passionate developer with a love for creating beautiful, functional, and user-centered digital experiences.'}
           </p>
@@ -195,17 +195,17 @@ export default function ModernAbout() {
               >
                 <div className='bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 rounded-2xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-300 border border-blue-200 dark:border-blue-700'>
                   <div className='bg-white dark:bg-gray-800 rounded-xl p-6 transform -rotate-3 shadow-lg'>
-                    <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
+                    <h3 className='text-2xl font-bold mb-4' style={{ color: 'var(--foreground)' }}>
                       My Story
                     </h3>
-                    <p className='text-gray-900 dark:text-gray-300 leading-relaxed mb-4 font-normal'>
+                    <p className='leading-relaxed mb-4 font-normal' style={{ color: 'var(--foreground)' }}>
                       I'm a passionate full-stack developer with over 5 years of
                       experience creating digital solutions that make a real
                       impact. My journey began with curiosity about how things
                       work, and it evolved into a love for building applications
                       that solve real-world problems.
                     </p>
-                    <p className='text-gray-900 dark:text-gray-300 leading-relaxed font-normal'>
+                    <p className='leading-relaxed font-normal' style={{ color: 'var(--foreground)' }}>
                       When I'm not coding, you'll find me exploring new
                       technologies, contributing to open-source projects, or
                       sharing knowledge with the developer community.
@@ -222,20 +222,20 @@ export default function ModernAbout() {
                 className='space-y-6'
               >
                 <div className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg'>
-                  <h4 className='text-xl font-semibold text-gray-900 dark:text-white mb-3'>
+                  <h4 className='text-xl font-semibold mb-3' style={{ color: 'var(--foreground)' }}>
                     🎯 Mission
                   </h4>
-                  <p className='text-gray-900 dark:text-gray-300 font-normal'>
+                  <p className='font-normal' style={{ color: 'var(--foreground)' }}>
                     To create technology that enhances human experiences and
                     solves complex problems with elegant solutions.
                   </p>
                 </div>
 
                 <div className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg'>
-                  <h4 className='text-xl font-semibold text-gray-900 dark:text-white mb-3'>
+                  <h4 className='text-xl font-semibold mb-3' style={{ color: 'var(--foreground)' }}>
                     💡 Philosophy
                   </h4>
-                  <p className='text-gray-900 dark:text-gray-300 font-normal'>
+                  <p className='font-normal' style={{ color: 'var(--foreground)' }}>
                     I believe in continuous learning, clean code, and putting
                     users at the center of every design decision.
                   </p>
@@ -256,7 +256,7 @@ export default function ModernAbout() {
                   className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg'
                 >
                   <div className='flex justify-between items-center mb-3'>
-                    <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
+                    <h3 className='text-lg font-semibold' style={{ color: 'var(--foreground)' }}>
                       {skill.name}
                     </h3>
                     <span className='text-theme-accent font-semibold'>
@@ -291,13 +291,13 @@ export default function ModernAbout() {
                   <div className='flex items-start gap-4'>
                     <div className='text-3xl'>{exp.icon}</div>
                     <div className='flex-1'>
-                      <h3 className='text-xl font-semibold text-gray-900 dark:text-white mb-2'>
+                      <h3 className='text-xl font-semibold mb-2' style={{ color: 'var(--foreground)' }}>
                         {exp.title}
                       </h3>
                       <p className='text-theme-accent font-medium mb-2'>
                         {exp.company} • {exp.period}
                       </p>
-                      <p className='text-gray-900 dark:text-gray-300 font-normal'>{exp.description}</p>
+                      <p className='font-normal' style={{ color: 'var(--foreground)' }}>{exp.description}</p>
                     </div>
                   </div>
                 </motion.div>

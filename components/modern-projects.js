@@ -301,13 +301,13 @@ export default function ModernProjects() {
           viewport={{ once: true }}
           className='text-center mb-16'
         >
-          <h2 className='text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6'>
+          <h2 className='text-5xl md:text-6xl font-bold mb-6' style={{ color: 'var(--foreground)' }}>
             My{' '}
             <span className='text-theme-gradient'>
               Projects
             </span>
           </h2>
-          <p className='text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto'>
+          <p className='text-xl max-w-3xl mx-auto' style={{ color: 'var(--foreground)' }}>
             A collection of projects that showcase my skills and passion for
             creating innovative digital solutions.
           </p>
@@ -320,7 +320,8 @@ export default function ModernProjects() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className='text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center'
+            className='text-3xl font-bold mb-12 text-center'
+            style={{ color: 'var(--foreground)' }}
           >
             Featured Projects
           </motion.h3>
@@ -389,7 +390,7 @@ export default function ModernProjects() {
                   {/* Content Section */}
                   <div className='p-6 space-y-4'>
                     {/* Title */}
-                    <h3 className='text-2xl font-bold text-gray-900 dark:text-white'>
+                    <h3 className='text-2xl font-bold' style={{ color: 'var(--foreground)' }}>
                       {project.title}
                     </h3>
                     
@@ -401,7 +402,7 @@ export default function ModernProjects() {
                     )}
 
                     {/* Description */}
-                    <p className='text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3'>
+                    <p className='leading-relaxed line-clamp-3' style={{ color: 'var(--muted-foreground)' }}>
                       {project.description}
                     </p>
 
@@ -431,7 +432,8 @@ export default function ModernProjects() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className='text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center'
+            className='text-3xl font-bold mb-12 text-center'
+            style={{ color: 'var(--foreground)' }}
           >
             More Projects
           </motion.h3>
@@ -500,7 +502,7 @@ export default function ModernProjects() {
                   {/* Content Section */}
                   <div className='p-4 flex-1 flex flex-col space-y-3'>
                     {/* Title */}
-                    <h3 className='text-lg font-bold text-gray-900 dark:text-white'>
+                    <h3 className='text-lg font-bold' style={{ color: 'var(--foreground)' }}>
                       {project.title}
                     </h3>
 
@@ -512,7 +514,7 @@ export default function ModernProjects() {
                     )}
                     
                     {/* Description */}
-                    <p className='text-gray-600 dark:text-gray-300 text-sm leading-relaxed line-clamp-2 flex-1'>
+                    <p className='text-sm leading-relaxed line-clamp-2 flex-1' style={{ color: 'var(--muted-foreground)' }}>
                       {project.description}
                     </p>
 
