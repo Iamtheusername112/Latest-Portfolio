@@ -104,7 +104,7 @@ export default function ModernHeader() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className='md:hidden p-2 text-gray-900 dark:text-white'
+            className='md:hidden p-2 text-gray-900 dark:text-white z-50 relative'
           >
             <div className='w-6 h-6 flex flex-col justify-center items-center'>
               <motion.span
@@ -129,56 +129,75 @@ export default function ModernHeader() {
           </motion.button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className='fixed inset-0 bg-black/50 z-40 md:hidden'
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
+        {/* Mobile Menu Drawer - Slide from Right */}
         <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{
-            opacity: isMobileMenuOpen ? 1 : 0,
-            height: isMobileMenuOpen ? 'auto' : 0,
-          }}
-          transition={{ duration: 0.3 }}
-          className='md:hidden overflow-hidden'
+          initial={{ x: '100%' }}
+          animate={{ x: isMobileMenuOpen ? 0 : '100%' }}
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          className='fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-gray-900 shadow-2xl z-50 md:hidden overflow-y-auto'
         >
-          <div className='py-4 space-y-4'>
-            {navItems.map((item, index) => (
-              <motion.button
-                key={item.name}
-                onClick={() => handleNavClick(item.href)}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{
-                  opacity: isMobileMenuOpen ? 1 : 0,
-                  x: isMobileMenuOpen ? 0 : -20,
-                }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                className='block text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors duration-300 font-medium py-2 w-full text-left'
-              >
-                {item.name}
-              </motion.button>
-            ))}
-            
-            {/* Theme Switcher - Mobile */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{
-                opacity: isMobileMenuOpen ? 1 : 0,
-                x: isMobileMenuOpen ? 0 : -20,
-              }}
-              transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
-              className='pt-2'
+          <div className='p-6 pt-20'>
+            {/* Close Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className='absolute top-4 right-4 p-2 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors'
             >
+              <svg className='w-6 h-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
+              </svg>
+            </button>
+
+            {/* Navigation Links */}
+            <div className='space-y-2 mb-8'>
+              {navItems.map((item, index) => (
+                <motion.button
+                  key={item.name}
+                  onClick={() => handleNavClick(item.href)}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: isMobileMenuOpen ? 1 : 0, x: isMobileMenuOpen ? 0 : 50 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  className='block w-full text-left text-gray-900 dark:text-white hover:text-theme-accent transition-colors duration-300 font-medium py-3 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800'
+                >
+                  {item.name}
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Theme Switcher Section - Mobile */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: isMobileMenuOpen ? 1 : 0, x: isMobileMenuOpen ? 0 : 50 }}
+              transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
+              className='mb-8'
+            >
+              <div className='mb-4'>
+                <h3 className='text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3'>
+                  Choose Theme
+                </h3>
+              </div>
               <ThemeSwitcher />
             </motion.div>
 
+            {/* CTA Button */}
             <motion.button
               onClick={() => handleNavClick('#contact')}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{
-                opacity: isMobileMenuOpen ? 1 : 0,
-                x: isMobileMenuOpen ? 0 : -20,
-              }}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: isMobileMenuOpen ? 1 : 0, x: isMobileMenuOpen ? 0 : 50 }}
               transition={{ duration: 0.3, delay: (navItems.length + 1) * 0.1 }}
               whileTap={{ scale: 0.95 }}
-              className='w-full mt-4 px-6 py-3 btn-theme-primary font-semibold rounded-full'
+              className='w-full px-6 py-3 btn-theme-primary font-semibold rounded-full shadow-lg'
             >
               Let's Talk
             </motion.button>
