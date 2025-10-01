@@ -2,11 +2,155 @@
 
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import { Target, Play, AlertCircle, CheckCircle, Award, Pause, XCircle } from 'lucide-react'
 
 export default function ModernProjects() {
   const [hoveredProject, setHoveredProject] = useState(null)
   const [projectsData, setProjectsData] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  // Project status configuration with stage order
+  const projectStatuses = {
+    planning: { label: 'Planning', icon: Target, color: 'bg-blue-500 text-white', badgeColor: 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300', stage: 1 },
+    in_progress: { label: 'In Progress', icon: Play, color: 'bg-yellow-500 text-white', badgeColor: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300', stage: 2 },
+    testing: { label: 'Testing', icon: AlertCircle, color: 'bg-orange-500 text-white', badgeColor: 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300', stage: 3 },
+    deployed: { label: 'Deployed', icon: CheckCircle, color: 'bg-green-500 text-white', badgeColor: 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300', stage: 4 },
+    completed: { label: 'Completed', icon: Award, color: 'bg-purple-500 text-white', badgeColor: 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300', stage: 5 },
+    on_hold: { label: 'On Hold', icon: Pause, color: 'bg-gray-500 text-white', badgeColor: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300', stage: 0 },
+    cancelled: { label: 'Cancelled', icon: XCircle, color: 'bg-red-500 text-white', badgeColor: 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300', stage: 0 }
+  }
+
+  // Development stages in order
+  const developmentStages = [
+    { key: 'planning', label: 'Planning', icon: Target },
+    { key: 'in_progress', label: 'Development', icon: Play },
+    { key: 'testing', label: 'Testing', icon: AlertCircle },
+    { key: 'deployed', label: 'Deployed', icon: CheckCircle },
+    { key: 'completed', label: 'Completed', icon: Award }
+  ]
+
+  // Function to render project stage tracker
+  const ProjectStageTracker = ({ currentStatus }) => {
+    const status = projectStatuses[currentStatus] || projectStatuses.planning
+    const currentStage = status.stage
+    const isOnHoldOrCancelled = currentStatus === 'on_hold' || currentStatus === 'cancelled'
+
+    if (isOnHoldOrCancelled) {
+      return (
+        <div className='flex items-center justify-center py-2'>
+          <span className={`px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 ${status.badgeColor}`}>
+            {currentStatus === 'on_hold' ? <Pause className='h-4 w-4' /> : <XCircle className='h-4 w-4' />}
+            {status.label}
+          </span>
+        </div>
+      )
+    }
+
+    return (
+      <div className='py-3'>
+        {/* Desktop/Tablet View */}
+        <div className='hidden md:flex items-center justify-between'>
+          {developmentStages.map((stage, index) => {
+            const StageIcon = stage.icon
+            const isCompleted = currentStage > index + 1
+            const isCurrent = currentStage === index + 1
+            const isPending = currentStage < index + 1
+
+            return (
+              <div key={stage.key} className='flex items-center flex-1'>
+                <div className='flex flex-col items-center flex-1'>
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                      isCurrent
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white scale-110 shadow-lg'
+                        : isCompleted
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
+                    }`}
+                  >
+                    <StageIcon className='h-5 w-5' />
+                  </div>
+                  <span
+                    className={`mt-2 text-xs font-medium text-center ${
+                      isCurrent
+                        ? 'text-purple-600 dark:text-purple-400 font-semibold'
+                        : isCompleted
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-gray-400 dark:text-gray-500'
+                    }`}
+                  >
+                    {stage.label}
+                  </span>
+                </div>
+                {index < developmentStages.length - 1 && (
+                  <div className='flex-1 h-1 mx-2 relative' style={{ maxWidth: '80px' }}>
+                    <div className='absolute inset-0 bg-gray-200 dark:bg-gray-700 rounded-full' />
+                    <div
+                      className={`absolute inset-0 rounded-full transition-all duration-500 ${
+                        isCompleted ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'
+                      }`}
+                      style={{ width: isCompleted ? '100%' : '0%' }}
+                    />
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Mobile View */}
+        <div className='md:hidden space-y-2'>
+          {developmentStages.map((stage, index) => {
+            const StageIcon = stage.icon
+            const isCompleted = currentStage > index + 1
+            const isCurrent = currentStage === index + 1
+            const isPending = currentStage < index + 1
+
+            return (
+              <div key={stage.key} className='flex items-center gap-3'>
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                    isCurrent
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                      : isCompleted
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
+                  }`}
+                >
+                  <StageIcon className='h-4 w-4' />
+                </div>
+                <div className='flex-1'>
+                  <div className='h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden'>
+                    <div
+                      className={`h-full transition-all duration-500 ${
+                        isCurrent
+                          ? 'bg-gradient-to-r from-purple-500 to-pink-500'
+                          : isCompleted
+                          ? 'bg-green-500'
+                          : 'bg-gray-200 dark:bg-gray-700'
+                      }`}
+                      style={{ width: isCurrent ? '50%' : isCompleted ? '100%' : '0%' }}
+                    />
+                  </div>
+                </div>
+                <span
+                  className={`text-xs font-medium min-w-[80px] ${
+                    isCurrent
+                      ? 'text-purple-600 dark:text-purple-400 font-semibold'
+                      : isCompleted
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-gray-400 dark:text-gray-500'
+                  }`}
+                >
+                  {stage.label}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
 
   const handleNavClick = (href) => {
     const element = document.querySelector(href)
@@ -163,7 +307,11 @@ export default function ModernProjects() {
           </motion.h3>
 
           <div className='grid lg:grid-cols-2 gap-8'>
-            {featuredProjects.map((project, index) => (
+            {featuredProjects.map((project, index) => {
+              const status = projectStatuses[project.status] || projectStatuses.planning
+              const StatusIcon = status.icon
+
+              return (
               <motion.div
                 key={project.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -222,6 +370,14 @@ export default function ModernProjects() {
                     <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-3'>
                       {project.title}
                     </h3>
+                    
+                    {/* Project Stage Tracker */}
+                    {project.status && (
+                      <div className='mb-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700'>
+                        <ProjectStageTracker currentStatus={project.status} />
+                      </div>
+                    )}
+
                     <p className='text-gray-600 dark:text-gray-300 mb-4 leading-relaxed'>
                       {project.description}
                     </p>
@@ -239,7 +395,8 @@ export default function ModernProjects() {
                   </div>
                 </div>
               </motion.div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
@@ -256,7 +413,11 @@ export default function ModernProjects() {
           </motion.h3>
 
           <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {otherProjects.map((project, index) => (
+            {otherProjects.map((project, index) => {
+              const status = projectStatuses[project.status] || projectStatuses.planning
+              const StatusIcon = status.icon
+
+              return (
               <motion.div
                 key={project.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -316,6 +477,14 @@ export default function ModernProjects() {
                     <h3 className='text-lg font-bold text-gray-900 dark:text-white mb-2'>
                       {project.title}
                     </h3>
+
+                    {/* Project Stage Tracker */}
+                    {project.status && (
+                      <div className='mb-3 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700'>
+                        <ProjectStageTracker currentStatus={project.status} />
+                      </div>
+                    )}
+                    
                     <p className='text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2'>
                       {project.description}
                     </p>
@@ -338,7 +507,8 @@ export default function ModernProjects() {
                   </div>
                 </div>
               </motion.div>
-            ))}
+              )
+            })}
           </div>
         </div>
 

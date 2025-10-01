@@ -287,7 +287,7 @@ const DynamicProjects = () => {
                             className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${status.color}`}
                           >
                             <StatusIcon className='h-3 w-3' />
-                            <span className='hidden sm:inline'>
+                            <span>
                               {status.label}
                             </span>
                           </span>
@@ -295,7 +295,7 @@ const DynamicProjects = () => {
                             <span
                               className={`px-2 py-1 rounded-full text-xs font-medium ${priority.color}`}
                             >
-                              <span className='hidden sm:inline'>
+                              <span>
                                 {priority.label}
                               </span>
                             </span>
