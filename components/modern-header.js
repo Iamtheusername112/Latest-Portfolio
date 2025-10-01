@@ -155,6 +155,20 @@ export default function ModernHeader() {
                 {item.name}
               </motion.button>
             ))}
+            
+            {/* Theme Switcher - Mobile */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{
+                opacity: isMobileMenuOpen ? 1 : 0,
+                x: isMobileMenuOpen ? 0 : -20,
+              }}
+              transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
+              className='pt-2'
+            >
+              <ThemeSwitcher />
+            </motion.div>
+
             <motion.button
               onClick={() => handleNavClick('#contact')}
               initial={{ opacity: 0, x: -20 }}
@@ -162,7 +176,7 @@ export default function ModernHeader() {
                 opacity: isMobileMenuOpen ? 1 : 0,
                 x: isMobileMenuOpen ? 0 : -20,
               }}
-              transition={{ duration: 0.3, delay: navItems.length * 0.1 }}
+              transition={{ duration: 0.3, delay: (navItems.length + 1) * 0.1 }}
               whileTap={{ scale: 0.95 }}
               className='w-full mt-4 px-6 py-3 btn-theme-primary font-semibold rounded-full'
             >

@@ -119,6 +119,167 @@ export const themes = {
       completed: 'bg-black',
     }
   },
+
+  sunset: {
+    name: 'Sunset',
+    description: 'Warm orange and amber - energetic and creative',
+    primary: '#C2410C', // Orange 800
+    secondary: '#92400E', // Amber 800
+    accent: '#F59E0B', // Amber 500
+    accentLight: '#FBBF24', // Amber 400
+    gradient: 'from-orange-600 to-amber-700',
+    cardBg: 'bg-white dark:bg-gray-800',
+    cardBorder: 'border-orange-200 dark:border-orange-900',
+    text: 'text-gray-900 dark:text-white',
+    textMuted: 'text-gray-600 dark:text-gray-300',
+    buttonPrimary: 'bg-orange-600 hover:bg-orange-700 text-white',
+    buttonSecondary: 'bg-amber-700 hover:bg-amber-800 text-white',
+    statusColors: {
+      planning: 'bg-amber-500',
+      in_progress: 'bg-orange-500',
+      testing: 'bg-red-500',
+      deployed: 'bg-yellow-500',
+      completed: 'bg-orange-600',
+    }
+  },
+
+  forest: {
+    name: 'Forest',
+    description: 'Deep green and teal - natural and balanced',
+    primary: '#065F46', // Emerald 800
+    secondary: '#14532D', // Green 900
+    accent: '#059669', // Emerald 600
+    accentLight: '#10B981', // Emerald 500
+    gradient: 'from-green-700 to-emerald-800',
+    cardBg: 'bg-white dark:bg-gray-800',
+    cardBorder: 'border-emerald-200 dark:border-emerald-900',
+    text: 'text-gray-900 dark:text-white',
+    textMuted: 'text-gray-600 dark:text-gray-300',
+    buttonPrimary: 'bg-emerald-700 hover:bg-emerald-800 text-white',
+    buttonSecondary: 'bg-green-700 hover:bg-green-800 text-white',
+    statusColors: {
+      planning: 'bg-teal-600',
+      in_progress: 'bg-emerald-600',
+      testing: 'bg-green-600',
+      deployed: 'bg-emerald-500',
+      completed: 'bg-green-700',
+    }
+  },
+
+  royal: {
+    name: 'Royal',
+    description: 'Deep purple and indigo - elegant and sophisticated',
+    primary: '#4C1D95', // Violet 900
+    secondary: '#312E81', // Indigo 900
+    accent: '#7C3AED', // Violet 600
+    accentLight: '#8B5CF6', // Violet 500
+    gradient: 'from-violet-700 to-indigo-900',
+    cardBg: 'bg-white dark:bg-gray-800',
+    cardBorder: 'border-violet-200 dark:border-violet-900',
+    text: 'text-gray-900 dark:text-white',
+    textMuted: 'text-gray-600 dark:text-gray-300',
+    buttonPrimary: 'bg-violet-700 hover:bg-violet-800 text-white',
+    buttonSecondary: 'bg-indigo-700 hover:bg-indigo-800 text-white',
+    statusColors: {
+      planning: 'bg-indigo-600',
+      in_progress: 'bg-violet-600',
+      testing: 'bg-purple-600',
+      deployed: 'bg-violet-500',
+      completed: 'bg-indigo-700',
+    }
+  },
+
+  crimson: {
+    name: 'Crimson',
+    description: 'Bold red and burgundy - powerful and confident',
+    primary: '#991B1B', // Red 800
+    secondary: '#7F1D1D', // Red 900
+    accent: '#DC2626', // Red 600
+    accentLight: '#EF4444', // Red 500
+    gradient: 'from-red-700 to-red-900',
+    cardBg: 'bg-white dark:bg-gray-800',
+    cardBorder: 'border-red-200 dark:border-red-900',
+    text: 'text-gray-900 dark:text-white',
+    textMuted: 'text-gray-600 dark:text-gray-300',
+    buttonPrimary: 'bg-red-700 hover:bg-red-800 text-white',
+    buttonSecondary: 'bg-red-800 hover:bg-red-900 text-white',
+    statusColors: {
+      planning: 'bg-rose-600',
+      in_progress: 'bg-red-600',
+      testing: 'bg-orange-600',
+      deployed: 'bg-red-500',
+      completed: 'bg-red-700',
+    }
+  },
+
+  arctic: {
+    name: 'Arctic',
+    description: 'Cool ice blue and steel - crisp and modern',
+    primary: '#075985', // Sky 800
+    secondary: '#0C4A6E', // Sky 900
+    accent: '#0EA5E9', // Sky 500
+    accentLight: '#38BDF8', // Sky 400
+    gradient: 'from-sky-600 to-blue-800',
+    cardBg: 'bg-white dark:bg-gray-800',
+    cardBorder: 'border-sky-200 dark:border-sky-900',
+    text: 'text-gray-900 dark:text-white',
+    textMuted: 'text-gray-600 dark:text-gray-300',
+    buttonPrimary: 'bg-sky-700 hover:bg-sky-800 text-white',
+    buttonSecondary: 'bg-blue-700 hover:bg-blue-800 text-white',
+    statusColors: {
+      planning: 'bg-sky-500',
+      in_progress: 'bg-blue-500',
+      testing: 'bg-cyan-500',
+      deployed: 'bg-sky-600',
+      completed: 'bg-blue-700',
+    }
+  },
+
+  slate: {
+    name: 'Slate',
+    description: 'Cool gray and charcoal - industrial and refined',
+    primary: '#334155', // Slate 700
+    secondary: '#1E293B', // Slate 800
+    accent: '#475569', // Slate 600
+    accentLight: '#64748B', // Slate 500
+    gradient: 'from-slate-700 to-slate-900',
+    cardBg: 'bg-white dark:bg-slate-900',
+    cardBorder: 'border-slate-300 dark:border-slate-700',
+    text: 'text-slate-900 dark:text-white',
+    textMuted: 'text-slate-600 dark:text-slate-400',
+    buttonPrimary: 'bg-slate-700 hover:bg-slate-800 text-white',
+    buttonSecondary: 'bg-slate-600 hover:bg-slate-700 text-white',
+    statusColors: {
+      planning: 'bg-slate-600',
+      in_progress: 'bg-slate-500',
+      testing: 'bg-slate-600',
+      deployed: 'bg-slate-700',
+      completed: 'bg-slate-800',
+    }
+  },
+
+  neon: {
+    name: 'Neon',
+    description: 'Electric cyan and magenta - vibrant and futuristic',
+    primary: '#0E7490', // Cyan 700
+    secondary: '#155E75', // Cyan 800
+    accent: '#06B6D4', // Cyan 500
+    accentLight: '#22D3EE', // Cyan 400
+    gradient: 'from-cyan-600 to-blue-700',
+    cardBg: 'bg-white dark:bg-gray-900',
+    cardBorder: 'border-cyan-200 dark:border-cyan-900',
+    text: 'text-gray-900 dark:text-white',
+    textMuted: 'text-gray-600 dark:text-gray-300',
+    buttonPrimary: 'bg-cyan-600 hover:bg-cyan-700 text-white',
+    buttonSecondary: 'bg-blue-600 hover:bg-blue-700 text-white',
+    statusColors: {
+      planning: 'bg-cyan-500',
+      in_progress: 'bg-blue-500',
+      testing: 'bg-teal-500',
+      deployed: 'bg-cyan-600',
+      completed: 'bg-blue-700',
+    }
+  },
 };
 
 export function ThemeProvider({ children }) {
