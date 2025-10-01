@@ -114,7 +114,7 @@ export default function ModernAbout() {
         <div className='container mx-auto px-4'>
           <div className='text-center'>
             <div className='w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
-            <p className='text-black dark:text-gray-300'>Loading about section...</p>
+            <p className='text-gray-900 dark:text-gray-300 font-medium'>Loading about section...</p>
           </div>
         </div>
       </section>
@@ -141,13 +141,13 @@ export default function ModernAbout() {
           viewport={{ once: true }}
           className='text-center mb-16'
         >
-          <h2 className='text-5xl md:text-6xl font-bold text-black dark:text-white mb-6'>
-            {aboutData?.title || 'About'}{' '}
+          <h2 className='text-5xl md:text-6xl font-bold mb-6'>
+            <span className='text-black dark:text-white'>{aboutData?.title || 'About'}</span>{' '}
             <span className='bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'>
               Me
             </span>
           </h2>
-          <p className='text-xl text-black dark:text-gray-300 max-w-3xl mx-auto'>
+          <p className='text-xl text-gray-900 dark:text-gray-300 max-w-3xl mx-auto font-medium'>
             {aboutData?.content ||
               'Passionate developer with a love for creating beautiful, functional, and user-centered digital experiences.'}
           </p>
@@ -167,7 +167,7 @@ export default function ModernAbout() {
                 className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
                   activeTab === tab.id
                     ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
-                    : 'text-black dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
+                    : 'text-gray-900 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 font-semibold'
                 }`}
               >
                 {tab.label}
@@ -195,17 +195,17 @@ export default function ModernAbout() {
               >
                 <div className='bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-2xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-300 border border-purple-200 dark:border-purple-700'>
                   <div className='bg-white dark:bg-gray-800 rounded-xl p-6 transform -rotate-3 shadow-lg'>
-                    <h3 className='text-2xl font-bold text-black dark:text-white mb-4'>
+                    <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-4'>
                       My Story
                     </h3>
-                    <p className='text-black dark:text-gray-300 leading-relaxed mb-4'>
+                    <p className='text-gray-900 dark:text-gray-300 leading-relaxed mb-4 font-normal'>
                       I'm a passionate full-stack developer with over 5 years of
                       experience creating digital solutions that make a real
                       impact. My journey began with curiosity about how things
                       work, and it evolved into a love for building applications
                       that solve real-world problems.
                     </p>
-                    <p className='text-black dark:text-gray-300 leading-relaxed'>
+                    <p className='text-gray-900 dark:text-gray-300 leading-relaxed font-normal'>
                       When I'm not coding, you'll find me exploring new
                       technologies, contributing to open-source projects, or
                       sharing knowledge with the developer community.
@@ -222,20 +222,20 @@ export default function ModernAbout() {
                 className='space-y-6'
               >
                 <div className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg'>
-                  <h4 className='text-xl font-semibold text-black dark:text-white mb-3'>
+                  <h4 className='text-xl font-semibold text-gray-900 dark:text-white mb-3'>
                     🎯 Mission
                   </h4>
-                  <p className='text-black dark:text-gray-300'>
+                  <p className='text-gray-900 dark:text-gray-300 font-normal'>
                     To create technology that enhances human experiences and
                     solves complex problems with elegant solutions.
                   </p>
                 </div>
 
                 <div className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg'>
-                  <h4 className='text-xl font-semibold text-black dark:text-white mb-3'>
+                  <h4 className='text-xl font-semibold text-gray-900 dark:text-white mb-3'>
                     💡 Philosophy
                   </h4>
-                  <p className='text-black dark:text-gray-300'>
+                  <p className='text-gray-900 dark:text-gray-300 font-normal'>
                     I believe in continuous learning, clean code, and putting
                     users at the center of every design decision.
                   </p>
@@ -256,7 +256,7 @@ export default function ModernAbout() {
                   className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg'
                 >
                   <div className='flex justify-between items-center mb-3'>
-                    <h3 className='text-lg font-semibold text-black dark:text-white'>
+                    <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
                       {skill.name}
                     </h3>
                     <span className='text-purple-600 font-semibold'>
@@ -291,13 +291,13 @@ export default function ModernAbout() {
                   <div className='flex items-start gap-4'>
                     <div className='text-3xl'>{exp.icon}</div>
                     <div className='flex-1'>
-                      <h3 className='text-xl font-semibold text-black dark:text-white mb-2'>
+                      <h3 className='text-xl font-semibold text-gray-900 dark:text-white mb-2'>
                         {exp.title}
                       </h3>
                       <p className='text-purple-600 font-medium mb-2'>
                         {exp.company} • {exp.period}
                       </p>
-                      <p className='text-black dark:text-gray-300'>{exp.description}</p>
+                      <p className='text-gray-900 dark:text-gray-300 font-normal'>{exp.description}</p>
                     </div>
                   </div>
                 </motion.div>
