@@ -98,55 +98,74 @@ export default function ModernProjects() {
           })}
         </div>
 
-        {/* Mobile View */}
-        <div className='md:hidden space-y-2'>
-          {developmentStages.map((stage, index) => {
-            const StageIcon = stage.icon
-            const isCompleted = currentStage > index + 1
-            const isCurrent = currentStage === index + 1
-            const isPending = currentStage < index + 1
-
-            return (
-              <div key={stage.key} className='flex items-center gap-3'>
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                    isCurrent
-                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
-                      : isCompleted
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
-                  }`}
-                >
-                  <StageIcon className='h-4 w-4' />
+        {/* Mobile View - Compact Horizontal */}
+        <div className='md:hidden'>
+          {/* Current Stage Badge */}
+          <div className='flex items-center justify-between mb-2'>
+            <span className='text-xs text-gray-500 dark:text-gray-400 font-medium'>Current Stage:</span>
+            <div className='flex items-center gap-2'>
+              {developmentStages.map((stage) => {
+                const StageIcon = stage.icon
+                const isCurrent = currentStage === stage.key || (currentStage === 1 && stage.key === 'planning') || (currentStage === 2 && stage.key === 'in_progress') || (currentStage === 3 && stage.key === 'testing') || (currentStage === 4 && stage.key === 'deployed') || (currentStage === 5 && stage.key === 'completed')
+                
+                if (isCurrent) {
+                  return (
+                    <span key={stage.key} className='px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-xs font-semibold flex items-center gap-1'>
+                      <StageIcon className='h-3 w-3' />
+                      {stage.label}
+                    </span>
+                  )
+                }
+                return null
+              })}
+            </div>
+          </div>
+          
+          {/* Mini Progress Bar */}
+          <div className='flex items-center gap-1'>
+            {developmentStages.map((stage, index) => {
+              const StageIcon = stage.icon
+              const isCompleted = currentStage > index + 1
+              const isCurrent = currentStage === index + 1
+              
+              return (
+                <div key={stage.key} className='flex-1'>
+                  <div
+                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                      isCurrent
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500'
+                        : isCompleted
+                        ? 'bg-green-500'
+                        : 'bg-gray-200 dark:bg-gray-700'
+                    }`}
+                  />
                 </div>
-                <div className='flex-1'>
-                  <div className='h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden'>
-                    <div
-                      className={`h-full transition-all duration-500 ${
-                        isCurrent
-                          ? 'bg-gradient-to-r from-purple-500 to-pink-500'
-                          : isCompleted
-                          ? 'bg-green-500'
-                          : 'bg-gray-200 dark:bg-gray-700'
-                      }`}
-                      style={{ width: isCurrent ? '50%' : isCompleted ? '100%' : '0%' }}
-                    />
-                  </div>
-                </div>
+              )
+            })}
+          </div>
+          
+          {/* Stage Labels - Compact */}
+          <div className='flex justify-between mt-1'>
+            {developmentStages.map((stage, index) => {
+              const isCompleted = currentStage > index + 1
+              const isCurrent = currentStage === index + 1
+              
+              return (
                 <span
-                  className={`text-xs font-medium min-w-[80px] ${
+                  key={stage.key}
+                  className={`text-[10px] font-medium ${
                     isCurrent
-                      ? 'text-purple-600 dark:text-purple-400 font-semibold'
+                      ? 'text-purple-600 dark:text-purple-400'
                       : isCompleted
                       ? 'text-green-600 dark:text-green-400'
-                      : 'text-gray-400 dark:text-gray-500'
+                      : 'text-gray-400 dark:text-gray-600'
                   }`}
                 >
-                  {stage.label}
+                  {stage.label.slice(0, 4)}
                 </span>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       </div>
     )
