@@ -319,70 +319,75 @@ export default function ModernProjects() {
                 transition={{ duration: 0.6, delay: index * 0.2 }}
                 viewport={{ once: true }}
                 className='group relative'
-                onMouseEnter={() => setHoveredProject(project.id)}
-                onMouseLeave={() => setHoveredProject(null)}
               >
-                <div className='bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-300 transform hover:scale-105 shadow-lg'>
-                  <div className='relative overflow-hidden'>
+                <div className='bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border-2 border-gray-100 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-500 transition-all duration-500 shadow-xl hover:shadow-2xl'>
+                  {/* Image Section with Gradient Overlay */}
+                  <div className='relative overflow-hidden h-72'>
                     {project.imageUrl ? (
                       <img
                         src={project.imageUrl}
                         alt={project.title}
-                        className='w-full h-64 object-cover'
+                        className='w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700'
                       />
                     ) : (
-                      <div className='w-full h-64 bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center'>
-                        <span className='text-white text-lg font-semibold'>
-                          Project Image
+                      <div className='w-full h-full bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 flex items-center justify-center'>
+                        <span className='text-white text-2xl font-bold'>
+                          {project.title}
                         </span>
                       </div>
                     )}
-
-                    {/* Overlay */}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{
-                        opacity: hoveredProject === project.id ? 1 : 0,
-                      }}
-                      transition={{ duration: 0.3 }}
-                      className='absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center gap-4'
-                    >
+                    
+                    {/* Gradient Overlay */}
+                    <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent'></div>
+                    
+                    {/* Quick Action Buttons - Always Visible at Bottom */}
+                    <div className='absolute bottom-4 left-4 right-4 flex gap-3'>
                       <motion.a
                         href={project.liveUrl}
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
-                        className='px-6 py-3 bg-purple-500 text-white rounded-full font-semibold hover:bg-purple-600 transition-colors'
+                        className='flex-1 px-4 py-3 bg-white/95 backdrop-blur-sm text-gray-900 rounded-xl font-semibold hover:bg-white transition-all duration-300 text-center shadow-lg flex items-center justify-center gap-2'
                       >
-                        Live Demo
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        <span className='hidden sm:inline'>Live Demo</span>
                       </motion.a>
                       <motion.a
                         href={project.githubUrl}
-                        whileHover={{ scale: 1.1 }}
+                        whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.95 }}
-                        className='px-6 py-3 border-2 border-white text-white rounded-full font-semibold hover:bg-white hover:text-black transition-colors'
+                        className='flex-1 px-4 py-3 bg-gray-900/95 backdrop-blur-sm text-white rounded-xl font-semibold hover:bg-gray-900 transition-all duration-300 text-center shadow-lg flex items-center justify-center gap-2'
                       >
-                        GitHub
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        <span className='hidden sm:inline'>GitHub</span>
                       </motion.a>
-                    </motion.div>
+                    </div>
                   </div>
 
-                  <div className='p-6'>
-                    <h3 className='text-2xl font-bold text-gray-900 dark:text-white mb-3'>
+                  {/* Content Section */}
+                  <div className='p-6 space-y-4'>
+                    {/* Title */}
+                    <h3 className='text-2xl font-bold text-gray-900 dark:text-white'>
                       {project.title}
                     </h3>
                     
                     {/* Project Stage Tracker */}
                     {project.status && (
-                      <div className='mb-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700'>
+                      <div className='p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700'>
                         <ProjectStageTracker currentStatus={project.status} />
                       </div>
                     )}
 
-                    <p className='text-gray-600 dark:text-gray-300 mb-4 leading-relaxed'>
+                    {/* Description */}
+                    <p className='text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3'>
                       {project.description}
                     </p>
 
-                    <div className='flex flex-wrap gap-2 mb-4'>
+                    {/* Technologies */}
+                    <div className='flex flex-wrap gap-2'>
                       {project.technologies.map((tech) => (
                         <span
                           key={tech}
@@ -424,72 +429,76 @@ export default function ModernProjects() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className='group'
-                onMouseEnter={() => setHoveredProject(project.id)}
-                onMouseLeave={() => setHoveredProject(null)}
+                className='group h-full'
               >
-                <div className='bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400 transition-all duration-300 transform hover:scale-105 shadow-lg'>
-                  <div className='relative overflow-hidden'>
+                <div className='bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border-2 border-gray-100 dark:border-gray-700 hover:border-purple-400 dark:hover:border-purple-500 transition-all duration-500 shadow-lg hover:shadow-xl h-full flex flex-col'>
+                  {/* Image Section */}
+                  <div className='relative overflow-hidden h-48'>
                     {project.imageUrl ? (
                       <img
                         src={project.imageUrl}
                         alt={project.title}
-                        className='w-full h-48 object-cover'
+                        className='w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700'
                       />
                     ) : (
-                      <div className='w-full h-48 bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center'>
-                        <span className='text-white font-semibold'>
-                          Project Image
+                      <div className='w-full h-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center'>
+                        <span className='text-white font-bold text-lg'>
+                          {project.title}
                         </span>
                       </div>
                     )}
-
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{
-                        opacity: hoveredProject === project.id ? 1 : 0,
-                      }}
-                      transition={{ duration: 0.3 }}
-                      className='absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center'
-                    >
-                      <div className='flex gap-3'>
-                        <motion.a
-                          href={project.liveUrl}
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          className='px-4 py-2 bg-purple-500 text-white rounded-full text-sm font-semibold hover:bg-purple-600 transition-colors'
-                        >
-                          Demo
-                        </motion.a>
-                        <motion.a
-                          href={project.githubUrl}
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          className='px-4 py-2 border border-white text-white rounded-full text-sm font-semibold hover:bg-white hover:text-black transition-colors'
-                        >
-                          Code
-                        </motion.a>
-                      </div>
-                    </motion.div>
+                    
+                    {/* Gradient Overlay */}
+                    <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent'></div>
+                    
+                    {/* Quick Action Buttons */}
+                    <div className='absolute bottom-3 left-3 right-3 flex gap-2'>
+                      <motion.a
+                        href={project.liveUrl}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        className='flex-1 px-3 py-2 bg-white/95 backdrop-blur-sm text-gray-900 rounded-lg font-semibold text-sm hover:bg-white transition-all duration-300 text-center shadow-md flex items-center justify-center gap-1'
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        <span>Demo</span>
+                      </motion.a>
+                      <motion.a
+                        href={project.githubUrl}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        className='flex-1 px-3 py-2 bg-gray-900/95 backdrop-blur-sm text-white rounded-lg font-semibold text-sm hover:bg-gray-900 transition-all duration-300 text-center shadow-md flex items-center justify-center gap-1'
+                      >
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        <span>Code</span>
+                      </motion.a>
+                    </div>
                   </div>
 
-                  <div className='p-4'>
-                    <h3 className='text-lg font-bold text-gray-900 dark:text-white mb-2'>
+                  {/* Content Section */}
+                  <div className='p-4 flex-1 flex flex-col space-y-3'>
+                    {/* Title */}
+                    <h3 className='text-lg font-bold text-gray-900 dark:text-white'>
                       {project.title}
                     </h3>
 
                     {/* Project Stage Tracker */}
                     {project.status && (
-                      <div className='mb-3 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700'>
+                      <div className='p-3 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700'>
                         <ProjectStageTracker currentStatus={project.status} />
                       </div>
                     )}
                     
-                    <p className='text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2'>
+                    {/* Description */}
+                    <p className='text-gray-600 dark:text-gray-300 text-sm leading-relaxed line-clamp-2 flex-1'>
                       {project.description}
                     </p>
 
-                    <div className='flex flex-wrap gap-1'>
+                    {/* Technologies */}
+                    <div className='flex flex-wrap gap-1.5'>
                       {project.technologies.slice(0, 3).map((tech) => (
                         <span
                           key={tech}
