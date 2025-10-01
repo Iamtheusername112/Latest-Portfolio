@@ -147,10 +147,7 @@ export default function ModernAbout() {
               Me
             </span>
           </h2>
-          <p className='text-xl max-w-3xl mx-auto font-medium' style={{ color: 'var(--foreground)' }}>
-            {aboutData?.content ||
-              'Passionate developer with a love for creating beautiful, functional, and user-centered digital experiences.'}
-          </p>
+          
         </motion.div>
 
         {/* Tab Navigation */}
