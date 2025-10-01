@@ -44,11 +44,12 @@ export default function ModernHeader() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 transition-all duration-300 ${
         isScrolled
           ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-lg'
           : 'bg-transparent'
       }`}
+      style={{ zIndex: 9997 }}
     >
       <nav className='container mx-auto px-4 py-4'>
         <div className='flex items-center justify-between'>
@@ -104,7 +105,8 @@ export default function ModernHeader() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className='md:hidden p-2 text-gray-900 dark:text-white z-50 relative'
+            className='md:hidden p-2 text-gray-900 dark:text-white relative'
+            style={{ zIndex: 10000 }}
           >
             <div className='w-6 h-6 flex flex-col justify-center items-center'>
               <motion.span
@@ -136,7 +138,8 @@ export default function ModernHeader() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className='fixed inset-0 bg-black/50 z-40 md:hidden'
+            className='fixed inset-0 bg-black/50 md:hidden'
+            style={{ zIndex: 9998 }}
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
@@ -146,7 +149,8 @@ export default function ModernHeader() {
           initial={{ x: '100%' }}
           animate={{ x: isMobileMenuOpen ? 0 : '100%' }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className='fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-gray-900 shadow-2xl z-50 md:hidden overflow-y-auto'
+          className='fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-gray-900 shadow-2xl md:hidden overflow-y-auto'
+          style={{ zIndex: 9999 }}
         >
           <div className='p-6 pt-20'>
             {/* Close Button */}
