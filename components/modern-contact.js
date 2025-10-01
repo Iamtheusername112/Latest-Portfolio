@@ -244,7 +244,7 @@ export default function ModernContact() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className='w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-colors duration-300'
+                    className='w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-purple-500 dark:focus:border-purple-400 focus:outline-none transition-colors duration-300'
                     placeholder='Your name'
                   />
                 </motion.div>
@@ -264,7 +264,7 @@ export default function ModernContact() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className='w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-500 focus:border-purple-500 focus:outline-none transition-colors duration-300'
+                    className='w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-purple-500 dark:focus:border-purple-400 focus:outline-none transition-colors duration-300'
                     placeholder='your@email.com'
                   />
                 </motion.div>

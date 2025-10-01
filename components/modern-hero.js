@@ -96,10 +96,10 @@ export default function ModernHero() {
 
   if (loading) {
     return (
-      <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-blue-50 to-purple-50'>
+      <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900'>
         <div className='text-center'>
           <div className='w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
-          <p className='text-gray-600'>Loading...</p>
+          <p className='text-gray-600 dark:text-gray-300'>Loading...</p>
         </div>
       </section>
     )

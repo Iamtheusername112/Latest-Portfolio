@@ -110,11 +110,11 @@ export default function ModernAbout() {
 
   if (loading) {
     return (
-      <section className='py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden'>
+      <section className='py-20 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 relative overflow-hidden'>
         <div className='container mx-auto px-4'>
           <div className='text-center'>
             <div className='w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
-            <p className='text-gray-600'>Loading about section...</p>
+            <p className='text-gray-600 dark:text-gray-300'>Loading about section...</p>
           </div>
         </div>
       </section>
@@ -253,17 +253,17 @@ export default function ModernAbout() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className='bg-white rounded-xl p-6 border border-gray-200 shadow-lg'
+                  className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg'
                 >
                   <div className='flex justify-between items-center mb-3'>
-                    <h3 className='text-lg font-semibold text-gray-900'>
+                    <h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
                       {skill.name}
                     </h3>
                     <span className='text-purple-600 font-semibold'>
                       {skill.level}%
                     </span>
                   </div>
-                  <div className='w-full bg-gray-200 rounded-full h-3'>
+                  <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3'>
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${skill.level}%` }}
@@ -286,18 +286,18 @@ export default function ModernAbout() {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.2 }}
                   viewport={{ once: true }}
-                  className='bg-white rounded-xl p-6 border border-gray-200 hover:border-purple-500 transition-colors duration-300 shadow-lg'
+                  className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-400 transition-colors duration-300 shadow-lg'
                 >
                   <div className='flex items-start gap-4'>
                     <div className='text-3xl'>{exp.icon}</div>
                     <div className='flex-1'>
-                      <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+                      <h3 className='text-xl font-semibold text-gray-900 dark:text-white mb-2'>
                         {exp.title}
                       </h3>
                       <p className='text-purple-600 font-medium mb-2'>
                         {exp.company} • {exp.period}
                       </p>
-                      <p className='text-gray-600'>{exp.description}</p>
+                      <p className='text-gray-600 dark:text-gray-300'>{exp.description}</p>
                     </div>
                   </div>
                 </motion.div>

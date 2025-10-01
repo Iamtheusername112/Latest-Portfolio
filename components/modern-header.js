@@ -98,7 +98,7 @@ export default function ModernHeader() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className='md:hidden p-2 text-gray-900'
+            className='md:hidden p-2 text-gray-900 dark:text-white'
           >
             <div className='w-6 h-6 flex flex-col justify-center items-center'>
               <motion.span
@@ -106,18 +106,18 @@ export default function ModernHeader() {
                   rotate: isMobileMenuOpen ? 45 : 0,
                   y: isMobileMenuOpen ? 6 : 0,
                 }}
-                className='w-full h-0.5 bg-gray-900 mb-1 transition-all duration-300'
+                className='w-full h-0.5 bg-gray-900 dark:bg-white mb-1 transition-all duration-300'
               />
               <motion.span
                 animate={{ opacity: isMobileMenuOpen ? 0 : 1 }}
-                className='w-full h-0.5 bg-gray-900 mb-1 transition-all duration-300'
+                className='w-full h-0.5 bg-gray-900 dark:bg-white mb-1 transition-all duration-300'
               />
               <motion.span
                 animate={{
                   rotate: isMobileMenuOpen ? -45 : 0,
                   y: isMobileMenuOpen ? -6 : 0,
                 }}
-                className='w-full h-0.5 bg-gray-900 transition-all duration-300'
+                className='w-full h-0.5 bg-gray-900 dark:bg-white transition-all duration-300'
               />
             </div>
           </motion.button>
@@ -144,7 +144,7 @@ export default function ModernHeader() {
                   x: isMobileMenuOpen ? 0 : -20,
                 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                className='block text-gray-600 hover:text-gray-900 transition-colors duration-300 font-medium py-2 w-full text-left'
+                className='block text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors duration-300 font-medium py-2 w-full text-left'
               >
                 {item.name}
               </motion.button>

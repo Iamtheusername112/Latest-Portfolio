@@ -147,11 +147,11 @@ export default function ModernFooter() {
 
   if (loading) {
     return (
-      <footer className='bg-gradient-to-b from-gray-50 to-white relative overflow-hidden border-t border-gray-200'>
+      <footer className='bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 relative overflow-hidden border-t border-gray-200 dark:border-gray-700'>
         <div className='container mx-auto px-4 py-8'>
           <div className='text-center'>
             <div className='w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
-            <p className='text-gray-600 dark:text-gray-300 dark:text-gray-300'>Loading footer...</p>
+            <p className='text-gray-600 dark:text-gray-300'>Loading footer...</p>
           </div>
         </div>
       </footer>
@@ -338,7 +338,7 @@ export default function ModernFooter() {
                   <input
                     type='email'
                     placeholder='Your email'
-                    className='flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none text-xs'
+                    className='flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-purple-500 focus:outline-none text-xs'
                   />
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -508,7 +508,7 @@ export default function ModernFooter() {
                   <input
                     type='email'
                     placeholder='Your email'
-                    className='flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none text-sm'
+                    className='flex-1 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-purple-500 focus:outline-none text-sm'
                   />
                   <motion.button
                     whileHover={{ scale: 1.05 }}
