@@ -49,6 +49,7 @@ const AdminLayout = ({ children }) => {
     { name: "Dashboard", href: "/admin", icon: Home, badge: null },
     { name: "Hero", href: "/admin/hero", icon: User, badge: null },
     { name: "Content", href: "/admin/content", icon: FileText, badge: null },
+    { name: "CV Management", href: "/admin/cv", icon: Award, badge: null },
     { name: "Media", href: "/admin/media", icon: Image, badge: mediaLoading ? "..." : mediaCount.toString() },
     { name: "Messages", href: "/admin/messages", icon: Mail, badge: messagesLoading ? "..." : getUnreadCount().toString() },
     { name: "Logo", href: "/admin/logo", icon: Palette, badge: null },

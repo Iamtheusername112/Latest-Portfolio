@@ -1,75 +1,16 @@
 import { NextResponse } from 'next/server'
+import { CVService } from '@/lib/db/services/cv-service'
 
 export async function GET() {
   try {
-    // CV data - you can move this to a database or config file later
-    const cvData = {
-      name: 'Iwu Francis Chisom',
-      title: 'Full Stack Web Developer',
-      email: 'iwufrancischisom20@gmail.com',
-      phone: '+234 123 456 7890', // Add your actual phone number
-      location: 'Nigeria',
-      website: 'https://iwufrancis.com',
-      linkedin: 'https://linkedin.com/in/iwufrancis',
-      github: 'https://github.com/iwufrancis',
-      
-      summary: 'Passionate full-stack developer with expertise in modern web technologies. I love creating beautiful, functional applications that solve real-world problems and make a difference.',
-      
-      skills: {
-        frontend: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Tailwind CSS', 'Framer Motion'],
-        backend: ['Node.js', 'Express.js', 'PostgreSQL', 'MongoDB', 'REST APIs', 'GraphQL'],
-        tools: ['Git', 'Docker', 'AWS', 'Vercel', 'Figma', 'VS Code', 'Linux'],
-        languages: ['JavaScript', 'TypeScript', 'Python', 'SQL', 'HTML', 'CSS']
-      },
-      
-      experience: [
-        {
-          title: 'Full Stack Developer',
-          company: 'Freelance',
-          period: '2022 - Present',
-          description: 'Developed full-stack web applications using React, Next.js, and Node.js. Built responsive, user-friendly interfaces and robust backend systems.',
-          achievements: [
-            'Built 20+ web applications for clients across various industries',
-            'Improved application performance by 40% through code optimization',
-            'Implemented modern development practices and CI/CD pipelines'
-          ]
-        },
-        {
-          title: 'Frontend Developer',
-          company: 'Tech Solutions Inc',
-          period: '2021 - 2022',
-          description: 'Focused on creating responsive and interactive user interfaces using React and modern CSS frameworks.',
-          achievements: [
-            'Developed responsive web applications for mobile and desktop',
-            'Collaborated with design team to implement pixel-perfect UIs',
-            'Reduced page load times by 30% through optimization techniques'
-          ]
-        }
-      ],
-      
-      education: [
-        {
-          degree: 'Bachelor of Science in Computer Science',
-          school: 'University of Technology',
-          year: '2018 - 2022',
-          description: 'Relevant coursework: Data Structures, Algorithms, Database Systems, Software Engineering'
-        }
-      ],
-      
-      projects: [
-        {
-          name: 'Portfolio Website',
-          description: 'A modern, responsive portfolio website built with Next.js and Tailwind CSS',
-          technologies: ['Next.js', 'React', 'Tailwind CSS', 'TypeScript'],
-          link: 'https://iwufrancis.com'
-        },
-        {
-          name: 'E-commerce Platform',
-          description: 'Full-stack e-commerce solution with payment integration and admin dashboard',
-          technologies: ['React', 'Node.js', 'PostgreSQL', 'Stripe'],
-          link: 'https://github.com/iwufrancis/ecommerce'
-        }
-      ]
+    // Fetch CV data from database
+    const cvData = await CVService.getCVContent()
+    
+    if (!cvData) {
+      return NextResponse.json(
+        { error: 'CV not found' },
+        { status: 404 }
+      )
     }
 
     // Generate HTML for CV
@@ -99,7 +40,7 @@ function generateCVHTML(data) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${data.name} - CV</title>
+    <title>${data.fullName} - CV</title>
     <style>
         * {
             margin: 0;
@@ -288,6 +229,41 @@ function generateCVHTML(data) {
             text-decoration: underline;
         }
         
+        .certification-item, .language-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .certification-item:last-child, .language-item:last-child {
+            border-bottom: none;
+        }
+        
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .language-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .language-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .language-proficiency {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
         @media print {
             body {
                 padding: 0;
@@ -303,25 +279,29 @@ function generateCVHTML(data) {
 <body>
     <div class="cv-container">
         <div class="header">
-            <h1>${data.name}</h1>
+            <h1>${data.fullName}</h1>
             <div class="title">${data.title}</div>
             <div class="contact-info">
                 <div class="contact-item">
                     <span>📧</span>
                     <span>${data.email}</span>
                 </div>
-                <div class="contact-item">
+                ${data.phone ? `<div class="contact-item">
                     <span>📱</span>
                     <span>${data.phone}</span>
-                </div>
-                <div class="contact-item">
+                </div>` : ''}
+                ${data.location ? `<div class="contact-item">
                     <span>📍</span>
                     <span>${data.location}</span>
-                </div>
-                <div class="contact-item">
+                </div>` : ''}
+                ${data.website ? `<div class="contact-item">
                     <span>🌐</span>
                     <span>${data.website}</span>
-                </div>
+                </div>` : ''}
+                ${data.linkedin ? `<div class="contact-item">
+                    <span>💼</span>
+                    <span>${data.linkedin}</span>
+                </div>` : ''}
             </div>
         </div>
         
@@ -334,34 +314,41 @@ function generateCVHTML(data) {
             <div class="section">
                 <h2>Technical Skills</h2>
                 <div class="skills-grid">
-                    <div class="skill-category">
+                    ${data.technicalSkills?.frontend ? `<div class="skill-category">
                         <h3>Frontend</h3>
                         <div class="skill-tags">
-                            ${data.skills.frontend.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            ${data.technicalSkills.frontend.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
                         </div>
-                    </div>
-                    <div class="skill-category">
+                    </div>` : ''}
+                    ${data.technicalSkills?.backend ? `<div class="skill-category">
                         <h3>Backend</h3>
                         <div class="skill-tags">
-                            ${data.skills.backend.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            ${data.technicalSkills.backend.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
                         </div>
-                    </div>
-                    <div class="skill-category">
+                    </div>` : ''}
+                    ${data.technicalSkills?.tools ? `<div class="skill-category">
                         <h3>Tools & Technologies</h3>
                         <div class="skill-tags">
-                            ${data.skills.tools.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            ${data.technicalSkills.tools.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
                         </div>
-                    </div>
-                    <div class="skill-category">
+                    </div>` : ''}
+                    ${data.technicalSkills?.languages ? `<div class="skill-category">
                         <h3>Programming Languages</h3>
                         <div class="skill-tags">
-                            ${data.skills.languages.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            ${data.technicalSkills.languages.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
                         </div>
-                    </div>
+                    </div>` : ''}
                 </div>
             </div>
             
-            <div class="section">
+            ${data.softSkills && data.softSkills.length > 0 ? `<div class="section">
+                <h2>Soft Skills</h2>
+                <div class="skill-tags">
+                    ${data.softSkills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                </div>
+            </div>` : ''}
+            
+            ${data.experience && data.experience.length > 0 ? `<div class="section">
                 <h2>Professional Experience</h2>
                 ${data.experience.map(exp => `
                     <div class="experience-item">
@@ -373,14 +360,14 @@ function generateCVHTML(data) {
                             <div class="item-period">${exp.period}</div>
                         </div>
                         <div class="item-description">${exp.description}</div>
-                        <ul class="achievements">
+                        ${exp.achievements && exp.achievements.length > 0 ? `<ul class="achievements">
                             ${exp.achievements.map(achievement => `<li>${achievement}</li>`).join('')}
-                        </ul>
+                        </ul>` : ''}
                     </div>
                 `).join('')}
-            </div>
+            </div>` : ''}
             
-            <div class="section">
+            ${data.education && data.education.length > 0 ? `<div class="section">
                 <h2>Education</h2>
                 ${data.education.map(edu => `
                     <div class="education-item">
@@ -391,12 +378,12 @@ function generateCVHTML(data) {
                             </div>
                             <div class="item-period">${edu.year}</div>
                         </div>
-                        <div class="item-description">${edu.description}</div>
+                        ${edu.description ? `<div class="item-description">${edu.description}</div>` : ''}
                     </div>
                 `).join('')}
-            </div>
+            </div>` : ''}
             
-            <div class="section">
+            ${data.projects && data.projects.length > 0 ? `<div class="section">
                 <h2>Key Projects</h2>
                 ${data.projects.map(project => `
                     <div class="project-item">
@@ -405,12 +392,40 @@ function generateCVHTML(data) {
                             ${project.link ? `<a href="${project.link}" class="project-link" target="_blank">View Project</a>` : ''}
                         </div>
                         <div class="item-description">${project.description}</div>
-                        <div class="project-tech">
+                        ${project.technologies && project.technologies.length > 0 ? `<div class="project-tech">
                             ${project.technologies.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
-                        </div>
+                        </div>` : ''}
                     </div>
                 `).join('')}
-            </div>
+            </div>` : ''}
+            
+            ${data.certifications && data.certifications.length > 0 ? `<div class="section">
+                <h2>Certifications</h2>
+                ${data.certifications.map(cert => `
+                    <div class="certification-item">
+                        <div class="item-header">
+                            <div>
+                                <div class="item-title">${cert.name}</div>
+                                <div class="item-company">${cert.issuer}</div>
+                            </div>
+                            <div class="item-period">${cert.date}</div>
+                        </div>
+                        ${cert.credentialId ? `<div class="item-description">Credential ID: ${cert.credentialId}</div>` : ''}
+                    </div>
+                `).join('')}
+            </div>` : ''}
+            
+            ${data.languages && data.languages.length > 0 ? `<div class="section">
+                <h2>Languages</h2>
+                <div class="languages-grid">
+                    ${data.languages.map(lang => `
+                        <div class="language-item">
+                            <span class="language-name">${lang.language}</span>
+                            <span class="language-proficiency">${lang.proficiency}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>` : ''}
         </div>
     </div>
     
