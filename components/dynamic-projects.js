@@ -19,11 +19,13 @@ import {
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
+import { useThemeContext } from '@/contexts/theme-context'
 
 const DynamicProjects = () => {
   const [projectsData, setProjectsData] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [refreshKey, setRefreshKey] = useState(0)
+  const { theme } = useThemeContext()
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -391,33 +393,15 @@ const DynamicProjects = () => {
                               rel='noopener noreferrer'
                             >
                               <ExternalLink className='h-3 w-3 sm:mr-1' />
-                              <span>Live</span>
-                            </a>
-                          </Button>
-                        )}
-                        {project.githubUrl && (
-                          <Button
-                            asChild
-                            variant='outline'
-                            size='sm'
-                            className='flex-1 text-xs sm:text-sm'
-                          >
-                            <a
-                              href={project.githubUrl}
-                              target='_blank'
-                              rel='noopener noreferrer'
-                            >
-                              <Github className='h-3 w-3 sm:mr-1' />
-                              <span>Code</span>
+                              <span className='font-bold drop-shadow-lg' style={{ color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.3)' }}>Live</span>
                             </a>
                           </Button>
                         )}
                         {project.demoUrl && !project.liveUrl && (
                           <Button
                             asChild
-                            variant='outline'
                             size='sm'
-                            className='flex-1 text-xs sm:text-sm'
+                            className={`flex-1 text-xs sm:text-sm text-white ${theme.buttonPrimary}`}
                           >
                             <a
                               href={project.demoUrl}
@@ -425,7 +409,7 @@ const DynamicProjects = () => {
                               rel='noopener noreferrer'
                             >
                               <ExternalLink className='h-3 w-3 sm:mr-1' />
-                              <span>Demo</span>
+                              <span className='font-bold drop-shadow-lg' style={{ color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.3)' }}>Demo</span>
                             </a>
                           </Button>
                         )}
