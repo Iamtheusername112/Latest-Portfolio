@@ -141,13 +141,6 @@ export default function ModernAbout() {
           viewport={{ once: true }}
           className='text-center mb-16'
         >
-          <h2 className='text-5xl md:text-6xl font-bold mb-6'>
-            <span style={{ color: 'var(--foreground)' }}>{aboutData?.title || 'About'}</span>{' '}
-            <span className='text-theme-gradient'>
-              Me
-            </span>
-          </h2>
-          
         </motion.div>
 
         {/* Tab Navigation */}

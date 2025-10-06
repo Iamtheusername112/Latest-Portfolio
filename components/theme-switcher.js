@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Palette, Check } from 'lucide-react';
 import { useThemeContext } from '@/contexts/theme-context';
 
-export default function ThemeSwitcher() {
+export default function ThemeSwitcher({ onThemeChange }) {
   const { theme, currentTheme, changeTheme, themes } = useThemeContext();
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -87,6 +87,10 @@ export default function ThemeSwitcher() {
                       onClick={() => {
                         changeTheme(key);
                         setIsOpen(false);
+                        // Call the callback to close mobile menu if provided
+                        if (onThemeChange) {
+                          onThemeChange();
+                        }
                       }}
                       className={`w-full p-3 md:p-4 rounded-xl text-left transition-all duration-300 ${
                         currentTheme === key

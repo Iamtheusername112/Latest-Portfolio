@@ -17,6 +17,38 @@ export default function ModernHeader() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      // Save current scroll position
+      const scrollY = window.scrollY
+      // Prevent scrolling
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+      document.body.style.overflow = 'hidden'
+    } else {
+      // Restore scrolling
+      const scrollY = document.body.style.top
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      document.body.style.overflow = ''
+      // Restore scroll position
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1)
+      }
+    }
+
+    // Cleanup function
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      document.body.style.overflow = ''
+    }
+  }, [isMobileMenuOpen])
+
   const navItems = [
     { name: 'Home', href: '#home' },
     { name: 'About', href: '#about' },
@@ -141,6 +173,7 @@ export default function ModernHeader() {
             className='fixed inset-0 bg-black/50 md:hidden'
             style={{ zIndex: 9998 }}
             onClick={() => setIsMobileMenuOpen(false)}
+            onTouchMove={(e) => e.preventDefault()} // Prevent touch scrolling on overlay
           />
         )}
 
@@ -151,6 +184,14 @@ export default function ModernHeader() {
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           className='fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-gray-900 shadow-2xl md:hidden overflow-y-auto'
           style={{ zIndex: 9999 }}
+          onTouchMove={(e) => {
+            // Allow scrolling within the menu drawer
+            const target = e.target
+            const isScrollable = target.closest('.overflow-y-auto')
+            if (!isScrollable) {
+              e.preventDefault()
+            }
+          }}
         >
           <div className='p-6 pt-20'>
             {/* Close Button */}
@@ -191,7 +232,7 @@ export default function ModernHeader() {
                   Choose Theme
                 </h3>
               </div>
-              <ThemeSwitcher />
+              <ThemeSwitcher onThemeChange={() => setIsMobileMenuOpen(false)} />
             </motion.div>
 
             {/* CTA Button */}

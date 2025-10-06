@@ -96,7 +96,7 @@ export default function ModernHero() {
 
   if (loading) {
     return (
-      <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-gray-900 dark:via-slate-900 dark:to-blue-950'>
+      <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-gray-900 dark:via-slate-900 dark:to-blue-950 pt-24 sm:pt-28 md:pt-32'>
         <div className='text-center'>
           <div className='w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
           <p className='text-gray-600 dark:text-gray-300'>Loading...</p>
@@ -106,7 +106,7 @@ export default function ModernHero() {
   }
 
   return (
-    <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-gray-900 dark:via-slate-900 dark:to-blue-950'>
+    <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-gray-900 dark:via-slate-900 dark:to-blue-950 pt-24 sm:pt-28 md:pt-32'>
       {/* Animated Background Elements */}
       <div className='absolute inset-0'>
         <div className='absolute top-1/4 left-1/4 w-72 h-72 bg-blue-200 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-lighten filter blur-xl opacity-60 animate-blob'></div>
