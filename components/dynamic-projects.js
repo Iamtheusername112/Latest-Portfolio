@@ -391,7 +391,7 @@ const DynamicProjects = () => {
                               rel='noopener noreferrer'
                             >
                               <ExternalLink className='h-3 w-3 sm:mr-1' />
-                              <span className='hidden sm:inline'>Live</span>
+                              <span>Live</span>
                             </a>
                           </Button>
                         )}
@@ -408,7 +408,7 @@ const DynamicProjects = () => {
                               rel='noopener noreferrer'
                             >
                               <Github className='h-3 w-3 sm:mr-1' />
-                              <span className='hidden sm:inline'>Code</span>
+                              <span>Code</span>
                             </a>
                           </Button>
                         )}
@@ -425,7 +425,7 @@ const DynamicProjects = () => {
                               rel='noopener noreferrer'
                             >
                               <ExternalLink className='h-3 w-3 sm:mr-1' />
-                              <span className='hidden sm:inline'>Demo</span>
+                              <span>Demo</span>
                             </a>
                           </Button>
                         )}

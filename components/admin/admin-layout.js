@@ -309,7 +309,7 @@ const AdminLayout = ({ children }) => {
               className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
             >
               <Globe className="h-4 w-4" />
-              <span className="hidden sm:inline">View Site</span>
+              <span>View Site</span>
             </a>
           </div>
         </div>
