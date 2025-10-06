@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 
 export default function ModernAbout() {
   const [activeTab, setActiveTab] = useState('about')
@@ -46,39 +46,63 @@ export default function ModernAbout() {
     fetchAboutData()
   }, [])
 
-  // Dynamic skills from API data
-  const skills = aboutData?.skills
-    ? aboutData.skills.map((skill, index) => ({
-        name: typeof skill === 'string' ? skill : skill.name,
-        level:
-          typeof skill === 'object' && skill.level
-            ? skill.level
-            : 85 + (index % 15),
-        color: [
-          'from-blue-500 to-cyan-500',
-          'from-green-500 to-emerald-500',
-          'from-blue-600 to-indigo-600',
-          'from-yellow-500 to-orange-500',
-          'from-teal-500 to-cyan-500',
-          'from-blue-500 to-indigo-500',
-        ][index % 6],
-      }))
-    : [
-        {
-          name: 'React/Next.js',
-          level: 95,
-          color: 'from-blue-500 to-cyan-500',
-        },
-        { name: 'Node.js', level: 90, color: 'from-green-500 to-emerald-500' },
-        { name: 'TypeScript', level: 88, color: 'from-blue-600 to-indigo-600' },
-        { name: 'Python', level: 85, color: 'from-yellow-500 to-orange-500' },
-        { name: 'UI/UX Design', level: 92, color: 'from-teal-500 to-cyan-500' },
-        {
-          name: 'Database Design',
-          level: 87,
-          color: 'from-blue-500 to-indigo-500',
-        },
-      ]
+  // Professional skills data with detailed information - Always use fallback for consistency
+  const skills = [
+    {
+      name: 'React & Next.js',
+      level: 95,
+      icon: '⚛️',
+      description: 'Expert in building scalable React applications with Next.js, including SSR, SSG, and advanced state management. Specialized in performance optimization and modern React patterns.',
+      experience: '4+ years',
+      category: 'Frontend',
+      color: 'from-blue-500 to-cyan-500',
+    },
+    {
+      name: 'Node.js & Express',
+      level: 90,
+      icon: '🟢',
+      description: 'Experienced in building robust backend services and APIs using Node.js, Express, and modern JavaScript features. Focus on microservices architecture and API design.',
+      experience: '4+ years',
+      category: 'Backend',
+      color: 'from-green-500 to-emerald-500',
+    },
+    {
+      name: 'TypeScript',
+      level: 88,
+      icon: '🔷',
+      description: 'Proficient in TypeScript for building type-safe applications and improving code quality and maintainability. Expert in advanced TypeScript patterns and generics.',
+      experience: '3+ years',
+      category: 'Language',
+      color: 'from-blue-600 to-indigo-600',
+    },
+    {
+      name: 'Python & Django',
+      level: 85,
+      icon: '🐍',
+      description: 'Skilled in Python for web development, data analysis, and automation with frameworks like Django and Flask. Experience in building scalable web applications.',
+      experience: '3+ years',
+      category: 'Backend',
+      color: 'from-yellow-500 to-orange-500',
+    },
+    {
+      name: 'PostgreSQL',
+      level: 87,
+      icon: '🐘',
+      description: 'Expert in database design, optimization, and complex queries using PostgreSQL and other SQL databases. Specialized in performance tuning and data modeling.',
+      experience: '4+ years',
+      category: 'Database',
+      color: 'from-teal-500 to-cyan-500',
+    },
+    {
+      name: 'AWS Cloud',
+      level: 82,
+      icon: '☁️',
+      description: 'Experienced in cloud architecture, deployment, and management using AWS services like EC2, S3, Lambda, and RDS. Focus on scalable and cost-effective solutions.',
+      experience: '2+ years',
+      category: 'Cloud',
+      color: 'from-blue-500 to-indigo-500',
+    },
+  ]
 
   // Dynamic experiences from API data
   const experiences = aboutData?.experiences || [
@@ -235,35 +259,137 @@ export default function ModernAbout() {
           )}
 
           {activeTab === 'skills' && (
-            <div className='grid md:grid-cols-2 gap-8'>
-              {skills.map((skill, index) => (
-                <motion.div
-                  key={skill.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg'
-                >
-                  <div className='flex justify-between items-center mb-3'>
-                    <h3 className='text-lg font-semibold' style={{ color: 'var(--foreground)' }}>
-                      {skill.name}
-                    </h3>
-                    <span className='text-theme-accent font-semibold'>
-                      {skill.level}%
-                    </span>
-                  </div>
-                  <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3'>
+            <div className='space-y-8'>
+              {/* Skills Overview */}
+              <div className='text-center mb-8'>
+                <h3 className='text-2xl font-bold mb-4' style={{ color: 'var(--foreground)' }}>
+                  Technical Skills & Expertise
+                </h3>
+                <p className='text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
+                  Here's a breakdown of my technical skills with proficiency levels. Each percentage represents my confidence and experience level with that technology.
+                </p>
+              </div>
+
+              {/* Skills Grid - Show only first 3 skills */}
+              <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                {skills.slice(0, 3).map((skill, index) => {
+                  const getProficiencyLevel = (level) => {
+                    if (level >= 90) return { label: 'Expert', description: 'Advanced mastery, can teach others', color: 'text-green-600' }
+                    if (level >= 75) return { label: 'Advanced', description: 'Highly proficient, can lead projects', color: 'text-blue-600' }
+                    if (level >= 50) return { label: 'Intermediate', description: 'Comfortable with most tasks', color: 'text-yellow-600' }
+                    return { label: 'Learning', description: 'Currently developing skills', color: 'text-gray-600' }
+                  }
+                  
+                  const proficiency = getProficiencyLevel(skill.level)
+                  
+                  return (
                     <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${skill.level}%` }}
-                      transition={{ duration: 1, delay: index * 0.1 }}
+                      key={`${skill.name}-${index}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
                       viewport={{ once: true }}
-                      className={`h-3 rounded-full bg-gradient-to-r ${skill.color}`}
-                    />
+                      className='bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 group'
+                    >
+                      {/* Skill Header */}
+                      <div className='flex items-start justify-between mb-4'>
+                        <div className='flex items-center gap-3'>
+                          <div className='text-2xl'>{skill.icon || '💻'}</div>
+                          <div>
+                            <h3 className='text-lg font-semibold' style={{ color: 'var(--foreground)' }}>
+                              {skill.name}
+                            </h3>
+                            <p className={`text-sm font-medium ${proficiency.color}`}>
+                              {proficiency.label}
+                            </p>
+                          </div>
+                        </div>
+                        <span className='text-theme-accent font-bold text-lg'>
+                          {skill.level}%
+                        </span>
+                      </div>
+
+                      {/* Skill Description */}
+                      <p className='text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed'>
+                        {skill.description || `${proficiency.description} in ${skill.name}.`}
+                      </p>
+
+                      {/* Progress Bar with Context */}
+                      <div className='space-y-2'>
+                        <div className='flex justify-between text-xs text-gray-500 dark:text-gray-400'>
+                          <span>Proficiency Level</span>
+                          <span>{proficiency.label} ({skill.level}%)</span>
+                        </div>
+                        <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden'>
+                          <motion.div
+                            initial={{ width: 0 }}
+                            whileInView={{ width: `${skill.level}%` }}
+                            transition={{ duration: 1.2, delay: index * 0.1, ease: "easeOut" }}
+                            viewport={{ once: true }}
+                            className={`h-3 rounded-full bg-gradient-to-r ${skill.color} shadow-sm`}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Experience Context */}
+                      {skill.experience && (
+                        <div className='mt-4 pt-3 border-t border-gray-200 dark:border-gray-700'>
+                          <div className='flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400'>
+                            <span>⏱️</span>
+                            <span>{skill.experience} of experience</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Skill Category */}
+                      {skill.category && (
+                        <div className='mt-2'>
+                          <span className='inline-block px-2 py-1 text-xs font-medium bg-theme-accent/10 text-theme-accent rounded-full'>
+                            {skill.category}
+                          </span>
+                        </div>
+                      )}
+                    </motion.div>
+                  )
+                })}
+              </div>
+
+              {/* Skills Legend */}
+              <div className='bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700'>
+                <h4 className='text-lg font-semibold mb-4' style={{ color: 'var(--foreground)' }}>
+                  Understanding the Proficiency Levels
+                </h4>
+                <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-4'>
+                  <div className='flex items-center gap-3'>
+                    <div className='w-4 h-4 bg-gray-500 rounded-full'></div>
+                    <div>
+                      <p className='font-medium text-sm'>Learning (0-49%)</p>
+                      <p className='text-xs text-gray-600 dark:text-gray-400'>Currently developing skills</p>
+                    </div>
                   </div>
-                </motion.div>
-              ))}
+                  <div className='flex items-center gap-3'>
+                    <div className='w-4 h-4 bg-yellow-500 rounded-full'></div>
+                    <div>
+                      <p className='font-medium text-sm'>Intermediate (50-74%)</p>
+                      <p className='text-xs text-gray-600 dark:text-gray-400'>Comfortable with most tasks</p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-3'>
+                    <div className='w-4 h-4 bg-blue-500 rounded-full'></div>
+                    <div>
+                      <p className='font-medium text-sm'>Advanced (75-89%)</p>
+                      <p className='text-xs text-gray-600 dark:text-gray-400'>Highly proficient, can lead projects</p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-3'>
+                    <div className='w-4 h-4 bg-green-500 rounded-full'></div>
+                    <div>
+                      <p className='font-medium text-sm'>Expert (90-100%)</p>
+                      <p className='text-xs text-gray-600 dark:text-gray-400'>Advanced mastery, can teach others</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 

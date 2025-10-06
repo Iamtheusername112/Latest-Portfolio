@@ -136,15 +136,38 @@ function PersonalInfoTab({ formData, handleInputChange }) {
 
 function SkillsTab({ formData, handleInputChange, handleNestedInputChange, addArrayItem, removeArrayItem }) {
   const [newSkill, setNewSkill] = useState('')
+  const [newSkillLevel, setNewSkillLevel] = useState('intermediate')
   const [selectedCategory, setSelectedCategory] = useState('frontend')
+  const [editingSkill, setEditingSkill] = useState(null)
+
+  const skillLevels = [
+    { value: 'beginner', label: 'Beginner', color: 'bg-gray-500', width: '25%' },
+    { value: 'intermediate', label: 'Intermediate', color: 'bg-yellow-500', width: '50%' },
+    { value: 'advanced', label: 'Advanced', color: 'bg-blue-500', width: '75%' },
+    { value: 'expert', label: 'Expert', color: 'bg-green-500', width: '100%' }
+  ]
+
+  const categoryIcons = {
+    frontend: '🎨',
+    backend: '⚙️',
+    tools: '🛠️',
+    languages: '💻'
+  }
 
   const addSkill = () => {
     if (newSkill.trim()) {
+      const skillData = {
+        name: newSkill.trim(),
+        level: newSkillLevel,
+        category: selectedCategory
+      }
+      
       addArrayItem('technicalSkills', {
         ...formData.technicalSkills,
-        [selectedCategory]: [...(formData.technicalSkills[selectedCategory] || []), newSkill.trim()]
+        [selectedCategory]: [...(formData.technicalSkills[selectedCategory] || []), skillData]
       })
       setNewSkill('')
+      setNewSkillLevel('intermediate')
       toast.success(`${newSkill.trim()} added to ${selectedCategory} skills`)
     }
   }
@@ -152,6 +175,14 @@ function SkillsTab({ formData, handleInputChange, handleNestedInputChange, addAr
   const removeSkill = (category, index) => {
     const updatedSkills = { ...formData.technicalSkills }
     updatedSkills[category] = updatedSkills[category].filter((_, i) => i !== index)
+    handleInputChange('technicalSkills', updatedSkills)
+  }
+
+  const updateSkillLevel = (category, index, newLevel) => {
+    const updatedSkills = { ...formData.technicalSkills }
+    updatedSkills[category] = updatedSkills[category].map((skill, i) => 
+      i === index ? { ...skill, level: newLevel } : skill
+    )
     handleInputChange('technicalSkills', updatedSkills)
   }
 
@@ -163,107 +194,191 @@ function SkillsTab({ formData, handleInputChange, handleNestedInputChange, addAr
     }
   }
 
+  const getSkillLevelInfo = (level) => {
+    return skillLevels.find(l => l.value === level) || skillLevels[1]
+  }
+
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900">Skills</h3>
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">Skills & Expertise</h3>
+        <p className="text-gray-600">Showcase your technical and soft skills with proficiency levels</p>
+      </div>
       
       {/* Technical Skills */}
-      <div>
-        <h4 className="text-md font-medium text-gray-900 mb-4">Technical Skills</h4>
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <span className="text-xl">💻</span>
+          </div>
+          <div>
+            <h4 className="text-xl font-semibold text-gray-900">Technical Skills</h4>
+            <p className="text-sm text-gray-600">Programming languages, frameworks, and tools</p>
+          </div>
+        </div>
         
         {/* Add new skill */}
-        <div className="flex gap-2 mb-4">
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="frontend">Frontend</option>
-            <option value="backend">Backend</option>
-            <option value="tools">Tools & Technologies</option>
-            <option value="languages">Programming Languages</option>
-          </select>
-          <input
-            type="text"
-            value={newSkill}
-            onChange={(e) => setNewSkill(e.target.value)}
-            placeholder="Add new skill"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            onKeyPress={(e) => e.key === 'Enter' && addSkill()}
-          />
-          <button
-            onClick={addSkill}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Add
-          </button>
+        <div className="bg-gray-50 rounded-lg p-4 mb-6">
+          <h5 className="text-sm font-medium text-gray-700 mb-3">Add New Technical Skill</h5>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="frontend">🎨 Frontend</option>
+              <option value="backend">⚙️ Backend</option>
+              <option value="tools">🛠️ Tools & Technologies</option>
+              <option value="languages">💻 Programming Languages</option>
+            </select>
+            <input
+              type="text"
+              value={newSkill}
+              onChange={(e) => setNewSkill(e.target.value)}
+              placeholder="Skill name (e.g., React, Python)"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              onKeyPress={(e) => e.key === 'Enter' && addSkill()}
+            />
+            <select
+              value={newSkillLevel}
+              onChange={(e) => setNewSkillLevel(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {skillLevels.map(level => (
+                <option key={level.value} value={level.value}>{level.label}</option>
+              ))}
+            </select>
+            <button
+              onClick={addSkill}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Skill
+            </button>
+          </div>
         </div>
 
         {/* Display skills by category */}
-        {['frontend', 'backend', 'tools', 'languages'].map(category => (
-          <div key={category} className="mb-4">
-            <h5 className="text-sm font-medium text-gray-700 mb-2 capitalize">{category}</h5>
-            <div className="flex flex-wrap gap-2">
-              {(formData.technicalSkills[category] || []).map((skill, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                >
-                  {skill}
-                  <button
-                    onClick={() => removeSkill(category, index)}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </span>
-              ))}
+        {['frontend', 'backend', 'tools', 'languages'].map(category => {
+          const skills = formData.technicalSkills[category] || []
+          if (skills.length === 0) return null
+          
+          return (
+            <div key={category} className="mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-lg">{categoryIcons[category]}</span>
+                <h5 className="text-lg font-semibold text-gray-900 capitalize">{category}</h5>
+                <span className="text-sm text-gray-500">({skills.length})</span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {skills.map((skill, index) => {
+                  const levelInfo = getSkillLevelInfo(skill.level || 'intermediate')
+                  return (
+                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h6 className="font-medium text-gray-900">{skill.name || skill}</h6>
+                          <p className="text-sm text-gray-600">{levelInfo.label}</p>
+                        </div>
+                        <button
+                          onClick={() => removeSkill(category, index)}
+                          className="text-red-500 hover:text-red-700 p-1"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                      
+                      {/* Skill Level Bar */}
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-xs text-gray-600">
+                          <span>Proficiency</span>
+                          <span>{levelInfo.label}</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full transition-all duration-300 ${levelInfo.color}`}
+                            style={{ width: levelInfo.width }}
+                          ></div>
+                        </div>
+                      </div>
+                      
+                      {/* Level Selector */}
+                      <div className="mt-3">
+                        <select
+                          value={skill.level || 'intermediate'}
+                          onChange={(e) => updateSkillLevel(category, index, e.target.value)}
+                          className="w-full text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          {skillLevels.map(level => (
+                            <option key={level.value} value={level.value}>{level.label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Soft Skills */}
-      <div>
-        <h4 className="text-md font-medium text-gray-900 mb-4">Soft Skills</h4>
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+            <span className="text-xl">🤝</span>
+          </div>
+          <div>
+            <h4 className="text-xl font-semibold text-gray-900">Soft Skills</h4>
+            <p className="text-sm text-gray-600">Personal attributes and interpersonal abilities</p>
+          </div>
+        </div>
         
         {/* Add soft skill */}
-        <div className="flex gap-2 mb-4">
-          <input
-            type="text"
-            value={newSkill}
-            onChange={(e) => setNewSkill(e.target.value)}
-            placeholder="Add soft skill"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            onKeyPress={(e) => e.key === 'Enter' && addSoftSkill()}
-          />
-          <button
-            onClick={addSoftSkill}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Add
-          </button>
+        <div className="bg-gray-50 rounded-lg p-4 mb-6">
+          <h5 className="text-sm font-medium text-gray-700 mb-3">Add New Soft Skill</h5>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={newSkill}
+              onChange={(e) => setNewSkill(e.target.value)}
+              placeholder="Soft skill (e.g., Leadership, Communication)"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              onKeyPress={(e) => e.key === 'Enter' && addSoftSkill()}
+            />
+            <button
+              onClick={addSoftSkill}
+              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Skill
+            </button>
+          </div>
         </div>
 
         {/* Display soft skills */}
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {formData.softSkills.map((skill, index) => (
-            <span
-              key={index}
-              className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm"
-            >
-              {skill}
+            <div key={index} className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-3 flex items-center justify-between">
+              <span className="font-medium text-green-800">{skill}</span>
               <button
                 onClick={() => removeArrayItem('softSkills', index)}
-                className="text-green-600 hover:text-green-800"
+                className="text-green-600 hover:text-green-800 p-1"
               >
                 <Trash2 className="h-3 w-3" />
               </button>
-            </span>
+            </div>
           ))}
         </div>
+        
+        {formData.softSkills.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            <div className="text-4xl mb-2">🤝</div>
+            <p>No soft skills added yet. Add your interpersonal skills above.</p>
+          </div>
+        )}
       </div>
     </div>
   )
