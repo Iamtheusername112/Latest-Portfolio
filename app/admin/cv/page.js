@@ -4,367 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Save, Download, Eye, Plus, Trash2, Edit3, Check } from 'lucide-react'
 import { toast } from 'sonner'
-
-export default function CVManagement() {
-  const [cvData, setCvData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [activeTab, setActiveTab] = useState('personal')
-  const [showPreview, setShowPreview] = useState(false)
-
-  // Form data state
-  const [formData, setFormData] = useState({
-    // Personal Information
-    fullName: '',
-    title: '',
-    email: '',
-    phone: '',
-    location: '',
-    website: '',
-    linkedin: '',
-    github: '',
-    summary: '',
-    
-    // Skills
-    technicalSkills: {
-      frontend: [],
-      backend: [],
-      tools: [],
-      languages: []
-    },
-    softSkills: [],
-    
-    // Experience
-    experience: [],
-    
-    // Education
-    education: [],
-    
-    // Projects
-    projects: [],
-    
-    // Certifications
-    certifications: [],
-    
-    // Languages
-    languages: [],
-    
-    // Additional Info
-    additionalInfo: {
-      interests: [],
-      volunteer: [],
-      publications: []
-    },
-    
-    // Settings
-    template: 'modern',
-    colorScheme: 'blue',
-    layout: 'single',
-    showPhoto: false,
-    photoUrl: ''
-  })
-
-  // Fetch CV data
-  useEffect(() => {
-    const fetchCVData = async () => {
-      try {
-        const response = await fetch('/api/admin/cv')
-        const data = await response.json()
-        
-        if (data.cv) {
-          setCvData(data.cv)
-          setFormData({
-            fullName: data.cv.fullName || '',
-            title: data.cv.title || '',
-            email: data.cv.email || '',
-            phone: data.cv.phone || '',
-            location: data.cv.location || '',
-            website: data.cv.website || '',
-            linkedin: data.cv.linkedin || '',
-            github: data.cv.github || '',
-            summary: data.cv.summary || '',
-            technicalSkills: data.cv.technicalSkills || { frontend: [], backend: [], tools: [], languages: [] },
-            softSkills: data.cv.softSkills || [],
-            experience: data.cv.experience || [],
-            education: data.cv.education || [],
-            projects: data.cv.projects || [],
-            certifications: data.cv.certifications || [],
-            languages: data.cv.languages || [],
-            additionalInfo: data.cv.additionalInfo || { interests: [], volunteer: [], publications: [] },
-            template: data.cv.template || 'modern',
-            colorScheme: data.cv.colorScheme || 'blue',
-            layout: data.cv.layout || 'single',
-            showPhoto: data.cv.showPhoto || false,
-            photoUrl: data.cv.photoUrl || ''
-          })
-          toast.success('CV data loaded successfully!')
-        }
-      } catch (error) {
-        console.error('Error fetching CV data:', error)
-        toast.error('Failed to load CV data. Please refresh the page.')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCVData()
-  }, [])
-
-  const handleSave = async () => {
-    setSaving(true)
-    try {
-      const response = await fetch('/api/admin/cv', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setCvData(data.cv)
-        toast.success('CV saved successfully!')
-      } else {
-        toast.error('Failed to save CV. Please try again.')
-      }
-    } catch (error) {
-      console.error('Error saving CV:', error)
-      toast.error('Error saving CV. Please check your connection.')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }))
-  }
-
-  const handleNestedInputChange = (parentField, childField, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [parentField]: {
-        ...prev[parentField],
-        [childField]: value
-      }
-    }))
-  }
-
-  const addArrayItem = (field, newItem) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: [...prev[field], newItem]
-    }))
-  }
-
-  const removeArrayItem = (field, index) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
-    }))
-  }
-
-  const updateArrayItem = (field, index, updatedItem) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: prev[field].map((item, i) => i === index ? updatedItem : item)
-    }))
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading CV data...</p>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">CV Management</h1>
-              <p className="text-gray-600 mt-1">Create and manage your professional CV</p>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowPreview(!showPreview)}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center gap-2"
-              >
-                <Eye className="h-4 w-4" />
-                {showPreview ? 'Hide Preview' : 'Preview'}
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
-              >
-                {saving ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Save className="h-4 w-4" />
-                )}
-                {saving ? 'Saving...' : 'Save CV'}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Form Section */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border">
-              {/* Tabs */}
-              <div className="border-b border-gray-200">
-                <nav className="flex space-x-8 px-6">
-                  {[
-                    { id: 'personal', label: 'Personal Info' },
-                    { id: 'skills', label: 'Skills' },
-                    { id: 'experience', label: 'Experience' },
-                    { id: 'education', label: 'Education' },
-                    { id: 'projects', label: 'Projects' },
-                    { id: 'additional', label: 'Additional' },
-                    { id: 'settings', label: 'Settings' }
-                  ].map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                        activeTab === tab.id
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </nav>
-              </div>
-
-              {/* Tab Content */}
-              <div className="p-6">
-                {activeTab === 'personal' && (
-                  <PersonalInfoTab 
-                    formData={formData} 
-                    handleInputChange={handleInputChange} 
-                  />
-                )}
-                {activeTab === 'skills' && (
-                  <SkillsTab 
-                    formData={formData} 
-                    handleInputChange={handleInputChange}
-                    handleNestedInputChange={handleNestedInputChange}
-                    addArrayItem={addArrayItem}
-                    removeArrayItem={removeArrayItem}
-                  />
-                )}
-                {activeTab === 'experience' && (
-                  <ExperienceTab 
-                    formData={formData} 
-                    addArrayItem={addArrayItem}
-                    removeArrayItem={removeArrayItem}
-                    updateArrayItem={updateArrayItem}
-                  />
-                )}
-                {activeTab === 'education' && (
-                  <EducationTab 
-                    formData={formData} 
-                    addArrayItem={addArrayItem}
-                    removeArrayItem={removeArrayItem}
-                    updateArrayItem={updateArrayItem}
-                  />
-                )}
-                {activeTab === 'projects' && (
-                  <ProjectsTab 
-                    formData={formData} 
-                    addArrayItem={addArrayItem}
-                    removeArrayItem={removeArrayItem}
-                    updateArrayItem={updateArrayItem}
-                  />
-                )}
-                {activeTab === 'additional' && (
-                  <AdditionalTab 
-                    formData={formData} 
-                    handleInputChange={handleInputChange}
-                    addArrayItem={addArrayItem}
-                    removeArrayItem={removeArrayItem}
-                    updateArrayItem={updateArrayItem}
-                  />
-                )}
-                {activeTab === 'settings' && (
-                  <SettingsTab 
-                    formData={formData} 
-                    handleInputChange={handleInputChange}
-                  />
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Preview Section */}
-          <div className="lg:col-span-1">
-            {showPreview && (
-              <div className="bg-white rounded-xl shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">CV Preview</h3>
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-gray-900">{formData.fullName || 'Your Name'}</h4>
-                    <p className="text-sm text-gray-600">{formData.title || 'Your Title'}</p>
-                    <p className="text-sm text-gray-500">{formData.email || 'your@email.com'}</p>
-                  </div>
-                  
-                  <div>
-                    <h5 className="font-medium text-gray-900 mb-2">Summary</h5>
-                    <p className="text-sm text-gray-600 line-clamp-3">
-                      {formData.summary || 'Your professional summary will appear here...'}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h5 className="font-medium text-gray-900 mb-2">Experience</h5>
-                    <div className="space-y-2">
-                      {formData.experience.slice(0, 2).map((exp, index) => (
-                        <div key={index} className="text-sm">
-                          <p className="font-medium text-gray-900">{exp.title || 'Job Title'}</p>
-                          <p className="text-gray-600">{exp.company || 'Company'}</p>
-                        </div>
-                      ))}
-                      {formData.experience.length === 0 && (
-                        <p className="text-sm text-gray-500">No experience added yet</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-6 pt-4 border-t">
-                  <a
-                    href="/api/cv/download"
-                    target="_blank"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Download className="h-4 w-4" />
-                    Download CV
-                  </a>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+import AdminLayout from '@/components/admin/admin-layout'
 
 // Tab Components
 function PersonalInfoTab({ formData, handleInputChange }) {
@@ -494,7 +134,6 @@ function PersonalInfoTab({ formData, handleInputChange }) {
   )
 }
 
-// Placeholder components for other tabs
 function SkillsTab({ formData, handleInputChange, handleNestedInputChange, addArrayItem, removeArrayItem }) {
   const [newSkill, setNewSkill] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('frontend')
@@ -1401,5 +1040,370 @@ function SettingsTab({ formData, handleInputChange }) {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function CVManagement() {
+  const [cvData, setCvData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [activeTab, setActiveTab] = useState('personal')
+  const [showPreview, setShowPreview] = useState(false)
+
+  // Form data state
+  const [formData, setFormData] = useState({
+    // Personal Information
+    fullName: '',
+    title: '',
+    email: '',
+    phone: '',
+    location: '',
+    website: '',
+    linkedin: '',
+    github: '',
+    summary: '',
+    
+    // Skills
+    technicalSkills: {
+      frontend: [],
+      backend: [],
+      tools: [],
+      languages: []
+    },
+    softSkills: [],
+    
+    // Experience
+    experience: [],
+    
+    // Education
+    education: [],
+    
+    // Projects
+    projects: [],
+    
+    // Certifications
+    certifications: [],
+    
+    // Languages
+    languages: [],
+    
+    // Additional Info
+    additionalInfo: {
+      interests: [],
+      volunteer: [],
+      publications: []
+    },
+    
+    // Settings
+    template: 'modern',
+    colorScheme: 'blue',
+    layout: 'single',
+    showPhoto: false,
+    photoUrl: ''
+  })
+
+  // Fetch CV data
+  useEffect(() => {
+    const fetchCVData = async () => {
+      try {
+        const response = await fetch('/api/admin/cv')
+        const data = await response.json()
+        
+        if (data.cv) {
+          setCvData(data.cv)
+          setFormData({
+            fullName: data.cv.fullName || '',
+            title: data.cv.title || '',
+            email: data.cv.email || '',
+            phone: data.cv.phone || '',
+            location: data.cv.location || '',
+            website: data.cv.website || '',
+            linkedin: data.cv.linkedin || '',
+            github: data.cv.github || '',
+            summary: data.cv.summary || '',
+            technicalSkills: data.cv.technicalSkills || { frontend: [], backend: [], tools: [], languages: [] },
+            softSkills: data.cv.softSkills || [],
+            experience: data.cv.experience || [],
+            education: data.cv.education || [],
+            projects: data.cv.projects || [],
+            certifications: data.cv.certifications || [],
+            languages: data.cv.languages || [],
+            additionalInfo: data.cv.additionalInfo || { interests: [], volunteer: [], publications: [] },
+            template: data.cv.template || 'modern',
+            colorScheme: data.cv.colorScheme || 'blue',
+            layout: data.cv.layout || 'single',
+            showPhoto: data.cv.showPhoto || false,
+            photoUrl: data.cv.photoUrl || ''
+          })
+          toast.success('CV data loaded successfully!')
+        }
+      } catch (error) {
+        console.error('Error fetching CV data:', error)
+        toast.error('Failed to load CV data. Please refresh the page.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCVData()
+  }, [])
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      const response = await fetch('/api/admin/cv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setCvData(data.cv)
+        toast.success('CV saved successfully!')
+      } else {
+        toast.error('Failed to save CV. Please try again.')
+      }
+    } catch (error) {
+      console.error('Error saving CV:', error)
+      toast.error('Error saving CV. Please check your connection.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  const handleNestedInputChange = (parentField, childField, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [parentField]: {
+        ...prev[parentField],
+        [childField]: value
+      }
+    }))
+  }
+
+  const addArrayItem = (field, newItem) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: [...prev[field], newItem]
+    }))
+  }
+
+  const removeArrayItem = (field, index) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: prev[field].filter((_, i) => i !== index)
+    }))
+  }
+
+  const updateArrayItem = (field, index, updatedItem) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: prev[field].map((item, i) => i === index ? updatedItem : item)
+    }))
+  }
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading CV data...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    )
+  }
+
+  return (
+    <AdminLayout>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">CV Management</h1>
+              <p className="text-gray-600 mt-1">Create and manage your professional CV</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowPreview(!showPreview)}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Eye className="h-4 w-4" />
+                {showPreview ? 'Hide Preview' : 'Preview'}
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                {saving ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
+                {saving ? 'Saving...' : 'Save CV'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Form Section */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-sm border">
+              {/* Tabs */}
+              <div className="border-b border-gray-200">
+                <nav className="flex space-x-8 px-6">
+                  {[
+                    { id: 'personal', label: 'Personal Info' },
+                    { id: 'skills', label: 'Skills' },
+                    { id: 'experience', label: 'Experience' },
+                    { id: 'education', label: 'Education' },
+                    { id: 'projects', label: 'Projects' },
+                    { id: 'additional', label: 'Additional' },
+                    { id: 'settings', label: 'Settings' }
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                        activeTab === tab.id
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </nav>
+              </div>
+
+              {/* Tab Content */}
+              <div className="p-6">
+                {activeTab === 'personal' && (
+                  <PersonalInfoTab 
+                    formData={formData} 
+                    handleInputChange={handleInputChange} 
+                  />
+                )}
+                {activeTab === 'skills' && (
+                  <SkillsTab 
+                    formData={formData} 
+                    handleInputChange={handleInputChange}
+                    handleNestedInputChange={handleNestedInputChange}
+                    addArrayItem={addArrayItem}
+                    removeArrayItem={removeArrayItem}
+                  />
+                )}
+                {activeTab === 'experience' && (
+                  <ExperienceTab 
+                    formData={formData} 
+                    addArrayItem={addArrayItem}
+                    removeArrayItem={removeArrayItem}
+                    updateArrayItem={updateArrayItem}
+                  />
+                )}
+                {activeTab === 'education' && (
+                  <EducationTab 
+                    formData={formData} 
+                    addArrayItem={addArrayItem}
+                    removeArrayItem={removeArrayItem}
+                    updateArrayItem={updateArrayItem}
+                  />
+                )}
+                {activeTab === 'projects' && (
+                  <ProjectsTab 
+                    formData={formData} 
+                    addArrayItem={addArrayItem}
+                    removeArrayItem={removeArrayItem}
+                    updateArrayItem={updateArrayItem}
+                  />
+                )}
+                {activeTab === 'additional' && (
+                  <AdditionalTab 
+                    formData={formData} 
+                    handleInputChange={handleInputChange}
+                    addArrayItem={addArrayItem}
+                    removeArrayItem={removeArrayItem}
+                    updateArrayItem={updateArrayItem}
+                  />
+                )}
+                {activeTab === 'settings' && (
+                  <SettingsTab 
+                    formData={formData} 
+                    handleInputChange={handleInputChange}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Preview Section */}
+          <div className="lg:col-span-1">
+            {showPreview && (
+              <div className="bg-white rounded-xl shadow-sm border p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">CV Preview</h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium text-gray-900">{formData.fullName || 'Your Name'}</h4>
+                    <p className="text-sm text-gray-600">{formData.title || 'Your Title'}</p>
+                    <p className="text-sm text-gray-500">{formData.email || 'your@email.com'}</p>
+                  </div>
+                  
+                  <div>
+                    <h5 className="font-medium text-gray-900 mb-2">Summary</h5>
+                    <p className="text-sm text-gray-600 line-clamp-3">
+                      {formData.summary || 'Your professional summary will appear here...'}
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h5 className="font-medium text-gray-900 mb-2">Experience</h5>
+                    <div className="space-y-2">
+                      {formData.experience.slice(0, 2).map((exp, index) => (
+                        <div key={index} className="text-sm">
+                          <p className="font-medium text-gray-900">{exp.title || 'Job Title'}</p>
+                          <p className="text-gray-600">{exp.company || 'Company'}</p>
+                        </div>
+                      ))}
+                      {formData.experience.length === 0 && (
+                        <p className="text-sm text-gray-500">No experience added yet</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-6 pt-4 border-t">
+                  <a
+                    href="/api/cv/download"
+                    target="_blank"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Download className="h-4 w-4" />
+                    Download CV
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+    </AdminLayout>
   )
 }
