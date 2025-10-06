@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { Github, Linkedin, Mail, Globe, Phone } from 'lucide-react'
+import { Github, Linkedin, Mail, Globe, Phone, Download } from 'lucide-react'
 
 export default function ModernContact() {
   const [formData, setFormData] = useState({
@@ -349,6 +349,35 @@ export default function ModernContact() {
             </form>
           </motion.div>
         </div>
+        
+        {/* CV Download Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          viewport={{ once: true }}
+          className='mt-16 text-center'
+        >
+          <div className='bg-gradient-to-r from-theme-accent/10 to-theme-gradient-to/10 rounded-2xl p-8 border border-theme-accent/20'>
+            <h3 className='text-2xl font-bold text-gray-900 mb-4'>
+              Download My CV
+            </h3>
+            <p className='text-gray-600 mb-6 max-w-md mx-auto'>
+              Get a copy of my resume to learn more about my experience and skills.
+            </p>
+            <motion.a
+              href='/api/cv/download'
+              target='_blank'
+              rel='noopener noreferrer'
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className='inline-flex items-center gap-2 px-8 py-4 bg-theme-gradient text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300'
+            >
+              <Download className='h-5 w-5' />
+              Download CV (PDF)
+            </motion.a>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

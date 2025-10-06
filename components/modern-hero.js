@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { Download } from 'lucide-react'
 
 export default function ModernHero() {
   const [currentText, setCurrentText] = useState('')
@@ -11,12 +12,18 @@ export default function ModernHero() {
   const [loading, setLoading] = useState(true)
 
   const handleNavClick = (href) => {
-    const element = document.querySelector(href)
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      })
+    // Only handle internal navigation (hash links)
+    if (href && href.startsWith('#')) {
+      const element = document.querySelector(href)
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        })
+      }
+    } else if (href && href.startsWith('/')) {
+      // Handle external links by navigating to them
+      window.location.href = href
     }
   }
 
@@ -30,7 +37,7 @@ export default function ModernHero() {
       } catch (error) {
         console.error('Error fetching hero data:', error)
         // Fallback data
-        setHeroData({
+        const fallbackData = {
           name: 'Your Name',
           title: 'Full Stack Developer & UI/UX Designer',
           description:
@@ -44,7 +51,8 @@ export default function ModernHero() {
             linkedin: '#',
             email: 'mailto:hello@example.com',
           },
-        })
+        }
+        setHeroData(fallbackData)
       } finally {
         setLoading(false)
       }
@@ -185,7 +193,7 @@ export default function ModernHero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className='flex flex-col sm:flex-row gap-6 justify-center items-center'
+          className='flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center flex-wrap'
         >
           <motion.button
             onClick={() =>
@@ -193,7 +201,7 @@ export default function ModernHero() {
             }
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='px-8 py-4 btn-theme-primary font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-lg'
+            className='px-6 sm:px-8 py-3 sm:py-4 btn-theme-primary font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg'
           >
             {heroData?.primaryButtonText || 'View My Work'}
           </motion.button>
@@ -204,10 +212,22 @@ export default function ModernHero() {
             }
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='px-8 py-4 btn-theme-outline font-semibold rounded-full transition-all duration-300 text-lg'
+            className='px-6 sm:px-8 py-3 sm:py-4 btn-theme-outline font-semibold rounded-full transition-all duration-300 text-base sm:text-lg'
           >
             {heroData?.secondaryButtonText || 'Get In Touch'}
           </motion.button>
+          
+          <motion.a
+            href='/api/cv/download'
+            target='_blank'
+            rel='noopener noreferrer'
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className='px-6 sm:px-8 py-3 sm:py-4 bg-theme-gradient text-white font-semibold rounded-full transition-all duration-300 text-base sm:text-lg hover:shadow-lg flex items-center gap-2'
+          >
+            <Download className='h-5 w-5' />
+            Download CV
+          </motion.a>
         </motion.div>
 
         {/* Scroll Indicator */}
