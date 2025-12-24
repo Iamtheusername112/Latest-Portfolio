@@ -9,6 +9,7 @@ export default function ModernProjects() {
   const [hoveredProject, setHoveredProject] = useState(null)
   const [projectsData, setProjectsData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(0)
   const { theme } = useThemeContext()
 
   // Project status configuration with stage order
@@ -269,10 +270,33 @@ export default function ModernProjects() {
     fetchProjectsData()
   }, [])
 
-  const featuredProjects =
-    projectsData?.filter((project) => project.featured) || []
-  const otherProjects =
-    projectsData?.filter((project) => !project.featured) || []
+  // Reset to first page when projects data changes
+  useEffect(() => {
+    setCurrentPage(0)
+  }, [projectsData])
+
+  const otherProjects = projectsData || []
+  const projectsPerPage = 3
+  const totalPages = Math.ceil(otherProjects.length / projectsPerPage)
+  const startIndex = currentPage * projectsPerPage
+  const endIndex = startIndex + projectsPerPage
+  const displayedProjects = otherProjects.slice(startIndex, endIndex)
+
+  const handleNext = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1)
+      // Scroll to top of projects section
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  const handlePrevious = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1)
+      // Scroll to top of projects section
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
 
   if (loading) {
     return (
@@ -315,122 +339,10 @@ export default function ModernProjects() {
           </p>
         </motion.div>
 
-        {/* Featured Projects */}
-        <div className='mb-20'>
-          <motion.h3
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className='text-3xl font-bold mb-12 text-center'
-            style={{ color: 'var(--foreground)' }}
-          >
-            Featured Projects
-          </motion.h3>
-
-          <div className='grid lg:grid-cols-2 gap-8'>
-            {featuredProjects.map((project, index) => {
-              const status = projectStatuses[project.status] || projectStatuses.planning
-              const StatusIcon = status.icon
-
-              return (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                className='group relative'
-              >
-                <div className='bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border-2 border-gray-100 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-500 shadow-xl hover:shadow-2xl'>
-                  {/* Image Section with Gradient Overlay */}
-                  <div className='relative overflow-hidden h-72'>
-                    {project.imageUrl ? (
-                      <img
-                        src={project.imageUrl}
-                        alt={project.title}
-                        className='w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700'
-                      />
-                    ) : (
-                      <div className='w-full h-full bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600 flex items-center justify-center'>
-                        <span className='text-white text-2xl font-bold'>
-                          {project.title}
-                        </span>
-                      </div>
-                    )}
-                    
-                    {/* Gradient Overlay */}
-                    <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent'></div>
-                    
-                    {/* Quick Action Buttons - Always Visible at Bottom */}
-                    <div className='absolute bottom-4 left-4 right-4 flex gap-3'>
-                      <motion.a
-                        href={project.liveUrl}
-                        whileHover={{ scale: 1.05, y: -2 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`flex-1 px-4 py-3 backdrop-blur-sm text-white rounded-xl font-semibold transition-all duration-300 text-center shadow-lg flex items-center justify-center gap-2 ${theme.buttonPrimary}`}
-                      >
-                        <svg className="w-4 h-4 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'white' }}>
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                        <span className='font-bold drop-shadow-lg' style={{ color: 'white', textShadow: '0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.3)' }}>Live Demo</span>
-                      </motion.a>
-                    </div>
-                  </div>
-
-                  {/* Content Section */}
-                  <div className='p-6 space-y-4'>
-                    {/* Title */}
-                    <h3 className='text-2xl font-bold' style={{ color: 'var(--foreground)' }}>
-                      {project.title}
-                    </h3>
-                    
-                    {/* Project Stage Tracker */}
-                    {project.status && (
-                      <div className='p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/50 dark:to-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700'>
-                        <ProjectStageTracker currentStatus={project.status} />
-                      </div>
-                    )}
-
-                    {/* Description */}
-                    <p className='leading-relaxed line-clamp-3' style={{ color: 'var(--muted-foreground)' }}>
-                      {project.description}
-                    </p>
-
-                    {/* Technologies */}
-                    <div className='flex flex-wrap gap-2'>
-                      {project.technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className='px-3 py-1 bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium'
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Other Projects Grid */}
+        {/* Projects Grid */}
         <div>
-          <motion.h3
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className='text-3xl font-bold mb-12 text-center'
-            style={{ color: 'var(--foreground)' }}
-          >
-            More Projects
-          </motion.h3>
-
           <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {otherProjects.map((project, index) => {
+            {displayedProjects.map((project, index) => {
               const status = projectStatuses[project.status] || projectStatuses.planning
               const StatusIcon = status.icon
 
@@ -520,6 +432,60 @@ export default function ModernProjects() {
               )
             })}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className='flex items-center justify-center gap-4 mt-12'
+            >
+              <motion.button
+                onClick={handlePrevious}
+                disabled={currentPage === 0}
+                whileHover={{ scale: currentPage === 0 ? 1 : 1.05 }}
+                whileTap={{ scale: currentPage === 0 ? 1 : 0.95 }}
+                className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  currentPage === 0
+                    ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    : `${theme.buttonPrimary} text-white shadow-lg hover:shadow-xl`
+                }`}
+                style={currentPage === 0 ? {} : { color: 'white' }}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+              </motion.button>
+
+              {/* Page Indicator */}
+              <div className='flex items-center gap-2'>
+                <span className='text-sm font-medium' style={{ color: 'var(--foreground)' }}>
+                  Page {currentPage + 1} of {totalPages}
+                </span>
+              </div>
+
+              <motion.button
+                onClick={handleNext}
+                disabled={currentPage >= totalPages - 1}
+                whileHover={{ scale: currentPage >= totalPages - 1 ? 1 : 1.05 }}
+                whileTap={{ scale: currentPage >= totalPages - 1 ? 1 : 0.95 }}
+                className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  currentPage >= totalPages - 1
+                    ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    : `${theme.buttonPrimary} text-white shadow-lg hover:shadow-xl`
+                }`}
+                style={currentPage >= totalPages - 1 ? {} : { color: 'white' }}
+              >
+                Next
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </motion.button>
+            </motion.div>
+          )}
         </div>
 
         {/* Call to Action */}
