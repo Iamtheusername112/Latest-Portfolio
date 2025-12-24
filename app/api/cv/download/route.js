@@ -240,9 +240,9 @@ function generateCVHTML(data) {
         }
         
         .languages-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         
         .language-item {
@@ -265,13 +265,183 @@ function generateCVHTML(data) {
         }
         
         @media print {
+            @page {
+                size: A4;
+                margin: 0.5cm;
+            }
+            
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
             body {
                 padding: 0;
+                margin: 0;
+                font-size: 10pt;
             }
             
             .cv-container {
                 box-shadow: none;
                 border-radius: 0;
+                max-width: 100%;
+                margin: 0;
+                page-break-inside: avoid;
+            }
+            
+            /* Compact header for print */
+            .header {
+                padding: 15px 20px;
+                page-break-inside: avoid;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+                margin-bottom: 5px;
+            }
+            
+            .header .title {
+                font-size: 1em;
+                margin-bottom: 10px;
+            }
+            
+            .contact-info {
+                gap: 10px;
+                margin-top: 10px;
+                font-size: 0.85em;
+            }
+            
+            /* Compact content */
+            .content {
+                padding: 15px 20px;
+            }
+            
+            .section {
+                margin-bottom: 12px;
+                page-break-inside: avoid;
+            }
+            
+            .section h2 {
+                font-size: 1.1em;
+                margin-bottom: 8px;
+                padding-bottom: 3px;
+            }
+            
+            .summary {
+                font-size: 0.9em;
+                line-height: 1.4;
+                margin-bottom: 10px;
+            }
+            
+            /* Compact skills */
+            .skills-grid {
+                gap: 10px;
+            }
+            
+            .skill-category {
+                margin-bottom: 8px;
+            }
+            
+            .skill-category h3 {
+                font-size: 0.95em;
+                margin-bottom: 5px;
+            }
+            
+            .skill-tags {
+                gap: 4px;
+            }
+            
+            .skill-tag {
+                font-size: 0.75em;
+                padding: 2px 6px;
+            }
+            
+            /* Compact experience/education items */
+            .experience-item,
+            .education-item,
+            .project-item,
+            .certification-item,
+            .language-item {
+                margin-bottom: 8px;
+                padding-bottom: 8px;
+                page-break-inside: avoid;
+            }
+            
+            .item-header {
+                margin-bottom: 4px;
+            }
+            
+            .item-title {
+                font-size: 0.95em;
+            }
+            
+            .item-company {
+                font-size: 0.85em;
+            }
+            
+            .item-period {
+                font-size: 0.8em;
+            }
+            
+            .item-description {
+                font-size: 0.8em;
+                line-height: 1.3;
+                margin-top: 4px;
+            }
+            
+            /* Compact achievements */
+            .achievements {
+                margin-top: 4px;
+                padding-left: 15px;
+            }
+            
+            .achievements li {
+                font-size: 0.75em;
+                line-height: 1.3;
+                margin-bottom: 2px;
+            }
+            
+            /* Compact projects */
+            .project-tech {
+                gap: 4px;
+                margin-top: 4px;
+            }
+            
+            .tech-tag {
+                font-size: 0.7em;
+                padding: 1px 6px;
+            }
+            
+            /* Compact languages */
+            .languages-grid {
+                gap: 6px;
+            }
+            
+            .language-item {
+                padding: 4px 8px;
+            }
+            
+            .language-name {
+                font-size: 0.85em;
+            }
+            
+            .language-proficiency {
+                font-size: 0.75em;
+            }
+            
+            /* Hide links that don't work on printed paper */
+            .project-link {
+                display: none !important;
+            }
+            
+            /* Hide any other interactive elements */
+            a[target="_blank"] {
+                display: none !important;
+            }
+            
+            /* Prevent page breaks */
+            .section:last-child {
+                margin-bottom: 0;
             }
         }
     </style>
@@ -314,37 +484,52 @@ function generateCVHTML(data) {
             <div class="section">
                 <h2>Technical Skills</h2>
                 <div class="skills-grid">
-                    ${data.technicalSkills?.frontend ? `<div class="skill-category">
+                    ${data.technicalSkills?.frontend && Array.isArray(data.technicalSkills.frontend) && data.technicalSkills.frontend.length > 0 ? `<div class="skill-category">
                         <h3>Frontend</h3>
                         <div class="skill-tags">
-                            ${data.technicalSkills.frontend.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            ${data.technicalSkills.frontend.map(skill => {
+                                const skillName = typeof skill === 'string' ? skill : (skill.name || skill)
+                                return `<span class="skill-tag">${skillName}</span>`
+                            }).join('')}
                         </div>
                     </div>` : ''}
-                    ${data.technicalSkills?.backend ? `<div class="skill-category">
+                    ${data.technicalSkills?.backend && Array.isArray(data.technicalSkills.backend) && data.technicalSkills.backend.length > 0 ? `<div class="skill-category">
                         <h3>Backend</h3>
                         <div class="skill-tags">
-                            ${data.technicalSkills.backend.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            ${data.technicalSkills.backend.map(skill => {
+                                const skillName = typeof skill === 'string' ? skill : (skill.name || skill)
+                                return `<span class="skill-tag">${skillName}</span>`
+                            }).join('')}
                         </div>
                     </div>` : ''}
-                    ${data.technicalSkills?.tools ? `<div class="skill-category">
+                    ${data.technicalSkills?.tools && Array.isArray(data.technicalSkills.tools) && data.technicalSkills.tools.length > 0 ? `<div class="skill-category">
                         <h3>Tools & Technologies</h3>
                         <div class="skill-tags">
-                            ${data.technicalSkills.tools.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            ${data.technicalSkills.tools.map(skill => {
+                                const skillName = typeof skill === 'string' ? skill : (skill.name || skill)
+                                return `<span class="skill-tag">${skillName}</span>`
+                            }).join('')}
                         </div>
                     </div>` : ''}
-                    ${data.technicalSkills?.languages ? `<div class="skill-category">
+                    ${data.technicalSkills?.languages && Array.isArray(data.technicalSkills.languages) && data.technicalSkills.languages.length > 0 ? `<div class="skill-category">
                         <h3>Programming Languages</h3>
                         <div class="skill-tags">
-                            ${data.technicalSkills.languages.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            ${data.technicalSkills.languages.map(skill => {
+                                const skillName = typeof skill === 'string' ? skill : (skill.name || skill)
+                                return `<span class="skill-tag">${skillName}</span>`
+                            }).join('')}
                         </div>
                     </div>` : ''}
                 </div>
             </div>
             
-            ${data.softSkills && data.softSkills.length > 0 ? `<div class="section">
+            ${data.softSkills && Array.isArray(data.softSkills) && data.softSkills.length > 0 ? `<div class="section">
                 <h2>Soft Skills</h2>
                 <div class="skill-tags">
-                    ${data.softSkills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    ${data.softSkills.map(skill => {
+                        const skillName = typeof skill === 'string' ? skill : (skill.name || skill)
+                        return `<span class="skill-tag">${skillName}</span>`
+                    }).join('')}
                 </div>
             </div>` : ''}
             
@@ -415,15 +600,35 @@ function generateCVHTML(data) {
                 `).join('')}
             </div>` : ''}
             
-            ${data.languages && data.languages.length > 0 ? `<div class="section">
+            ${data.languages && Array.isArray(data.languages) && data.languages.length > 0 ? `<div class="section">
                 <h2>Languages</h2>
                 <div class="languages-grid">
-                    ${data.languages.map(lang => `
+                    ${data.languages.map(lang => {
+                        // Handle both object format {language, proficiency} and string format
+                        const languageName = typeof lang === 'string' ? lang : (lang.language || lang.name || 'Unknown')
+                        const proficiencyValue = typeof lang === 'string' ? 'B2' : (lang.proficiency || 'B2')
+                        
+                        // CEFR levels mapping
+                        const cefrLevels = {
+                            'A1': 'A1 (Beginner)',
+                            'A2': 'A2 (Elementary)',
+                            'B1': 'B1 (Intermediate)',
+                            'B2': 'B2 (Upper Intermediate)',
+                            'C1': 'C1 (Advanced)',
+                            'C2': 'C2 (Proficient)'
+                        }
+                        
+                        // Handle both uppercase and lowercase CEFR levels
+                        const proficiencyUpper = proficiencyValue.toUpperCase()
+                        const proficiencyLabel = cefrLevels[proficiencyUpper] || proficiencyUpper
+                        
+                        return `
                         <div class="language-item">
-                            <span class="language-name">${lang.language}</span>
-                            <span class="language-proficiency">${lang.proficiency}</span>
+                            <span class="language-name">${languageName}</span>
+                            <span class="language-proficiency">${proficiencyLabel}</span>
                         </div>
-                    `).join('')}
+                        `
+                    }).join('')}
                 </div>
             </div>` : ''}
         </div>

@@ -162,25 +162,38 @@ function SkillsTab({ formData, handleInputChange, handleNestedInputChange, addAr
         category: selectedCategory
       }
       
-      addArrayItem('technicalSkills', {
+      // Get current skills for the selected category
+      const currentCategorySkills = Array.isArray(formData.technicalSkills[selectedCategory]) 
+        ? formData.technicalSkills[selectedCategory] 
+        : []
+      
+      // Update technicalSkills with the new skill added to the category
+      const updatedSkills = {
         ...formData.technicalSkills,
-        [selectedCategory]: [...(formData.technicalSkills[selectedCategory] || []), skillData]
-      })
+        [selectedCategory]: [...currentCategorySkills, skillData]
+      }
+      
+      handleInputChange('technicalSkills', updatedSkills)
       setNewSkill('')
       setNewSkillLevel('intermediate')
       toast.success(`${newSkill.trim()} added to ${selectedCategory} skills`)
+    } else {
+      toast.error('Please enter a skill name')
     }
   }
 
   const removeSkill = (category, index) => {
     const updatedSkills = { ...formData.technicalSkills }
-    updatedSkills[category] = updatedSkills[category].filter((_, i) => i !== index)
+    const categorySkills = Array.isArray(updatedSkills[category]) ? updatedSkills[category] : []
+    updatedSkills[category] = categorySkills.filter((_, i) => i !== index)
     handleInputChange('technicalSkills', updatedSkills)
+    toast.success('Skill removed')
   }
 
   const updateSkillLevel = (category, index, newLevel) => {
     const updatedSkills = { ...formData.technicalSkills }
-    updatedSkills[category] = updatedSkills[category].map((skill, i) => 
+    const categorySkills = Array.isArray(updatedSkills[category]) ? updatedSkills[category] : []
+    updatedSkills[category] = categorySkills.map((skill, i) => 
       i === index ? { ...skill, level: newLevel } : skill
     )
     handleInputChange('technicalSkills', updatedSkills)
@@ -397,7 +410,13 @@ function ExperienceTab({ formData, addArrayItem, removeArrayItem, updateArrayIte
 
   const addExperience = () => {
     if (newExperience.title && newExperience.company) {
-      addArrayItem('experience', { ...newExperience })
+      const experienceToAdd = { ...newExperience }
+      addArrayItem('experience', experienceToAdd)
+      
+      // Show toast with the values before resetting
+      toast.success(`${experienceToAdd.title} at ${experienceToAdd.company} added`)
+      
+      // Reset form after adding
       setNewExperience({
         title: '',
         company: '',
@@ -405,7 +424,8 @@ function ExperienceTab({ formData, addArrayItem, removeArrayItem, updateArrayIte
         description: '',
         achievements: []
       })
-      toast.success(`${newExperience.title} at ${newExperience.company} added`)
+    } else {
+      toast.error('Please fill in job title and company')
     }
   }
 
@@ -447,7 +467,14 @@ function ExperienceTab({ formData, addArrayItem, removeArrayItem, updateArrayIte
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900">Professional Experience</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900">Professional Experience</h3>
+        {Array.isArray(formData.experience) && formData.experience.length > 0 && (
+          <span className="text-sm text-gray-500">
+            {formData.experience.length} {formData.experience.length === 1 ? 'experience' : 'experiences'} added
+          </span>
+        )}
+      </div>
       
       {/* Add/Edit Experience Form */}
       <div className="bg-gray-50 p-4 rounded-lg">
@@ -576,7 +603,7 @@ function ExperienceTab({ formData, addArrayItem, removeArrayItem, updateArrayIte
       
       {/* Experience List */}
       <div className="space-y-4">
-        {formData.experience.map((exp, index) => (
+        {Array.isArray(formData.experience) && formData.experience.map((exp, index) => (
           <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="flex justify-between items-start mb-2">
               <div>
@@ -1044,8 +1071,397 @@ function ProjectsTab({ formData, addArrayItem, removeArrayItem, updateArrayItem 
   )
 }
 
+function LanguagesTab({ formData, addArrayItem, removeArrayItem, updateArrayItem }) {
+  const [editingIndex, setEditingIndex] = useState(-1)
+  const [newLanguage, setNewLanguage] = useState({
+    language: '',
+    proficiency: 'B2' // CEFR levels: A1, A2, B1, B2, C1, C2
+  })
+
+  const proficiencyLevels = [
+    { value: 'A1', label: 'A1', description: 'Beginner - Can understand and use familiar everyday expressions' },
+    { value: 'A2', label: 'A2', description: 'Elementary - Can communicate in simple and routine tasks' },
+    { value: 'B1', label: 'B1', description: 'Intermediate - Can understand the main points of clear standard input' },
+    { value: 'B2', label: 'B2', description: 'Upper Intermediate - Can understand the main ideas of complex text' },
+    { value: 'C1', label: 'C1', description: 'Advanced - Can express ideas fluently and spontaneously' },
+    { value: 'C2', label: 'C2', description: 'Proficient - Can understand with ease virtually everything heard or read' }
+  ]
+
+  const addLanguage = () => {
+    const languageName = newLanguage.language.trim()
+    if (languageName) {
+      addArrayItem('languages', { language: languageName, proficiency: newLanguage.proficiency })
+      toast.success(`${languageName} added`)
+      setNewLanguage({
+        language: '',
+        proficiency: 'B2'
+      })
+    } else {
+      toast.error('Please enter a language name')
+    }
+  }
+
+  const editLanguage = (index) => {
+    setEditingIndex(index)
+    setNewLanguage({ ...formData.languages[index] })
+  }
+
+  const updateLanguage = () => {
+    if (editingIndex >= 0 && newLanguage.language.trim()) {
+      updateArrayItem('languages', editingIndex, { ...newLanguage, language: newLanguage.language.trim() })
+      setEditingIndex(-1)
+      setNewLanguage({
+        language: '',
+        proficiency: 'B2'
+      })
+      toast.success('Language updated')
+    } else {
+      toast.error('Please enter a language name')
+    }
+  }
+
+  const cancelEdit = () => {
+    setEditingIndex(-1)
+    setNewLanguage({
+      language: '',
+      proficiency: 'B2'
+    })
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900">Languages</h3>
+        <p className="text-sm text-gray-600 mt-1">Add languages you speak and your proficiency level</p>
+      </div>
+      
+      {/* Add/Edit Language Form */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h4 className="text-md font-medium text-gray-900 mb-4">
+          {editingIndex >= 0 ? 'Edit Language' : 'Add New Language'}
+        </h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Language *</label>
+            <input
+              type="text"
+              value={newLanguage.language}
+              onChange={(e) => setNewLanguage(prev => ({ ...prev, language: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="e.g., English, Spanish, French"
+              onKeyPress={(e) => e.key === 'Enter' && (editingIndex >= 0 ? updateLanguage() : addLanguage())}
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Proficiency Level *</label>
+            <select
+              value={newLanguage.proficiency}
+              onChange={(e) => setNewLanguage(prev => ({ ...prev, proficiency: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {proficiencyLevels.map(level => (
+                <option key={level.value} value={level.value}>{level.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        
+        <div className="mt-4 flex gap-2">
+          {editingIndex >= 0 ? (
+            <>
+              <button
+                onClick={updateLanguage}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Check className="h-4 w-4" />
+                Update Language
+              </button>
+              <button
+                onClick={cancelEdit}
+                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={addLanguage}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Language
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Languages List */}
+      <div className="space-y-4">
+        {formData.languages && Array.isArray(formData.languages) && formData.languages.length > 0 ? (
+          formData.languages.map((lang, index) => {
+            const proficiencyInfo = proficiencyLevels.find(p => p.value === lang.proficiency) || proficiencyLevels[3] // Default to B2
+            return (
+              <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h5 className="text-lg font-semibold text-gray-900">{lang.language}</h5>
+                      <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                        {proficiencyInfo.label}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600">{proficiencyInfo.description}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => editLanguage(index)}
+                      className="text-blue-600 hover:text-blue-800 p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Edit language"
+                    >
+                      <Edit3 className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        removeArrayItem('languages', index)
+                        toast.success(`${lang.language} removed`)
+                      }}
+                      className="text-red-600 hover:text-red-800 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Remove language"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )
+          })
+        ) : (
+          <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <p className="text-gray-500">No languages added yet. Add your languages above.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function CertificationsTab({ formData, addArrayItem, removeArrayItem, updateArrayItem }) {
+  const [editingIndex, setEditingIndex] = useState(-1)
+  const [newCertification, setNewCertification] = useState({
+    name: '',
+    issuer: '',
+    date: '',
+    credentialId: ''
+  })
+
+  const addCertification = () => {
+    const certName = newCertification.name.trim()
+    if (certName && newCertification.issuer.trim()) {
+      addArrayItem('certifications', {
+        name: certName,
+        issuer: newCertification.issuer.trim(),
+        date: newCertification.date.trim(),
+        credentialId: newCertification.credentialId.trim()
+      })
+      toast.success(`${certName} added`)
+      setNewCertification({
+        name: '',
+        issuer: '',
+        date: '',
+        credentialId: ''
+      })
+    } else {
+      toast.error('Please enter certification name and issuer')
+    }
+  }
+
+  const editCertification = (index) => {
+    setEditingIndex(index)
+    setNewCertification({ ...formData.certifications[index] })
+  }
+
+  const updateCertification = () => {
+    if (editingIndex >= 0 && newCertification.name.trim() && newCertification.issuer.trim()) {
+      updateArrayItem('certifications', editingIndex, {
+        name: newCertification.name.trim(),
+        issuer: newCertification.issuer.trim(),
+        date: newCertification.date.trim(),
+        credentialId: newCertification.credentialId.trim()
+      })
+      setEditingIndex(-1)
+      setNewCertification({
+        name: '',
+        issuer: '',
+        date: '',
+        credentialId: ''
+      })
+      toast.success('Certification updated')
+    } else {
+      toast.error('Please enter certification name and issuer')
+    }
+  }
+
+  const cancelEdit = () => {
+    setEditingIndex(-1)
+    setNewCertification({
+      name: '',
+      issuer: '',
+      date: '',
+      credentialId: ''
+    })
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900">Certifications</h3>
+        <p className="text-sm text-gray-600 mt-1">Add your professional certifications and credentials</p>
+      </div>
+      
+      {/* Add/Edit Certification Form */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h4 className="text-md font-medium text-gray-900 mb-4">
+          {editingIndex >= 0 ? 'Edit Certification' : 'Add New Certification'}
+        </h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Certification Name *</label>
+            <input
+              type="text"
+              value={newCertification.name}
+              onChange={(e) => setNewCertification(prev => ({ ...prev, name: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="e.g., AWS Certified Developer"
+              onKeyPress={(e) => e.key === 'Enter' && (editingIndex >= 0 ? updateCertification() : addCertification())}
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Issuing Organization *</label>
+            <input
+              type="text"
+              value={newCertification.issuer}
+              onChange={(e) => setNewCertification(prev => ({ ...prev, issuer: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="e.g., Amazon Web Services"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <input
+              type="text"
+              value={newCertification.date}
+              onChange={(e) => setNewCertification(prev => ({ ...prev, date: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="e.g., 2023 or Jan 2023"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Credential ID</label>
+            <input
+              type="text"
+              value={newCertification.credentialId}
+              onChange={(e) => setNewCertification(prev => ({ ...prev, credentialId: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="e.g., AWS-DEV-123456"
+            />
+          </div>
+        </div>
+        
+        <div className="flex gap-2">
+          {editingIndex >= 0 ? (
+            <>
+              <button
+                onClick={updateCertification}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Check className="h-4 w-4" />
+                Update Certification
+              </button>
+              <button
+                onClick={cancelEdit}
+                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={addCertification}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add Certification
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Certifications List */}
+      <div className="space-y-4">
+        {formData.certifications && Array.isArray(formData.certifications) && formData.certifications.length > 0 ? (
+          formData.certifications.map((cert, index) => (
+            <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h5 className="text-lg font-semibold text-gray-900">{cert.name}</h5>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm text-gray-700">
+                      <span className="font-medium">Issued by:</span> {cert.issuer || 'Not specified'}
+                    </p>
+                    {cert.date && (
+                      <p className="text-sm text-gray-700">
+                        <span className="font-medium">Date:</span> {cert.date}
+                      </p>
+                    )}
+                    {cert.credentialId && (
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Credential ID:</span> {cert.credentialId}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => editCertification(index)}
+                    className="text-blue-600 hover:text-blue-800 p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                    title="Edit certification"
+                  >
+                    <Edit3 className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      removeArrayItem('certifications', index)
+                      toast.success(`${cert.name} removed`)
+                    }}
+                    className="text-red-600 hover:text-red-800 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Remove certification"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <p className="text-gray-500">No certifications added yet. Add your certifications above.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function AdditionalTab({ formData, handleInputChange, addArrayItem, removeArrayItem, updateArrayItem }) {
-  return <div>Additional Tab - Coming Soon</div>
+return <div>Additional Tab - Coming Soon</div>
 }
 
 function SettingsTab({ formData, handleInputChange }) {
@@ -1217,6 +1633,89 @@ export default function CVManagement() {
     photoUrl: ''
   })
 
+  // Default skills to restore
+  const getDefaultSkills = () => {
+    return {
+      frontend: [
+        { name: 'React', level: 'expert', category: 'frontend' },
+        { name: 'Next.js', level: 'expert', category: 'frontend' },
+        { name: 'TypeScript', level: 'advanced', category: 'frontend' },
+        { name: 'JavaScript', level: 'expert', category: 'frontend' },
+        { name: 'HTML5', level: 'expert', category: 'frontend' },
+        { name: 'CSS3', level: 'expert', category: 'frontend' },
+        { name: 'Tailwind CSS', level: 'advanced', category: 'frontend' },
+        { name: 'Framer Motion', level: 'advanced', category: 'frontend' }
+      ],
+      backend: [
+        { name: 'Node.js', level: 'expert', category: 'backend' },
+        { name: 'Express.js', level: 'advanced', category: 'backend' },
+        { name: 'PostgreSQL', level: 'advanced', category: 'backend' },
+        { name: 'MongoDB', level: 'intermediate', category: 'backend' },
+        { name: 'REST APIs', level: 'advanced', category: 'backend' },
+        { name: 'GraphQL', level: 'intermediate', category: 'backend' }
+      ],
+      tools: [
+        { name: 'Git', level: 'advanced', category: 'tools' },
+        { name: 'Docker', level: 'intermediate', category: 'tools' },
+        { name: 'AWS', level: 'intermediate', category: 'tools' },
+        { name: 'Vercel', level: 'advanced', category: 'tools' },
+        { name: 'Figma', level: 'intermediate', category: 'tools' },
+        { name: 'VS Code', level: 'expert', category: 'tools' },
+        { name: 'Linux', level: 'intermediate', category: 'tools' }
+      ],
+      languages: [
+        { name: 'JavaScript', level: 'expert', category: 'languages' },
+        { name: 'TypeScript', level: 'advanced', category: 'languages' },
+        { name: 'Python', level: 'intermediate', category: 'languages' },
+        { name: 'SQL', level: 'advanced', category: 'languages' },
+        { name: 'HTML', level: 'expert', category: 'languages' },
+        { name: 'CSS', level: 'expert', category: 'languages' }
+      ]
+    }
+  }
+
+  // Convert string skills to object format
+  const convertSkillsToObjects = (skills) => {
+    if (!skills || typeof skills !== 'object') {
+      return getDefaultSkills()
+    }
+
+    const converted = {
+      frontend: [],
+      backend: [],
+      tools: [],
+      languages: []
+    }
+
+    // Convert each category
+    Object.keys(converted).forEach(category => {
+      const categorySkills = Array.isArray(skills[category]) ? skills[category] : []
+      converted[category] = categorySkills.map(skill => {
+        // If already an object, return as is
+        if (typeof skill === 'object' && skill !== null && skill.name) {
+          return {
+            name: skill.name,
+            level: skill.level || 'intermediate',
+            category: skill.category || category
+          }
+        }
+        // If string, convert to object
+        if (typeof skill === 'string') {
+          return {
+            name: skill,
+            level: 'intermediate',
+            category: category
+          }
+        }
+        return null
+      }).filter(Boolean)
+    })
+
+    // If all categories are empty, return default skills
+    const hasAnySkills = Object.values(converted).some(arr => arr.length > 0)
+    return hasAnySkills ? converted : getDefaultSkills()
+  }
+
   // Fetch CV data
   useEffect(() => {
     const fetchCVData = async () => {
@@ -1226,6 +1725,32 @@ export default function CVManagement() {
         
         if (data.cv) {
           setCvData(data.cv)
+          
+          // Ensure languages is properly loaded - use exactly what's in the database
+          const loadedLanguages = Array.isArray(data.cv.languages) ? data.cv.languages : []
+          
+          // Convert and load technical skills (with defaults if empty)
+          const loadedTechnicalSkills = convertSkillsToObjects(data.cv.technicalSkills)
+          
+          // Load soft skills with defaults if empty
+          const defaultSoftSkills = ['Problem Solving', 'Team Collaboration', 'Communication', 'Project Management', 'Leadership']
+          const loadedSoftSkills = Array.isArray(data.cv.softSkills) && data.cv.softSkills.length > 0 
+            ? data.cv.softSkills 
+            : defaultSoftSkills
+          
+          // Load experience with proper array validation
+          const loadedExperience = Array.isArray(data.cv.experience) ? data.cv.experience : []
+          
+          console.log('Loading CV data:', {
+            languages: loadedLanguages,
+            languagesCount: loadedLanguages.length,
+            technicalSkills: loadedTechnicalSkills,
+            softSkills: loadedSoftSkills,
+            experience: loadedExperience,
+            experienceCount: loadedExperience.length,
+            experienceData: JSON.stringify(loadedExperience)
+          })
+          
           setFormData({
             fullName: data.cv.fullName || '',
             title: data.cv.title || '',
@@ -1236,13 +1761,13 @@ export default function CVManagement() {
             linkedin: data.cv.linkedin || '',
             github: data.cv.github || '',
             summary: data.cv.summary || '',
-            technicalSkills: data.cv.technicalSkills || { frontend: [], backend: [], tools: [], languages: [] },
-            softSkills: data.cv.softSkills || [],
-            experience: data.cv.experience || [],
-            education: data.cv.education || [],
-            projects: data.cv.projects || [],
-            certifications: data.cv.certifications || [],
-            languages: data.cv.languages || [],
+            technicalSkills: loadedTechnicalSkills, // Use converted skills with defaults
+            softSkills: loadedSoftSkills, // Use loaded or default soft skills
+            experience: loadedExperience, // Use properly validated experience array
+            education: Array.isArray(data.cv.education) ? data.cv.education : [],
+            projects: Array.isArray(data.cv.projects) ? data.cv.projects : [],
+            certifications: Array.isArray(data.cv.certifications) ? data.cv.certifications : [],
+            languages: loadedLanguages, // Use the properly formatted array
             additionalInfo: data.cv.additionalInfo || { interests: [], volunteer: [], publications: [] },
             template: data.cv.template || 'modern',
             colorScheme: data.cv.colorScheme || 'blue',
@@ -1266,12 +1791,35 @@ export default function CVManagement() {
   const handleSave = async () => {
     setSaving(true)
     try {
+      // Ensure languages is always an array (explicitly set, even if empty)
+      const languagesArray = Array.isArray(formData.languages) ? formData.languages : []
+      
+      // Ensure experience is always an array (explicitly set, even if empty)
+      const experienceArray = Array.isArray(formData.experience) ? formData.experience : []
+      
+      const dataToSave = {
+        ...formData,
+        languages: languagesArray, // Explicitly set to ensure it's saved
+        experience: experienceArray // Explicitly set to ensure all experiences are saved
+      }
+      
+      console.log('Saving CV data:', { 
+        languages: dataToSave.languages,
+        languagesCount: dataToSave.languages.length,
+        experience: dataToSave.experience,
+        experienceCount: dataToSave.experience.length,
+        experienceData: JSON.stringify(dataToSave.experience),
+        formDataExperience: formData.experience,
+        formDataExperienceType: typeof formData.experience,
+        formDataExperienceIsArray: Array.isArray(formData.experience)
+      })
+      
       const response = await fetch('/api/admin/cv', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSave),
       })
 
       if (response.ok) {
@@ -1307,24 +1855,36 @@ export default function CVManagement() {
   }
 
   const addArrayItem = (field, newItem) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: [...prev[field], newItem]
-    }))
+    setFormData(prev => {
+      const currentValue = prev[field]
+      const arrayValue = Array.isArray(currentValue) ? currentValue : []
+      return {
+        ...prev,
+        [field]: [...arrayValue, newItem]
+      }
+    })
   }
 
   const removeArrayItem = (field, index) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
-    }))
+    setFormData(prev => {
+      const currentValue = prev[field]
+      const arrayValue = Array.isArray(currentValue) ? currentValue : []
+      return {
+        ...prev,
+        [field]: arrayValue.filter((_, i) => i !== index)
+      }
+    })
   }
 
   const updateArrayItem = (field, index, updatedItem) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: prev[field].map((item, i) => i === index ? updatedItem : item)
-    }))
+    setFormData(prev => {
+      const currentValue = prev[field]
+      const arrayValue = Array.isArray(currentValue) ? currentValue : []
+      return {
+        ...prev,
+        [field]: arrayValue.map((item, i) => i === index ? updatedItem : item)
+      }
+    })
   }
 
   if (loading) {
@@ -1390,6 +1950,8 @@ export default function CVManagement() {
                     { id: 'experience', label: 'Experience' },
                     { id: 'education', label: 'Education' },
                     { id: 'projects', label: 'Projects' },
+                    { id: 'certifications', label: 'Certifications' },
+                    { id: 'languages', label: 'Languages' },
                     { id: 'additional', label: 'Additional' },
                     { id: 'settings', label: 'Settings' }
                   ].map((tab) => (
@@ -1443,6 +2005,22 @@ export default function CVManagement() {
                 )}
                 {activeTab === 'projects' && (
                   <ProjectsTab 
+                    formData={formData} 
+                    addArrayItem={addArrayItem}
+                    removeArrayItem={removeArrayItem}
+                    updateArrayItem={updateArrayItem}
+                  />
+                )}
+                {activeTab === 'certifications' && (
+                  <CertificationsTab 
+                    formData={formData} 
+                    addArrayItem={addArrayItem}
+                    removeArrayItem={removeArrayItem}
+                    updateArrayItem={updateArrayItem}
+                  />
+                )}
+                {activeTab === 'languages' && (
+                  <LanguagesTab 
                     formData={formData} 
                     addArrayItem={addArrayItem}
                     removeArrayItem={removeArrayItem}
