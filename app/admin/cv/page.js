@@ -1720,7 +1720,9 @@ export default function CVManagement() {
   useEffect(() => {
     const fetchCVData = async () => {
       try {
-        const response = await fetch('/api/admin/cv')
+        const response = await fetch('/api/admin/cv', {
+        credentials: 'include' // Include cookies for authentication
+      })
         const data = await response.json()
         
         if (data.cv) {
@@ -1819,6 +1821,7 @@ export default function CVManagement() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Include cookies for authentication
         body: JSON.stringify(dataToSave),
       })
 
@@ -1827,11 +1830,36 @@ export default function CVManagement() {
         setCvData(data.cv)
         toast.success('CV saved successfully!')
       } else {
-        toast.error('Failed to save CV. Please try again.')
+        // Try to get error message from response
+        let errorMessage = 'Failed to save CV. Please try again.'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorData.message || errorMessage
+        } catch (e) {
+          // If response is not JSON, use status text
+          errorMessage = response.statusText || errorMessage
+        }
+        
+        console.error('Save failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorMessage
+        })
+        
+        toast.error(`Failed to save CV: ${errorMessage}`)
       }
     } catch (error) {
       console.error('Error saving CV:', error)
-      toast.error('Error saving CV. Please check your connection.')
+      
+      // Provide more specific error messages
+      let errorMessage = 'Error saving CV. Please check your connection.'
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        errorMessage = 'Network error: Unable to connect to server. Please check if the server is running.'
+      } else if (error.message) {
+        errorMessage = `Error: ${error.message}`
+      }
+      
+      toast.error(errorMessage)
     } finally {
       setSaving(false)
     }
