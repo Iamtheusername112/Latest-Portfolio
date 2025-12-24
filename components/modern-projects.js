@@ -285,16 +285,12 @@ export default function ModernProjects() {
   const handleNext = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1)
-      // Scroll to top of projects section
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   const handlePrevious = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1)
-      // Scroll to top of projects section
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
